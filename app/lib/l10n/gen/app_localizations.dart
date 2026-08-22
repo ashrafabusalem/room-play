@@ -1,0 +1,830 @@
+import 'dart:async';
+
+import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:intl/intl.dart' as intl;
+
+import 'app_localizations_ar.dart';
+import 'app_localizations_en.dart';
+
+// ignore_for_file: type=lint
+
+/// Callers can lookup localized strings with an instance of AppLocalizations
+/// returned by `AppLocalizations.of(context)`.
+///
+/// Applications need to include `AppLocalizations.delegate()` in their app's
+/// `localizationDelegates` list, and the locales they support in the app's
+/// `supportedLocales` list. For example:
+///
+/// ```dart
+/// import 'gen/app_localizations.dart';
+///
+/// return MaterialApp(
+///   localizationsDelegates: AppLocalizations.localizationsDelegates,
+///   supportedLocales: AppLocalizations.supportedLocales,
+///   home: MyApplicationHome(),
+/// );
+/// ```
+///
+/// ## Update pubspec.yaml
+///
+/// Please make sure to update your pubspec.yaml to include the following
+/// packages:
+///
+/// ```yaml
+/// dependencies:
+///   # Internationalization support.
+///   flutter_localizations:
+///     sdk: flutter
+///   intl: any # Use the pinned version from flutter_localizations
+///
+///   # Rest of dependencies
+/// ```
+///
+/// ## iOS Applications
+///
+/// iOS applications define key application metadata, including supported
+/// locales, in an Info.plist file that is built into the application bundle.
+/// To configure the locales supported by your app, you’ll need to edit this
+/// file.
+///
+/// First, open your project’s ios/Runner.xcworkspace Xcode workspace file.
+/// Then, in the Project Navigator, open the Info.plist file under the Runner
+/// project’s Runner folder.
+///
+/// Next, select the Information Property List item, select Add Item from the
+/// Editor menu, then select Localizations from the pop-up menu.
+///
+/// Select and expand the newly-created Localizations item then, for each
+/// locale your application supports, add a new item and select the locale
+/// you wish to add from the pop-up menu in the Value field. This list should
+/// be consistent with the languages listed in the AppLocalizations.supportedLocales
+/// property.
+abstract class AppLocalizations {
+  AppLocalizations(String locale)
+    : localeName = intl.Intl.canonicalizedLocale(locale.toString());
+
+  final String localeName;
+
+  static AppLocalizations of(BuildContext context) {
+    return Localizations.of<AppLocalizations>(context, AppLocalizations)!;
+  }
+
+  static const LocalizationsDelegate<AppLocalizations> delegate =
+      _AppLocalizationsDelegate();
+
+  /// A list of this localizations delegate along with the default localizations
+  /// delegates.
+  ///
+  /// Returns a list of localizations delegates containing this delegate along with
+  /// GlobalMaterialLocalizations.delegate, GlobalCupertinoLocalizations.delegate,
+  /// and GlobalWidgetsLocalizations.delegate.
+  ///
+  /// Additional delegates can be added by appending to this list in
+  /// MaterialApp. This list does not have to be used at all if a custom list
+  /// of delegates is preferred or required.
+  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates =
+      <LocalizationsDelegate<dynamic>>[
+        delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ];
+
+  /// A list of this localizations delegate's supported locales.
+  static const List<Locale> supportedLocales = <Locale>[
+    Locale('ar'),
+    Locale('en'),
+  ];
+
+  /// This language's own name, shown in the language picker. Never translate this into another language — it must always read in its own script.
+  ///
+  /// In en, this message translates to:
+  /// **'English'**
+  String get languageName;
+
+  /// No description provided for @navHome.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get navHome;
+
+  /// No description provided for @navRooms.
+  ///
+  /// In en, this message translates to:
+  /// **'Rooms'**
+  String get navRooms;
+
+  /// No description provided for @navMessages.
+  ///
+  /// In en, this message translates to:
+  /// **'Messages'**
+  String get navMessages;
+
+  /// No description provided for @navProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile'**
+  String get navProfile;
+
+  /// No description provided for @categoryGames.
+  ///
+  /// In en, this message translates to:
+  /// **'Games'**
+  String get categoryGames;
+
+  /// No description provided for @categoryVoiceRooms.
+  ///
+  /// In en, this message translates to:
+  /// **'Voice Rooms'**
+  String get categoryVoiceRooms;
+
+  /// No description provided for @categoryParty.
+  ///
+  /// In en, this message translates to:
+  /// **'Party'**
+  String get categoryParty;
+
+  /// No description provided for @categoryEvents.
+  ///
+  /// In en, this message translates to:
+  /// **'Events'**
+  String get categoryEvents;
+
+  /// No description provided for @sectionPopularGames.
+  ///
+  /// In en, this message translates to:
+  /// **'Popular Games'**
+  String get sectionPopularGames;
+
+  /// No description provided for @sectionRecommendedRooms.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommended Rooms'**
+  String get sectionRecommendedRooms;
+
+  /// No description provided for @sectionQuickStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick Start'**
+  String get sectionQuickStart;
+
+  /// No description provided for @actionSeeAll.
+  ///
+  /// In en, this message translates to:
+  /// **'See All'**
+  String get actionSeeAll;
+
+  /// No description provided for @actionMore.
+  ///
+  /// In en, this message translates to:
+  /// **'More'**
+  String get actionMore;
+
+  /// No description provided for @actionSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Search'**
+  String get actionSearch;
+
+  /// No description provided for @actionPlay.
+  ///
+  /// In en, this message translates to:
+  /// **'Play'**
+  String get actionPlay;
+
+  /// Under a game card. count arrives pre-formatted, e.g. '12.4K'.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} playing'**
+  String playersPlaying(String count);
+
+  /// No description provided for @bannerPlayGamesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Play Games\nMake Friends'**
+  String get bannerPlayGamesTitle;
+
+  /// No description provided for @bannerPlayGamesSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Millions of players are\nwaiting for you!'**
+  String get bannerPlayGamesSubtitle;
+
+  /// No description provided for @bannerPlayGamesCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Start Now'**
+  String get bannerPlayGamesCta;
+
+  /// No description provided for @bannerTournamentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekend\nTournament'**
+  String get bannerTournamentTitle;
+
+  /// No description provided for @bannerTournamentSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Win coins in Ludo and UNO\nall weekend long.'**
+  String get bannerTournamentSubtitle;
+
+  /// No description provided for @bannerTournamentCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Join'**
+  String get bannerTournamentCta;
+
+  /// No description provided for @bannerHostTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Host a Room\nEarn Rewards'**
+  String get bannerHostTitle;
+
+  /// No description provided for @bannerHostSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Open a voice room and grow\nyour audience.'**
+  String get bannerHostSubtitle;
+
+  /// No description provided for @bannerHostCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Room'**
+  String get bannerHostCta;
+
+  /// No description provided for @roomIdLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'ID: {id}'**
+  String roomIdLabel(String id);
+
+  /// No description provided for @roomTagChatting.
+  ///
+  /// In en, this message translates to:
+  /// **'Chatting'**
+  String get roomTagChatting;
+
+  /// No description provided for @roomFollow.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow'**
+  String get roomFollow;
+
+  /// No description provided for @roomFollowing.
+  ///
+  /// In en, this message translates to:
+  /// **'Following'**
+  String get roomFollowing;
+
+  /// No description provided for @roomSeatOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get roomSeatOpen;
+
+  /// No description provided for @roomChatHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Say something...'**
+  String get roomChatHint;
+
+  /// No description provided for @roomSystemSender.
+  ///
+  /// In en, this message translates to:
+  /// **'System'**
+  String get roomSystemSender;
+
+  /// No description provided for @roomControlMic.
+  ///
+  /// In en, this message translates to:
+  /// **'Mic'**
+  String get roomControlMic;
+
+  /// No description provided for @roomControlSound.
+  ///
+  /// In en, this message translates to:
+  /// **'Sound'**
+  String get roomControlSound;
+
+  /// No description provided for @roomControlEffects.
+  ///
+  /// In en, this message translates to:
+  /// **'Effects'**
+  String get roomControlEffects;
+
+  /// No description provided for @roomControlGame.
+  ///
+  /// In en, this message translates to:
+  /// **'Game'**
+  String get roomControlGame;
+
+  /// No description provided for @roomControlMore.
+  ///
+  /// In en, this message translates to:
+  /// **'More'**
+  String get roomControlMore;
+
+  /// No description provided for @roomLiveBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'LIVE'**
+  String get roomLiveBadge;
+
+  /// No description provided for @gamesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Games'**
+  String get gamesTitle;
+
+  /// No description provided for @filterAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get filterAll;
+
+  /// No description provided for @filterPopular.
+  ///
+  /// In en, this message translates to:
+  /// **'Popular'**
+  String get filterPopular;
+
+  /// No description provided for @filterNew.
+  ///
+  /// In en, this message translates to:
+  /// **'New'**
+  String get filterNew;
+
+  /// No description provided for @filterBoard.
+  ///
+  /// In en, this message translates to:
+  /// **'Board'**
+  String get filterBoard;
+
+  /// No description provided for @filterParty.
+  ///
+  /// In en, this message translates to:
+  /// **'Party'**
+  String get filterParty;
+
+  /// No description provided for @filterAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Action'**
+  String get filterAction;
+
+  /// No description provided for @gameCategoryBoard.
+  ///
+  /// In en, this message translates to:
+  /// **'Board'**
+  String get gameCategoryBoard;
+
+  /// No description provided for @gameCategoryCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Card'**
+  String get gameCategoryCard;
+
+  /// No description provided for @gameCategoryParty.
+  ///
+  /// In en, this message translates to:
+  /// **'Party'**
+  String get gameCategoryParty;
+
+  /// No description provided for @gameCategoryPuzzle.
+  ///
+  /// In en, this message translates to:
+  /// **'Puzzle'**
+  String get gameCategoryPuzzle;
+
+  /// No description provided for @gameCategoryAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Action'**
+  String get gameCategoryAction;
+
+  /// No description provided for @gamesEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing here yet'**
+  String get gamesEmptyTitle;
+
+  /// No description provided for @gamesEmptyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'No games match this filter.'**
+  String get gamesEmptyBody;
+
+  /// No description provided for @gameNotBuiltTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Not built yet'**
+  String get gameNotBuiltTitle;
+
+  /// No description provided for @gameNotBuiltBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This is the UI shell. The game itself needs a rules engine and a server that owns the match state.'**
+  String get gameNotBuiltBody;
+
+  /// No description provided for @gameSyncTurnBased.
+  ///
+  /// In en, this message translates to:
+  /// **'Planned: turn-based sync'**
+  String get gameSyncTurnBased;
+
+  /// No description provided for @gameSyncRealtime.
+  ///
+  /// In en, this message translates to:
+  /// **'Planned: realtime sync'**
+  String get gameSyncRealtime;
+
+  /// No description provided for @createTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Create'**
+  String get createTitle;
+
+  /// No description provided for @createRoomTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a Room'**
+  String get createRoomTitle;
+
+  /// No description provided for @createRoomSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Start a voice room and\ninvite your friends'**
+  String get createRoomSubtitle;
+
+  /// No description provided for @createRoomCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Room'**
+  String get createRoomCta;
+
+  /// No description provided for @goLiveTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Go Live'**
+  String get goLiveTitle;
+
+  /// No description provided for @goLiveSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Share your moments\nwith everyone'**
+  String get goLiveSubtitle;
+
+  /// No description provided for @goLiveCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Go Live'**
+  String get goLiveCta;
+
+  /// No description provided for @messagesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Messages'**
+  String get messagesTitle;
+
+  /// No description provided for @messagesVoiceNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Voice message'**
+  String get messagesVoiceNote;
+
+  /// No description provided for @profileTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile'**
+  String get profileTitle;
+
+  /// No description provided for @profileFollowing.
+  ///
+  /// In en, this message translates to:
+  /// **'Following'**
+  String get profileFollowing;
+
+  /// No description provided for @profileFollowers.
+  ///
+  /// In en, this message translates to:
+  /// **'Followers'**
+  String get profileFollowers;
+
+  /// No description provided for @profileFriends.
+  ///
+  /// In en, this message translates to:
+  /// **'Friends'**
+  String get profileFriends;
+
+  /// No description provided for @profileCoinBalance.
+  ///
+  /// In en, this message translates to:
+  /// **'Coin balance'**
+  String get profileCoinBalance;
+
+  /// No description provided for @profileTopUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Top Up'**
+  String get profileTopUp;
+
+  /// No description provided for @profileWallet.
+  ///
+  /// In en, this message translates to:
+  /// **'Wallet'**
+  String get profileWallet;
+
+  /// No description provided for @profileBackpack.
+  ///
+  /// In en, this message translates to:
+  /// **'Backpack'**
+  String get profileBackpack;
+
+  /// No description provided for @profileAchievements.
+  ///
+  /// In en, this message translates to:
+  /// **'Achievements'**
+  String get profileAchievements;
+
+  /// No description provided for @profileHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Help & Support'**
+  String get profileHelp;
+
+  /// No description provided for @profileLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get profileLanguage;
+
+  /// No description provided for @profileNotDesignedNote.
+  ///
+  /// In en, this message translates to:
+  /// **'This screen was not in the mockup — layout is a proposal.'**
+  String get profileNotDesignedNote;
+
+  /// No description provided for @roomsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Rooms'**
+  String get roomsTitle;
+
+  /// No description provided for @languagePickerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get languagePickerTitle;
+
+  /// Follow the phone's own language setting instead of a fixed choice.
+  ///
+  /// In en, this message translates to:
+  /// **'System default'**
+  String get languageSystemDefault;
+
+  /// No description provided for @authWelcomeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome back'**
+  String get authWelcomeTitle;
+
+  /// No description provided for @authWelcomeSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to get back to your rooms'**
+  String get authWelcomeSubtitle;
+
+  /// No description provided for @authSignUpTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Create your account'**
+  String get authSignUpTitle;
+
+  /// No description provided for @authSignUpSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Join the rooms, play the games'**
+  String get authSignUpSubtitle;
+
+  /// No description provided for @authUsername.
+  ///
+  /// In en, this message translates to:
+  /// **'Username'**
+  String get authUsername;
+
+  /// No description provided for @authEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get authEmail;
+
+  /// No description provided for @authPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get authPassword;
+
+  /// No description provided for @authConfirmPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm password'**
+  String get authConfirmPassword;
+
+  /// No description provided for @authSignIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign In'**
+  String get authSignIn;
+
+  /// No description provided for @authSignUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Account'**
+  String get authSignUp;
+
+  /// No description provided for @authForgotPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Forgot password?'**
+  String get authForgotPassword;
+
+  /// No description provided for @authNoAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Don\'t have an account?'**
+  String get authNoAccount;
+
+  /// No description provided for @authHaveAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Already have an account?'**
+  String get authHaveAccount;
+
+  /// No description provided for @authSignUpLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign up'**
+  String get authSignUpLink;
+
+  /// No description provided for @authSignInLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in'**
+  String get authSignInLink;
+
+  /// No description provided for @authSignOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign out'**
+  String get authSignOut;
+
+  /// No description provided for @authTermsAgree.
+  ///
+  /// In en, this message translates to:
+  /// **'I agree to the Terms of Service and Privacy Policy'**
+  String get authTermsAgree;
+
+  /// No description provided for @authResetTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset password'**
+  String get authResetTitle;
+
+  /// No description provided for @authResetBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the email you signed up with and we\'ll send you a link to set a new password.'**
+  String get authResetBody;
+
+  /// No description provided for @authResetSend.
+  ///
+  /// In en, this message translates to:
+  /// **'Send reset link'**
+  String get authResetSend;
+
+  /// No description provided for @authResetSentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Check your email'**
+  String get authResetSentTitle;
+
+  /// No description provided for @authResetSentBody.
+  ///
+  /// In en, this message translates to:
+  /// **'We sent a reset link to {email}'**
+  String authResetSentBody(String email);
+
+  /// No description provided for @authResetBackToSignIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to sign in'**
+  String get authResetBackToSignIn;
+
+  /// No description provided for @valUsernameRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a username'**
+  String get valUsernameRequired;
+
+  /// No description provided for @valUsernameShort.
+  ///
+  /// In en, this message translates to:
+  /// **'At least 3 characters'**
+  String get valUsernameShort;
+
+  /// No description provided for @valEmailRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your email'**
+  String get valEmailRequired;
+
+  /// No description provided for @valEmailInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'That doesn\'t look like an email address'**
+  String get valEmailInvalid;
+
+  /// No description provided for @valPasswordRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your password'**
+  String get valPasswordRequired;
+
+  /// No description provided for @valPasswordShort.
+  ///
+  /// In en, this message translates to:
+  /// **'At least 8 characters'**
+  String get valPasswordShort;
+
+  /// No description provided for @valPasswordMismatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Passwords don\'t match'**
+  String get valPasswordMismatch;
+
+  /// No description provided for @valTermsRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please accept the terms to continue'**
+  String get valTermsRequired;
+
+  /// No description provided for @errorNetwork.
+  ///
+  /// In en, this message translates to:
+  /// **'Can\'t reach the server. Check your connection and try again.'**
+  String get errorNetwork;
+
+  /// No description provided for @errorTimeout.
+  ///
+  /// In en, this message translates to:
+  /// **'The server took too long to respond. Try again.'**
+  String get errorTimeout;
+
+  /// No description provided for @errorTooManyRequests.
+  ///
+  /// In en, this message translates to:
+  /// **'Too many attempts. Wait a moment and try again.'**
+  String get errorTooManyRequests;
+
+  /// Last-resort message when the failure has no useful detail. Never show a status code or a stack trace to a user.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong. Please try again.'**
+  String get errorUnexpected;
+}
+
+class _AppLocalizationsDelegate
+    extends LocalizationsDelegate<AppLocalizations> {
+  const _AppLocalizationsDelegate();
+
+  @override
+  Future<AppLocalizations> load(Locale locale) {
+    return SynchronousFuture<AppLocalizations>(lookupAppLocalizations(locale));
+  }
+
+  @override
+  bool isSupported(Locale locale) =>
+      <String>['ar', 'en'].contains(locale.languageCode);
+
+  @override
+  bool shouldReload(_AppLocalizationsDelegate old) => false;
+}
+
+AppLocalizations lookupAppLocalizations(Locale locale) {
+  // Lookup logic when only language code is specified.
+  switch (locale.languageCode) {
+    case 'ar':
+      return AppLocalizationsAr();
+    case 'en':
+      return AppLocalizationsEn();
+  }
+
+  throw FlutterError(
+    'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
+    'an issue with the localizations generation tool. Please file an issue '
+    'on GitHub with a reproducible sample app and the gen-l10n configuration '
+    'that was used.',
+  );
+}

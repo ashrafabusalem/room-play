@@ -1,0 +1,159 @@
+{
+  "@@locale": "en",
+
+  "languageName": "English",
+  "@languageName": {
+    "description": "This language's own name, shown in the language picker. Never translate this into another language — it must always read in its own script."
+  },
+
+  "navHome": "Home",
+  "navRooms": "Rooms",
+  "navMessages": "Messages",
+  "navProfile": "Profile",
+
+  "categoryGames": "Games",
+  "categoryVoiceRooms": "Voice Rooms",
+  "categoryParty": "Party",
+  "categoryEvents": "Events",
+
+  "sectionPopularGames": "Popular Games",
+  "sectionRecommendedRooms": "Recommended Rooms",
+  "sectionQuickStart": "Quick Start",
+  "actionSeeAll": "See All",
+  "actionMore": "More",
+  "actionSearch": "Search",
+  "actionPlay": "Play",
+
+  "playersPlaying": "{count} playing",
+  "@playersPlaying": {
+    "description": "Under a game card. count arrives pre-formatted, e.g. '12.4K'.",
+    "placeholders": { "count": { "type": "String" } }
+  },
+
+  "bannerPlayGamesTitle": "Play Games\nMake Friends",
+  "bannerPlayGamesSubtitle": "Millions of players are\nwaiting for you!",
+  "bannerPlayGamesCta": "Start Now",
+  "bannerTournamentTitle": "Weekend\nTournament",
+  "bannerTournamentSubtitle": "Win coins in Ludo and UNO\nall weekend long.",
+  "bannerTournamentCta": "Join",
+  "bannerHostTitle": "Host a Room\nEarn Rewards",
+  "bannerHostSubtitle": "Open a voice room and grow\nyour audience.",
+  "bannerHostCta": "Create Room",
+
+  "roomIdLabel": "ID: {id}",
+  "@roomIdLabel": {
+    "placeholders": { "id": { "type": "String" } }
+  },
+  "roomTagChatting": "Chatting",
+  "roomFollow": "Follow",
+  "roomFollowing": "Following",
+  "roomSeatOpen": "Open",
+  "roomChatHint": "Say something...",
+  "roomSystemSender": "System",
+  "roomControlMic": "Mic",
+  "roomControlSound": "Sound",
+  "roomControlEffects": "Effects",
+  "roomControlGame": "Game",
+  "roomControlMore": "More",
+  "roomLiveBadge": "LIVE",
+
+  "gamesTitle": "Games",
+  "filterAll": "All",
+  "filterPopular": "Popular",
+  "filterNew": "New",
+  "filterBoard": "Board",
+  "filterParty": "Party",
+  "filterAction": "Action",
+  "gameCategoryBoard": "Board",
+  "gameCategoryCard": "Card",
+  "gameCategoryParty": "Party",
+  "gameCategoryPuzzle": "Puzzle",
+  "gameCategoryAction": "Action",
+  "gamesEmptyTitle": "Nothing here yet",
+  "gamesEmptyBody": "No games match this filter.",
+
+  "gameNotBuiltTitle": "Not built yet",
+  "gameNotBuiltBody": "This is the UI shell. The game itself needs a rules engine and a server that owns the match state.",
+  "gameSyncTurnBased": "Planned: turn-based sync",
+  "gameSyncRealtime": "Planned: realtime sync",
+
+  "createTitle": "Create",
+  "createRoomTitle": "Create a Room",
+  "createRoomSubtitle": "Start a voice room and\ninvite your friends",
+  "createRoomCta": "Create Room",
+  "goLiveTitle": "Go Live",
+  "goLiveSubtitle": "Share your moments\nwith everyone",
+  "goLiveCta": "Go Live",
+
+  "messagesTitle": "Messages",
+  "messagesVoiceNote": "Voice message",
+
+  "profileTitle": "Profile",
+  "profileFollowing": "Following",
+  "profileFollowers": "Followers",
+  "profileFriends": "Friends",
+  "profileCoinBalance": "Coin balance",
+  "profileTopUp": "Top Up",
+  "profileWallet": "Wallet",
+  "profileBackpack": "Backpack",
+  "profileAchievements": "Achievements",
+  "profileHelp": "Help & Support",
+  "profileLanguage": "Language",
+  "profileNotDesignedNote": "This screen was not in the mockup — layout is a proposal.",
+
+  "roomsTitle": "Rooms",
+
+  "languagePickerTitle": "Language",
+  "languageSystemDefault": "System default",
+  "@languageSystemDefault": {
+    "description": "Follow the phone's own language setting instead of a fixed choice."
+  },
+
+  "authWelcomeTitle": "Welcome back",
+  "authWelcomeSubtitle": "Sign in to get back to your rooms",
+  "authSignUpTitle": "Create your account",
+  "authSignUpSubtitle": "Join the rooms, play the games",
+
+  "authUsername": "Username",
+  "authEmail": "Email",
+  "authPassword": "Password",
+  "authConfirmPassword": "Confirm password",
+
+  "authSignIn": "Sign In",
+  "authSignUp": "Create Account",
+  "authForgotPassword": "Forgot password?",
+  "authNoAccount": "Don't have an account?",
+  "authHaveAccount": "Already have an account?",
+  "authSignUpLink": "Sign up",
+  "authSignInLink": "Sign in",
+  "authSignOut": "Sign out",
+
+  "authTermsAgree": "I agree to the Terms of Service and Privacy Policy",
+
+  "authResetTitle": "Reset password",
+  "authResetBody": "Enter the email you signed up with and we'll send you a link to set a new password.",
+  "authResetSend": "Send reset link",
+  "authResetSentTitle": "Check your email",
+  "authResetSentBody": "We sent a reset link to {email}",
+  "@authResetSentBody": {
+    "placeholders": { "email": { "type": "String" } }
+  },
+  "authResetBackToSignIn": "Back to sign in",
+
+  "valUsernameRequired": "Choose a username",
+  "valUsernameShort": "At least 3 characters",
+  "valEmailRequired": "Enter your email",
+  "valEmailInvalid": "That doesn't look like an email address",
+  "valPasswordRequired": "Enter your password",
+  "valPasswordShort": "At least 8 characters",
+  "valPasswordMismatch": "Passwords don't match",
+  "valTermsRequired": "Please accept the terms to continue",
+
+  "errorNetwork": "Can't reach the server. Check your connection and try again.",
+  "errorTimeout": "The server took too long to respond. Try again.",
+  "errorTooManyRequests": "Too many attempts. Wait a moment and try again.",
+  "errorUnexpected": "Something went wrong. Please try again.",
+  "@errorUnexpected": {
+    "description": "Last-resort message when the failure has no useful detail. Never show a status code or a stack trace to a user."
+  }
+}

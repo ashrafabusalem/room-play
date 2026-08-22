@@ -1,0 +1,41 @@
+# Normalise line endings.
+#
+# Development is on Windows, the server is Linux. A shell script or supervisor
+# config committed with CRLF fails on Linux with errors that point nowhere near
+# the real cause — `bash: \r: command not found`, or a config the daemon reads
+# as one long broken line.
+#
+# Storing everything as LF in the repository avoids that. Git still checks out
+# whatever the local platform prefers for ordinary editing.
+* text=auto eol=lf
+
+# Files that must stay LF even on Windows, because Linux executes them.
+*.sh          text eol=lf
+*.conf        text eol=lf
+*.ini         text eol=lf
+artisan       text eol=lf
+*.bash        text eol=lf
+
+# Windows-only, must keep CRLF.
+*.bat         text eol=crlf
+*.cmd         text eol=crlf
+*.ps1         text eol=crlf
+
+# Binary — never touch, never diff as text.
+*.png         binary
+*.jpg         binary
+*.jpeg        binary
+*.webp        binary
+*.ttf         binary
+*.otf         binary
+*.ico         binary
+*.jar         binary
+*.apk         binary
+*.aab         binary
+*.keystore    binary
+*.jks         binary
+
+# Generated. Keep them in the repo — the app will not build without them — but
+# do not clutter a pull request diff with them.
+app/lib/l10n/gen/**   linguist-generated=true
+app/test/goldens/**   linguist-generated=true
