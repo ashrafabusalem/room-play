@@ -161,14 +161,32 @@ class Conversation {
 
 class HeroBanner {
   const HeroBanner({
+    this.id,
     required this.title,
     required this.subtitle,
     required this.cta,
+    this.imageUrl,
+    this.actionType = 'none',
+    this.actionValue,
   });
 
+  final String? id;
   final String title;
   final String subtitle;
   final String cta;
+  final String? imageUrl;
+  final String actionType;
+  final String? actionValue;
+
+  factory HeroBanner.fromJson(Map<String, dynamic> json) => HeroBanner(
+    id: json['id'] as String?,
+    title: json['title'] as String? ?? '',
+    subtitle: json['subtitle'] as String? ?? '',
+    cta: json['cta'] as String? ?? '',
+    imageUrl: json['image_url'] as String?,
+    actionType: json['action_type'] as String? ?? 'none',
+    actionValue: json['action_value'] as String?,
+  );
 }
 
 class HomeCategory {

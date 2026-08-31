@@ -70,6 +70,14 @@ class LoginRequest extends FormRequest
             ]);
         }
 
+        if ($user->blocked_at) {
+            RateLimiter::hit($this->throttleKey());
+
+            throw ValidationException::withMessages([
+                'email' => __('auth.failed'),
+            ]);
+        }
+
         RateLimiter::clear($this->throttleKey());
 
         return $user;

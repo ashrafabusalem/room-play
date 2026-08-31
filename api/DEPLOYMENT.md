@@ -31,10 +31,15 @@ be served from its `public/` directory. Anything else exposes `.env`, your
 database credentials and your `APP_KEY` to the open internet, on a URL anyone
 can guess.
 
+This repository is a monorepo, so the clone puts Laravel one level down: the
+site root holds `api/` and `app/`, and the directory to serve is
+`public_html/api/public`. Every path below is relative to `public_html/api`,
+not `public_html` — including the two supervisor configs.
+
 Fix it in **Websites → List Websites → Manage → vHost Conf**:
 
 ```
-docRoot                   $VH_ROOT/public_html/public
+docRoot                   $VH_ROOT/public_html/api/public
 ```
 
 Verify afterwards by requesting `https://api.example.com/.env` — it must return
@@ -46,8 +51,8 @@ Verify afterwards by requesting `https://api.example.com/.env` — it must retur
 
 ```bash
 cd /home/api.example.com
-rm -rf public_html && git clone <your-repo> public_html
-cd public_html
+rm -rf public_html && git clone https://github.com/ashrafabusalem/room-play.git public_html
+cd public_html/api
 
 # Use the site's PHP, not the system one — see the trap below.
 /usr/local/lsws/lsphp83/bin/php /usr/local/bin/composer install \
@@ -163,7 +168,7 @@ production keeps an exemption you no longer need.
 ## 7. Every deploy after the first
 
 ```bash
-cd /home/api.example.com/public_html
+cd /home/api.example.com/public_html/api
 git pull
 /usr/local/lsws/lsphp83/bin/php /usr/local/bin/composer install --no-dev --optimize-autoloader
 /usr/local/lsws/lsphp83/bin/php artisan migrate --force

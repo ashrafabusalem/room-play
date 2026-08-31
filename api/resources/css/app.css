@@ -9,3 +9,15 @@
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
 }
+
+@layer components {
+    .admin-card { @apply rounded-2xl border border-[#2a3140] bg-[#14172b] p-5 shadow-xl shadow-black/10; }
+    .admin-nav { @apply block whitespace-nowrap rounded-xl px-4 py-3 text-sm font-medium text-[#9ca3ae] transition hover:bg-white/5 hover:text-white; }
+    .admin-nav-active { @apply bg-[#634bf7]/15 text-white ring-1 ring-[#634bf7]/30; }
+    .admin-label { @apply mb-2 block text-sm font-medium text-[#c8cbd2]; }
+    .admin-input { @apply w-full rounded-xl border border-[#2a3140] bg-[#1d2230] px-4 py-3 text-sm text-white outline-none transition placeholder:text-[#5a6474] focus:border-[#634bf7] focus:ring-2 focus:ring-[#634bf7]/20; }
+    .admin-primary { @apply inline-flex items-center justify-center rounded-xl bg-[#634bf7] px-5 py-3 text-sm font-bold text-white transition hover:bg-[#7361e9] focus:ring-2 focus:ring-[#7361e9]/40; }
+    .admin-secondary { @apply inline-flex items-center justify-center rounded-xl border border-[#2a3140] bg-[#1f2532] px-5 py-3 text-sm font-semibold text-white transition hover:border-[#634bf7]; }
+    .admin-danger { @apply inline-flex items-center justify-center rounded-xl bg-[#e5484d]/15 px-5 py-3 text-sm font-semibold text-[#ff8589] transition hover:bg-[#e5484d]/25; }
+    .admin-badge { @apply inline-flex rounded-full px-2.5 py-1 text-xs font-semibold; }
+}

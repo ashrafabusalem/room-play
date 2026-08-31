@@ -1,25 +1,62 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
 import '../../data/mock_data.dart';
+import '../../data/content_repository.dart';
 import '../../data/models.dart';
 import '../../l10n/gen/app_localizations.dart';
 import '../../widgets/avatar.dart';
 import '../../widgets/common.dart';
 import '../rooms/room_screen.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key, required this.onSeeAllGames});
 
   final VoidCallback onSeeAllGames;
 
-  static const _repo = MockRepository();
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  static const _fallback = MockRepository();
+  final _content = ContentRepository();
+  List<HeroBanner>? _banners;
+  String? _loadedLocale;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final locale = Localizations.localeOf(context).languageCode;
+    if (_loadedLocale == locale) return;
+    _loadedLocale = locale;
+    _banners = _fallback.banners(AppLocalizations.of(context));
+    unawaited(_loadBanners(locale));
+  }
+
+  Future<void> _loadBanners(String locale) async {
+    try {
+      final banners = await _content.banners(locale);
+      if (!mounted || _loadedLocale != locale || banners.isEmpty) return;
+      setState(() => _banners = banners);
+    } catch (_) {
+      // The translated built-in banners remain visible while offline.
+    }
+  }
+
+  @override
+  void dispose() {
+    _content.close();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final rooms = _repo.rooms();
+    final rooms = _fallback.rooms();
 
     return SafeArea(
       bottom: false,
@@ -28,15 +65,15 @@ class HomeScreen extends StatelessWidget {
         children: [
           const _HomeHeader(),
           const SizedBox(height: AppSizes.gapL),
-          _HeroCarousel(banners: _repo.banners(l10n)),
+          _HeroCarousel(banners: _banners ?? _fallback.banners(l10n)),
           const SizedBox(height: AppSizes.gapXl),
-          _CategoryRow(categories: _repo.categories(l10n)),
+          _CategoryRow(categories: _fallback.categories(l10n)),
           const SizedBox(height: AppSizes.gapXl),
           SectionHeader(
             title: l10n.sectionPopularGames,
-            onSeeAll: onSeeAllGames,
+            onSeeAll: widget.onSeeAllGames,
           ),
-          _PopularGamesRail(games: _repo.games()),
+          _PopularGamesRail(games: _fallback.games()),
           const SizedBox(height: AppSizes.gapXl),
           SectionHeader(title: l10n.sectionRecommendedRooms),
           for (final room in rooms) ...[
@@ -220,6 +257,18 @@ class _HeroCard extends StatelessWidget {
         decoration: const BoxDecoration(gradient: AppColors.heroGradient),
         child: Stack(
           children: [
+            if (banner.imageUrl case final imageUrl?)
+              Positioned.fill(
+                child: Image.network(
+                  imageUrl,
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, _, _) => const SizedBox.shrink(),
+                ),
+              ),
+            if (banner.imageUrl != null)
+              Positioned.fill(
+                child: ColoredBox(color: Colors.black.withValues(alpha: 0.28)),
+              ),
             // Soft light blooms, standing in for the mascot illustration.
             Positioned(
               right: -30,

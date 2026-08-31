@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\ContentController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -22,7 +23,9 @@ Route::post('/forgot-password', [AuthController::class, 'forgotPassword'])
     // Sending mail is expensive and abusable, so this one is deliberately tight.
     ->middleware('throttle:5,1');
 
-Route::middleware('auth:sanctum')->group(function () {
+Route::get('/content', ContentController::class)->middleware('throttle:120,1');
+
+Route::middleware(['auth:sanctum', 'active'])->group(function () {
     Route::get('/me', [AuthController::class, 'me']);
     Route::post('/logout', [AuthController::class, 'logout']);
 });
