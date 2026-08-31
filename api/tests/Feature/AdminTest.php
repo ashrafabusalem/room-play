@@ -99,4 +99,15 @@ class AdminTest extends TestCase
         $this->assertFalse($admin->must_change_password);
         $this->assertTrue(Hash::check('private-password-456', $admin->password));
     }
+
+    public function test_admin_can_view_and_search_the_audit_log(): void
+    {
+        $admin = User::factory()->create(['is_admin' => true]);
+        AdminAudit::create(['admin_id' => $admin->id, 'action' => 'user.blocked']);
+
+        $this->actingAs($admin)->get('/admin/audit?search=blocked')
+            ->assertOk()
+            ->assertSee('User Blocked')
+            ->assertSee($admin->email);
+    }
 }

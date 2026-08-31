@@ -8,6 +8,7 @@ use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
+use App\Models\AppSetting;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
@@ -22,6 +23,10 @@ class AuthController extends Controller
 {
     public function register(RegisterRequest $request): JsonResponse
     {
+        if (! AppSetting::current()->registration_enabled) {
+            return response()->json(['message' => 'New registrations are temporarily closed.'], 403);
+        }
+
         $user = User::create($request->safe()->only(['name', 'email', 'password']));
 
         return response()->json([

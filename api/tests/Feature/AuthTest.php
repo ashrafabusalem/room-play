@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\User;
+use App\Models\AppSetting;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Notification;
@@ -12,6 +13,20 @@ use Tests\TestCase;
 class AuthTest extends TestCase
 {
     use RefreshDatabase;
+
+    public function test_registration_can_be_disabled_by_an_administrator(): void
+    {
+        AppSetting::current()->update(['registration_enabled' => false]);
+
+        $this->postJson('/api/register', [
+            'name' => 'Alex',
+            'email' => 'alex@example.com',
+            'password' => 'password-123',
+            'password_confirmation' => 'password-123',
+        ])->assertForbidden()->assertJsonPath('message', 'New registrations are temporarily closed.');
+
+        $this->assertDatabaseMissing('users', ['email' => 'alex@example.com']);
+    }
 
     protected function setUp(): void
     {

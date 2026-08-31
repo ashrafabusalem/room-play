@@ -21,6 +21,8 @@
                 <a class="admin-nav {{ request()->routeIs('admin.users.*') ? 'admin-nav-active' : '' }}" href="{{ route('admin.users.index') }}">Users</a>
                 <a class="admin-nav {{ request()->routeIs('admin.banners.*') ? 'admin-nav-active' : '' }}" href="{{ route('admin.banners.index') }}">Banners</a>
                 <a class="admin-nav {{ request()->routeIs('admin.offers.*') ? 'admin-nav-active' : '' }}" href="{{ route('admin.offers.index') }}">Offers</a>
+                <a class="admin-nav {{ request()->routeIs('admin.audit.*') ? 'admin-nav-active' : '' }}" href="{{ route('admin.audit.index') }}">Audit log</a>
+                <a class="admin-nav {{ request()->routeIs('admin.settings.*') ? 'admin-nav-active' : '' }}" href="{{ route('admin.settings.edit') }}">App settings</a>
             </nav>
             <div class="mt-auto hidden p-5 lg:block lg:absolute lg:bottom-0 lg:w-[260px]">
                 <div class="rounded-2xl border border-[#2a3140] bg-[#14172b] p-4">

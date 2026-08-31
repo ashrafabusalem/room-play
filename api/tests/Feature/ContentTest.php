@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\Banner;
 use App\Models\Offer;
 use App\Models\User;
+use App\Models\AppSetting;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -59,5 +60,40 @@ class ContentTest extends TestCase
         ])->assertRedirect();
 
         $this->assertDatabaseHas('offers', ['title_en' => 'Starter pack', 'currency' => 'USD', 'reward_coins' => 1000]);
+    }
+
+    public function test_content_endpoint_returns_localized_app_settings(): void
+    {
+        AppSetting::current()->update([
+            'maintenance_enabled' => true,
+            'maintenance_message_en' => 'Back soon',
+            'maintenance_message_ar' => 'سنعود قريباً',
+            'minimum_android_version' => '1.2.0',
+            'force_update' => true,
+        ]);
+
+        $this->withHeader('Accept-Language', 'ar')->getJson('/api/content')
+            ->assertOk()
+            ->assertJsonPath('settings.maintenance_enabled', true)
+            ->assertJsonPath('settings.maintenance_message', 'سنعود قريباً')
+            ->assertJsonPath('settings.minimum_android_version', '1.2.0')
+            ->assertJsonPath('settings.force_update', true);
+    }
+
+    public function test_admin_can_update_settings_and_the_change_is_audited(): void
+    {
+        $admin = User::factory()->create(['is_admin' => true]);
+
+        $this->actingAs($admin)->put('/admin/settings', [
+            'registration_enabled' => '1',
+            'maintenance_enabled' => '1',
+            'maintenance_message_en' => 'Maintenance',
+            'maintenance_message_ar' => 'صيانة',
+            'support_email' => 'help@roomsplay.com',
+            'minimum_android_version' => '1.0.0',
+        ])->assertSessionHas('success');
+
+        $this->assertDatabaseHas('app_settings', ['maintenance_enabled' => true, 'support_email' => 'help@roomsplay.com']);
+        $this->assertDatabaseHas('admin_audits', ['action' => 'settings.updated', 'admin_id' => $admin->id]);
     }
 }
