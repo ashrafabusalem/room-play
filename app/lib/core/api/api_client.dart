@@ -38,6 +38,23 @@ class ApiClient {
   Future<Map<String, dynamic>> get(String path) =>
       _send(() => _http.get(_uri(path), headers: _headers()));
 
+  Future<Map<String, dynamic>> put(
+    String path, {
+    Map<String, dynamic> body = const {},
+  }) => _send(
+    () => _http.put(_uri(path), headers: _headers(), body: jsonEncode(body)),
+  );
+
+  Future<Map<String, dynamic>> patch(
+    String path, {
+    Map<String, dynamic> body = const {},
+  }) => _send(
+    () => _http.patch(_uri(path), headers: _headers(), body: jsonEncode(body)),
+  );
+
+  Future<Map<String, dynamic>> delete(String path) =>
+      _send(() => _http.delete(_uri(path), headers: _headers()));
+
   Uri _uri(String path) => Uri.parse('$_baseUrl/api$path');
 
   String? get _bearer => authToken == null ? null : 'Bearer $authToken';

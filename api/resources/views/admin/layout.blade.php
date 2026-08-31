@@ -19,6 +19,7 @@
             <nav class="flex gap-2 overflow-x-auto px-4 pb-4 lg:block lg:space-y-2 lg:pb-0">
                 <a class="admin-nav {{ request()->routeIs('admin.dashboard') ? 'admin-nav-active' : '' }}" href="{{ route('admin.dashboard') }}">Dashboard</a>
                 <a class="admin-nav {{ request()->routeIs('admin.users.*') ? 'admin-nav-active' : '' }}" href="{{ route('admin.users.index') }}">Users</a>
+                <a class="admin-nav {{ request()->routeIs('admin.rooms.*') ? 'admin-nav-active' : '' }}" href="{{ route('admin.rooms.index') }}">Rooms</a>
                 <a class="admin-nav {{ request()->routeIs('admin.banners.*') ? 'admin-nav-active' : '' }}" href="{{ route('admin.banners.index') }}">Banners</a>
                 <a class="admin-nav {{ request()->routeIs('admin.offers.*') ? 'admin-nav-active' : '' }}" href="{{ route('admin.offers.index') }}">Offers</a>
                 <a class="admin-nav {{ request()->routeIs('admin.audit.*') ? 'admin-nav-active' : '' }}" href="{{ route('admin.audit.index') }}">Audit log</a>

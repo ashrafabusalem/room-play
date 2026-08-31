@@ -51,6 +51,14 @@ class ContentController extends Controller
                 'minimum_ios_version' => $settings->minimum_ios_version,
                 'force_update' => $settings->force_update,
             ],
+            // The Reverb key identifies the public application. Its secret is
+            // deliberately never sent to clients.
+            'realtime' => [
+                'key' => config('broadcasting.connections.reverb.key'),
+                'host' => config('broadcasting.connections.reverb.options.host'),
+                'port' => (int) config('broadcasting.connections.reverb.options.port', 443),
+                'scheme' => config('broadcasting.connections.reverb.options.scheme', 'https'),
+            ],
         ]);
     }
 

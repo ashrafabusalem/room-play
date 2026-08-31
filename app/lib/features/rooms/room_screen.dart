@@ -1,12 +1,17 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
 import '../../data/mock_data.dart';
 import '../../data/models.dart';
+import '../../data/room_realtime.dart';
+import '../../data/room_repository.dart';
 import '../../l10n/gen/app_localizations.dart';
 import '../../widgets/avatar.dart';
 import '../../widgets/common.dart';
+import '../auth/auth_controller.dart';
 
 /// The voice room: nine seats, live chat, and the control bar.
 ///
@@ -30,9 +35,68 @@ class _RoomScreenState extends State<RoomScreen> {
   late List<ChatMessage> _messages = _repo.roomChat();
   bool _micOn = false;
   bool _following = false;
+  late Room _room = widget.room;
+  RoomRepository? _rooms;
+  RoomRealtime? _realtime;
+  bool _connected = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_connected) return;
+    final auth = AuthScope.maybeOf(context);
+    if (auth?.token == null || !RegExp(r'^\d{6}$').hasMatch(widget.room.id)) {
+      return;
+    }
+    _connected = true;
+    _rooms = RoomRepository(auth!.api, currentUserId: auth.publicId);
+    _realtime = RoomRealtime(token: auth.token!, currentUserId: auth.publicId);
+    unawaited(_join());
+  }
+
+  Future<void> _join() async {
+    try {
+      final room = await _rooms!.join(_room.id);
+      if (mounted) setState(() => _room = room);
+      await _realtime!.listen(_room.id, (room) {
+        if (mounted) setState(() => _room = room);
+      });
+    } catch (_) {
+      // Keep the last known room visible if joining or realtime is unavailable.
+    }
+  }
+
+  Future<void> _takeSeat(Seat seat) async {
+    if (_rooms == null || !seat.isOpen) return;
+    try {
+      final room = await _rooms!.takeSeat(_room.id, seat.index);
+      if (mounted) setState(() => _room = room);
+    } catch (_) {}
+  }
+
+  Future<void> _toggleMic() async {
+    final next = !_micOn;
+    if (_rooms == null) {
+      setState(() => _micOn = next);
+      return;
+    }
+    try {
+      final room = await _rooms!.microphone(_room.id, muted: !next);
+      if (mounted) {
+        setState(() {
+          _room = room;
+          _micOn = next;
+        });
+      }
+    } catch (_) {}
+  }
 
   @override
   void dispose() {
+    if (_rooms != null) {
+      unawaited(_rooms!.leave(_room.id).catchError((_) => _room));
+    }
+    unawaited(_realtime?.dispose());
     _chatController.dispose();
     _scrollController.dispose();
     super.dispose();
@@ -62,7 +126,7 @@ class _RoomScreenState extends State<RoomScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final room = widget.room;
+    final room = _room;
 
     return Scaffold(
       body: Container(
@@ -85,7 +149,7 @@ class _RoomScreenState extends State<RoomScreen> {
               const SizedBox(height: 10),
               _RoomMetaPills(room: room),
               const SizedBox(height: 18),
-              _SeatGrid(seats: room.seats, micOn: _micOn),
+              _SeatGrid(seats: room.seats, micOn: _micOn, onSeatTap: _takeSeat),
               const SizedBox(height: 16),
               Expanded(
                 child: _ChatPanel(
@@ -95,10 +159,7 @@ class _RoomScreenState extends State<RoomScreen> {
                   onSend: _send,
                 ),
               ),
-              _ControlBar(
-                micOn: _micOn,
-                onToggleMic: () => setState(() => _micOn = !_micOn),
-              ),
+              _ControlBar(micOn: _micOn, onToggleMic: _toggleMic),
             ],
           ),
         ),
@@ -251,10 +312,15 @@ class _RoomMetaPills extends StatelessWidget {
 // ------------------------------------------------------------- seat grid
 
 class _SeatGrid extends StatelessWidget {
-  const _SeatGrid({required this.seats, required this.micOn});
+  const _SeatGrid({
+    required this.seats,
+    required this.micOn,
+    required this.onSeatTap,
+  });
 
   final List<Seat> seats;
   final bool micOn;
+  final ValueChanged<Seat> onSeatTap;
 
   @override
   Widget build(BuildContext context) {
@@ -272,61 +338,74 @@ class _SeatGrid extends StatelessWidget {
           // leaves dead space between the rows.
           childAspectRatio: 1.05,
         ),
-        itemBuilder: (context, i) => _SeatTile(seat: seats[i], micOn: micOn),
+        itemBuilder: (context, i) => _SeatTile(
+          seat: seats[i],
+          micOn: micOn,
+          onTap: () => onSeatTap(seats[i]),
+        ),
       ),
     );
   }
 }
 
 class _SeatTile extends StatelessWidget {
-  const _SeatTile({required this.seat, required this.micOn});
+  const _SeatTile({
+    required this.seat,
+    required this.micOn,
+    required this.onTap,
+  });
 
   final Seat seat;
   final bool micOn;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     final user = seat.user;
 
     if (user == null) {
-      return Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 56,
-            height: 56,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: Colors.white.withValues(alpha: 0.06),
-              border: Border.all(color: Colors.white.withValues(alpha: 0.10)),
+      return GestureDetector(
+        onTap: onTap,
+        behavior: HitTestBehavior.opaque,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 56,
+              height: 56,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white.withValues(alpha: 0.06),
+                border: Border.all(color: Colors.white.withValues(alpha: 0.10)),
+              ),
+              child: const Icon(
+                Icons.add_rounded,
+                color: AppColors.textSecondary,
+                size: 24,
+              ),
             ),
-            child: const Icon(
-              Icons.add_rounded,
-              color: AppColors.textSecondary,
-              size: 24,
+            const SizedBox(height: 6),
+            Text(
+              '${seat.index}',
+              style: const TextStyle(
+                fontFamily: kFontFamily,
+                fontFamilyFallback: kFontFallback,
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+                color: AppColors.textSecondary,
+              ),
             ),
-          ),
-          const SizedBox(height: 6),
-          Text(
-            '${seat.index}',
-            style: const TextStyle(
-              fontFamily: kFontFamily,
-              fontFamilyFallback: kFontFallback,
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
-              color: AppColors.textSecondary,
+            Text(
+              AppLocalizations.of(context).roomSeatOpen,
+              style: const TextStyle(
+                fontFamily: kFontFamily,
+                fontFamilyFallback: kFontFallback,
+                fontSize: 11,
+                color: AppColors.textTertiary,
+              ),
             ),
-          ),
-          Text(
-            AppLocalizations.of(context).roomSeatOpen,
-            style: const TextStyle(
-              fontFamily: kFontFamily,
-              fontFamilyFallback: kFontFallback,
-              fontSize: 11,
-              color: AppColors.textTertiary,
-            ),
-          ),
-        ],
+          ],
+        ),
       );
     }
 

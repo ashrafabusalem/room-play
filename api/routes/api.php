@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ContentController;
+use App\Http\Controllers\Api\RoomController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -28,4 +29,12 @@ Route::get('/content', ContentController::class)->middleware('throttle:120,1');
 Route::middleware(['auth:sanctum', 'active'])->group(function () {
     Route::get('/me', [AuthController::class, 'me']);
     Route::post('/logout', [AuthController::class, 'logout']);
+    Route::get('/rooms', [RoomController::class, 'index']);
+    Route::post('/rooms', [RoomController::class, 'store'])->middleware('throttle:10,1');
+    Route::get('/rooms/{room}', [RoomController::class, 'show']);
+    Route::post('/rooms/{room}/join', [RoomController::class, 'join']);
+    Route::delete('/rooms/{room}/leave', [RoomController::class, 'leave']);
+    Route::put('/rooms/{room}/seats/{position}', [RoomController::class, 'takeSeat']);
+    Route::delete('/rooms/{room}/seat', [RoomController::class, 'leaveSeat']);
+    Route::patch('/rooms/{room}/microphone', [RoomController::class, 'microphone']);
 });

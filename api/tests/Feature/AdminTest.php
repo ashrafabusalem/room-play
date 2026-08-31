@@ -3,6 +3,9 @@
 namespace Tests\Feature;
 
 use App\Models\AdminAudit;
+use App\Models\Room;
+use App\Models\RoomMember;
+use App\Models\RoomSeat;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
@@ -109,5 +112,54 @@ class AdminTest extends TestCase
             ->assertOk()
             ->assertSee('User Blocked')
             ->assertSee($admin->email);
+    }
+
+    public function test_admin_can_moderate_a_room_and_lock_a_seat(): void
+    {
+        $admin = User::factory()->create(['is_admin' => true]);
+        $host = User::factory()->create();
+        $room = $this->roomFor($host);
+
+        $this->actingAs($admin)->put("/admin/rooms/{$room->public_id}", [
+            'name' => 'Featured Lounge', 'language' => 'AR', 'tag' => 'music',
+            'max_members' => 250, 'is_featured' => '1', 'is_locked' => '1',
+        ])->assertSessionHas('success');
+
+        $seat = $room->seats()->where('position', 2)->firstOrFail();
+        $this->actingAs($admin)->post("/admin/rooms/{$room->public_id}/seats/{$seat->id}")
+            ->assertSessionHas('success');
+
+        $this->assertDatabaseHas('rooms', ['id' => $room->id, 'name' => 'Featured Lounge', 'language' => 'AR', 'is_featured' => true]);
+        $this->assertDatabaseHas('room_seats', ['id' => $seat->id, 'is_locked' => true]);
+        $this->assertDatabaseHas('admin_audits', ['action' => 'room.seat_locked', 'target_id' => $room->id]);
+    }
+
+    public function test_admin_can_remove_a_room_member_and_close_the_room(): void
+    {
+        $admin = User::factory()->create(['is_admin' => true]);
+        $host = User::factory()->create();
+        $guest = User::factory()->create();
+        $room = $this->roomFor($host);
+        $member = RoomMember::create(['room_id' => $room->id, 'user_id' => $guest->id]);
+        $room->seats()->where('position', 2)->update(['user_id' => $guest->id]);
+
+        $this->actingAs($admin)->delete("/admin/rooms/{$room->public_id}/members/{$member->id}")
+            ->assertSessionHas('success');
+        $this->assertDatabaseMissing('room_members', ['id' => $member->id]);
+        $this->assertDatabaseHas('room_seats', ['room_id' => $room->id, 'position' => 2, 'user_id' => null]);
+
+        $this->actingAs($admin)->post("/admin/rooms/{$room->public_id}/closed")
+            ->assertSessionHas('success');
+        $this->assertNotNull($room->fresh()->closed_at);
+    }
+
+    private function roomFor(User $host): Room
+    {
+        $room = Room::create(['host_user_id' => $host->id, 'name' => 'Test Room', 'language' => 'EN']);
+        RoomMember::create(['room_id' => $room->id, 'user_id' => $host->id, 'role' => 'host']);
+        foreach (range(1, 9) as $position) {
+            RoomSeat::create(['room_id' => $room->id, 'position' => $position, 'user_id' => $position === 1 ? $host->id : null]);
+        }
+        return $room;
     }
 }

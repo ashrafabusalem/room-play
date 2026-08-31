@@ -29,4 +29,6 @@ class ApiConfig {
 
   /// Nothing in the UI should hang on a dead server for longer than this.
   static const timeout = Duration(seconds: 15);
+
+  static String get broadcastingAuthUrl => '$baseUrl/api/broadcasting/auth';
 }

@@ -29,6 +29,19 @@ class AppUser {
   final bool isHost;
   final bool isMe;
 
+  factory AppUser.fromJson(
+    Map<String, dynamic> json, {
+    String? currentUserId,
+  }) => AppUser(
+    id: json['id'] as String? ?? '',
+    name: json['name'] as String? ?? '',
+    coins: (json['coins'] as num?)?.toInt() ?? 0,
+    level: (json['level'] as num?)?.toInt() ?? 1,
+    micMuted: json['mic_muted'] as bool? ?? false,
+    isHost: json['is_host'] as bool? ?? false,
+    isMe: json['id'] == currentUserId,
+  );
+
   String get initials {
     final parts = name.trim().split(RegExp(r'\s+'));
     if (parts.isEmpty || parts.first.isEmpty) return '?';
@@ -53,6 +66,20 @@ class Seat {
   final bool locked;
 
   bool get isOpen => user == null && !locked;
+
+  factory Seat.fromJson(Map<String, dynamic> json, {String? currentUserId}) {
+    final rawUser = json['user'];
+    return Seat(
+      index: (json['position'] as num?)?.toInt() ?? 0,
+      locked: json['is_locked'] as bool? ?? false,
+      user: rawUser is Map<String, dynamic>
+          ? AppUser.fromJson({
+              ...rawUser,
+              'mic_muted': json['mic_muted'],
+            }, currentUserId: currentUserId)
+          : null,
+    );
+  }
 }
 
 class Room {
@@ -79,6 +106,28 @@ class Room {
   final String tag;
   final List<Seat> seats;
   final bool following;
+
+  factory Room.fromJson(Map<String, dynamic> json, {String? currentUserId}) {
+    final members = (json['members'] as List? ?? const [])
+        .whereType<Map<String, dynamic>>()
+        .map((item) => AppUser.fromJson(item, currentUserId: currentUserId))
+        .toList(growable: false);
+    final seats = (json['seats'] as List? ?? const [])
+        .whereType<Map<String, dynamic>>()
+        .map((item) => Seat.fromJson(item, currentUserId: currentUserId))
+        .toList(growable: false);
+    final id = json['id'] as String? ?? '';
+    return Room(
+      id: id,
+      numericId: id,
+      name: json['name'] as String? ?? '',
+      language: json['language'] as String? ?? 'EN',
+      memberCount: (json['member_count'] as num?)?.toInt() ?? members.length,
+      members: members,
+      tag: json['tag'] as String? ?? 'chatting',
+      seats: seats,
+    );
+  }
 }
 
 enum GameCategory { board, card, party, puzzle, action }

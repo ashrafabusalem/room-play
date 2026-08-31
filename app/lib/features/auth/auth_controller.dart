@@ -40,6 +40,8 @@ class AuthController extends ChangeNotifier {
   String? get name => _name;
   String? get publicId => _publicId;
   int get level => _level;
+  String? get token => _token;
+  ApiClient get api => _api;
 
   /// Forwarded to the API client so the server can answer in the user's
   /// language once its own translations exist.
@@ -174,4 +176,7 @@ class AuthScope extends InheritedNotifier<AuthController> {
     assert(scope != null, 'No AuthScope above this widget');
     return scope!.notifier!;
   }
+
+  static AuthController? maybeOf(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<AuthScope>()?.notifier;
 }

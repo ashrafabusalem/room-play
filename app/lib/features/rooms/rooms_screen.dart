@@ -1,9 +1,13 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
 import '../../data/mock_data.dart';
 import '../../data/models.dart';
+import '../../data/room_repository.dart';
+import '../auth/auth_controller.dart';
 import '../../l10n/gen/app_localizations.dart';
 import '../../widgets/avatar.dart';
 import '../../widgets/common.dart';
@@ -14,14 +18,42 @@ import 'room_screen.dart';
 /// NOTE: this screen was not in the delivered mockup — it is in the bottom nav
 /// but never drawn. Built here to match the established style so the nav works
 /// end to end; expect it to be redesigned.
-class RoomsScreen extends StatelessWidget {
+class RoomsScreen extends StatefulWidget {
   const RoomsScreen({super.key});
 
+  @override
+  State<RoomsScreen> createState() => _RoomsScreenState();
+}
+
+class _RoomsScreenState extends State<RoomsScreen> {
   static const _repo = MockRepository();
+  List<Room> _rooms = _repo.rooms();
+  bool _loaded = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_loaded) return;
+    _loaded = true;
+    unawaited(_load());
+  }
+
+  Future<void> _load() async {
+    final auth = AuthScope.of(context);
+    try {
+      final rooms = await RoomRepository(
+        auth.api,
+        currentUserId: auth.publicId,
+      ).rooms();
+      if (mounted) setState(() => _rooms = rooms);
+    } catch (_) {
+      // Keep the built-in rooms available while offline.
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final rooms = _repo.rooms();
+    final rooms = _rooms;
 
     return SafeArea(
       bottom: false,

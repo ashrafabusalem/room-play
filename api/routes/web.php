@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\OfferController;
 use App\Http\Controllers\Admin\AuditController;
 use App\Http\Controllers\Admin\SettingController;
+use App\Http\Controllers\Admin\RoomController as AdminRoomController;
 use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -39,4 +40,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::get('/audit', AuditController::class)->name('audit.index');
     Route::get('/settings', [SettingController::class, 'edit'])->name('settings.edit');
     Route::put('/settings', [SettingController::class, 'update'])->name('settings.update');
+    Route::get('/rooms', [AdminRoomController::class, 'index'])->name('rooms.index');
+    Route::get('/rooms/{room}/edit', [AdminRoomController::class, 'edit'])->name('rooms.edit');
+    Route::put('/rooms/{room}', [AdminRoomController::class, 'update'])->name('rooms.update');
+    Route::post('/rooms/{room}/closed', [AdminRoomController::class, 'toggleClosed'])->name('rooms.closed');
+    Route::post('/rooms/{room}/seats/{seat}', [AdminRoomController::class, 'toggleSeat'])->name('rooms.seats.toggle');
+    Route::delete('/rooms/{room}/members/{member}', [AdminRoomController::class, 'removeMember'])->name('rooms.members.destroy');
 });

@@ -7,10 +7,12 @@ import '../../core/theme/app_theme.dart';
 import '../../data/mock_data.dart';
 import '../../data/content_repository.dart';
 import '../../data/models.dart';
+import '../../data/room_repository.dart';
 import '../../l10n/gen/app_localizations.dart';
 import '../../widgets/avatar.dart';
 import '../../widgets/common.dart';
 import '../rooms/room_screen.dart';
+import '../auth/auth_controller.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key, required this.onSeeAllGames});
@@ -25,6 +27,7 @@ class _HomeScreenState extends State<HomeScreen> {
   static const _fallback = MockRepository();
   final _content = ContentRepository();
   List<HeroBanner>? _banners;
+  List<Room>? _rooms;
   String? _loadedLocale;
 
   @override
@@ -35,6 +38,20 @@ class _HomeScreenState extends State<HomeScreen> {
     _loadedLocale = locale;
     _banners = _fallback.banners(AppLocalizations.of(context));
     unawaited(_loadBanners(locale));
+    unawaited(_loadRooms());
+  }
+
+  Future<void> _loadRooms() async {
+    final auth = AuthScope.of(context);
+    try {
+      final rooms = await RoomRepository(
+        auth.api,
+        currentUserId: auth.publicId,
+      ).rooms();
+      if (mounted) setState(() => _rooms = rooms);
+    } catch (_) {
+      // Keep the built-in recommendations available while offline.
+    }
   }
 
   Future<void> _loadBanners(String locale) async {
@@ -56,7 +73,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final rooms = _fallback.rooms();
+    final rooms = _rooms ?? _fallback.rooms();
 
     return SafeArea(
       bottom: false,

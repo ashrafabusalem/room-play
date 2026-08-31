@@ -129,10 +129,14 @@ normal reverse proxy and a standard proxy rule will not upgrade the connection.
 
 | Field | Value |
 |---|---|
-| URI | `/app` |
+| URI | `/` |
 | Address | `127.0.0.1:8080` |
 
-Reverb serves WebSocket connections under `/app/{key}`. Its HTTP publishing
+OpenLiteSpeed treats the WebSocket URI as a mount point and removes it before
+proxying. Using `/` preserves Reverb's required `/app/{key}` path; using `/app`
+for the proxy makes Reverb receive `/{key}` and answer 404. Only requests with
+a WebSocket upgrade header use this proxy, so normal site traffic still goes to
+Laravel. Reverb's HTTP publishing
 endpoint `/apps/{id}/events` is called by Laravel on the same machine, so it
 needs no proxy — leave it on loopback.
 
@@ -141,7 +145,7 @@ Then graceful-restart OpenLiteSpeed.
 ### Confirm it actually upgraded
 
 ```bash
-curl -i -N -H "Connection: Upgrade" -H "Upgrade: websocket" \
+curl --http1.1 -i -N -H "Connection: Upgrade" -H "Upgrade: websocket" \
   -H "Sec-WebSocket-Version: 13" -H "Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==" \
   https://api.example.com/app/YOUR_REVERB_KEY
 ```
