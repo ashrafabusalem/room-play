@@ -464,6 +464,72 @@ abstract class AppLocalizations {
   /// **'Create Room'**
   String get createRoomCta;
 
+  /// No description provided for @createRoomName.
+  ///
+  /// In en, this message translates to:
+  /// **'Room name'**
+  String get createRoomName;
+
+  /// No description provided for @createRoomNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Give your room a name'**
+  String get createRoomNameHint;
+
+  /// No description provided for @createRoomLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Room language'**
+  String get createRoomLanguage;
+
+  /// No description provided for @createRoomTopic.
+  ///
+  /// In en, this message translates to:
+  /// **'Topic'**
+  String get createRoomTopic;
+
+  /// No description provided for @createRoomTopicChatting.
+  ///
+  /// In en, this message translates to:
+  /// **'Chatting'**
+  String get createRoomTopicChatting;
+
+  /// No description provided for @createRoomTopicGaming.
+  ///
+  /// In en, this message translates to:
+  /// **'Gaming'**
+  String get createRoomTopicGaming;
+
+  /// No description provided for @createRoomTopicMusic.
+  ///
+  /// In en, this message translates to:
+  /// **'Music'**
+  String get createRoomTopicMusic;
+
+  /// No description provided for @createRoomTopicParty.
+  ///
+  /// In en, this message translates to:
+  /// **'Party'**
+  String get createRoomTopicParty;
+
+  /// No description provided for @createRoomSubmit.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Room'**
+  String get createRoomSubmit;
+
+  /// No description provided for @createRoomNameRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a room name'**
+  String get createRoomNameRequired;
+
+  /// No description provided for @createRoomNameShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Use at least 2 characters'**
+  String get createRoomNameShort;
+
   /// No description provided for @goLiveTitle.
   ///
   /// In en, this message translates to:

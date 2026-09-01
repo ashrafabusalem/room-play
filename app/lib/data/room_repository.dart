@@ -17,6 +17,14 @@ class RoomRepository {
         .toList(growable: false);
   }
 
+  Future<Room> create({
+    required String name,
+    required String language,
+    required String tag,
+  }) => _room(
+    _api.post('/rooms', body: {'name': name, 'language': language, 'tag': tag}),
+  );
+
   Future<Room> join(String id) => _room(_api.post('/rooms/$id/join'));
   Future<Room> leave(String id) => _room(_api.delete('/rooms/$id/leave'));
   Future<Room> takeSeat(String id, int position) =>

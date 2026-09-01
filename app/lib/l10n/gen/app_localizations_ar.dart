@@ -199,6 +199,39 @@ class AppLocalizationsAr extends AppLocalizations {
   String get createRoomCta => 'إنشاء غرفة';
 
   @override
+  String get createRoomName => 'اسم الغرفة';
+
+  @override
+  String get createRoomNameHint => 'اختر اسماً للغرفة';
+
+  @override
+  String get createRoomLanguage => 'لغة الغرفة';
+
+  @override
+  String get createRoomTopic => 'الموضوع';
+
+  @override
+  String get createRoomTopicChatting => 'دردشة';
+
+  @override
+  String get createRoomTopicGaming => 'ألعاب';
+
+  @override
+  String get createRoomTopicMusic => 'موسيقى';
+
+  @override
+  String get createRoomTopicParty => 'حفلة';
+
+  @override
+  String get createRoomSubmit => 'فتح الغرفة';
+
+  @override
+  String get createRoomNameRequired => 'أدخل اسم الغرفة';
+
+  @override
+  String get createRoomNameShort => 'استخدم حرفين على الأقل';
+
+  @override
   String get goLiveTitle => 'بث مباشر';
 
   @override

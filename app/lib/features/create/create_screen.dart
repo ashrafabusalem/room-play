@@ -7,6 +7,7 @@ import '../../data/models.dart';
 import '../../games/game_registry.dart';
 import '../../l10n/gen/app_localizations.dart';
 import '../../widgets/common.dart';
+import 'create_room_screen.dart';
 
 /// Modal sheet behind the centre (+) button.
 class CreateScreen extends StatelessWidget {
@@ -45,7 +46,15 @@ class CreateScreen extends StatelessWidget {
                     size: 32,
                     iconSize: 20,
                     background: Colors.transparent,
-                    onTap: () => Navigator.of(context).pop(),
+                    onTap: () {
+                      final navigator = Navigator.of(context);
+                      navigator.pop();
+                      navigator.push(
+                        MaterialPageRoute<void>(
+                          builder: (_) => const CreateRoomScreen(),
+                        ),
+                      );
+                    },
                   ),
                   Expanded(
                     child: Center(

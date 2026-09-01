@@ -201,6 +201,39 @@ class AppLocalizationsEn extends AppLocalizations {
   String get createRoomCta => 'Create Room';
 
   @override
+  String get createRoomName => 'Room name';
+
+  @override
+  String get createRoomNameHint => 'Give your room a name';
+
+  @override
+  String get createRoomLanguage => 'Room language';
+
+  @override
+  String get createRoomTopic => 'Topic';
+
+  @override
+  String get createRoomTopicChatting => 'Chatting';
+
+  @override
+  String get createRoomTopicGaming => 'Gaming';
+
+  @override
+  String get createRoomTopicMusic => 'Music';
+
+  @override
+  String get createRoomTopicParty => 'Party';
+
+  @override
+  String get createRoomSubmit => 'Open Room';
+
+  @override
+  String get createRoomNameRequired => 'Enter a room name';
+
+  @override
+  String get createRoomNameShort => 'Use at least 2 characters';
+
+  @override
   String get goLiveTitle => 'Go Live';
 
   @override
