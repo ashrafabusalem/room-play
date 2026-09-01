@@ -428,6 +428,18 @@ abstract class AppLocalizations {
   /// **'More'**
   String get roomControlMore;
 
+  /// No description provided for @roomRewardReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready'**
+  String get roomRewardReady;
+
+  /// No description provided for @roomRewardClaimed.
+  ///
+  /// In en, this message translates to:
+  /// **'+{amount} Gold claimed'**
+  String roomRewardClaimed(int amount);
+
   /// No description provided for @roomLiveBadge.
   ///
   /// In en, this message translates to:

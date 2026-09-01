@@ -200,6 +200,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get roomControlMore => 'More';
 
   @override
+  String get roomRewardReady => 'Ready';
+
+  @override
+  String roomRewardClaimed(int amount) {
+    return '+$amount Gold claimed';
+  }
+
+  @override
   String get roomLiveBadge => 'LIVE';
 
   @override

@@ -199,6 +199,14 @@ class AppLocalizationsAr extends AppLocalizations {
   String get roomControlMore => 'المزيد';
 
   @override
+  String get roomRewardReady => 'جاهز';
+
+  @override
+  String roomRewardClaimed(int amount) {
+    return 'تم استلام +$amount ذهب';
+  }
+
+  @override
   String get roomLiveBadge => 'مباشر';
 
   @override

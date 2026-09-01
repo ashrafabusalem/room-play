@@ -72,6 +72,9 @@
   "roomControlEffects": "المؤثرات",
   "roomControlGame": "لعبة",
   "roomControlMore": "المزيد",
+  "roomRewardReady": "جاهز",
+  "roomRewardClaimed": "تم استلام +{amount} ذهب",
+  "@roomRewardClaimed": {"placeholders": {"amount": {"type": "int"}}},
   "roomLiveBadge": "مباشر",
 
   "gamesTitle": "الألعاب",

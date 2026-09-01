@@ -47,6 +47,8 @@ class _RoomScreenState extends State<RoomScreen> {
   bool _connected = false;
   LiveGift? _liveGift;
   Timer? _giftTimer;
+  RoomRewardStatus? _reward;
+  Timer? _rewardTimer;
 
   @override
   void didChangeDependencies() {
@@ -66,6 +68,7 @@ class _RoomScreenState extends State<RoomScreen> {
     try {
       final room = await _rooms!.join(_room.id);
       if (mounted) setState(() => _room = room);
+      await _loadReward();
       final messages = await _rooms!.messages(_room.id);
       if (mounted) setState(() => _messages = messages);
       await _realtime!.listen(
@@ -118,6 +121,7 @@ class _RoomScreenState extends State<RoomScreen> {
     _chatController.dispose();
     _scrollController.dispose();
     _giftTimer?.cancel();
+    _rewardTimer?.cancel();
     super.dispose();
   }
 
@@ -162,6 +166,33 @@ class _RoomScreenState extends State<RoomScreen> {
     _giftTimer = Timer(const Duration(seconds: 4), () {
       if (mounted) setState(() => _liveGift = null);
     });
+  }
+
+  Future<void> _loadReward() async {
+    try {
+      final reward = await _rooms!.rewardStatus(_room.id);
+      if (!mounted) return;
+      setState(() => _reward = reward);
+      _rewardTimer ??= Timer.periodic(const Duration(seconds: 1), (_) {
+        if (mounted) setState(() {});
+      });
+    } catch (_) {}
+  }
+
+  Future<void> _claimReward() async {
+    if (_rooms == null || _reward?.available != true) return;
+    try {
+      final reward = await _rooms!.claimReward(_room.id);
+      if (!mounted) return;
+      setState(() => _reward = reward);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context).roomRewardClaimed(reward.reward),
+          ),
+        ),
+      );
+    } catch (_) {}
   }
 
   Future<void> _openGifts() async {
@@ -289,7 +320,12 @@ class _RoomScreenState extends State<RoomScreen> {
                   onGift: _openGifts,
                 ),
               ),
-              _ControlBar(micOn: _micOn, onToggleMic: _toggleMic),
+              _ControlBar(
+                micOn: _micOn,
+                onToggleMic: _toggleMic,
+                reward: _reward,
+                onReward: _claimReward,
+              ),
             ],
           ),
         ),
@@ -1046,10 +1082,17 @@ class _ChatInput extends StatelessWidget {
 // ----------------------------------------------------------- control bar
 
 class _ControlBar extends StatelessWidget {
-  const _ControlBar({required this.micOn, required this.onToggleMic});
+  const _ControlBar({
+    required this.micOn,
+    required this.onToggleMic,
+    required this.reward,
+    required this.onReward,
+  });
 
   final bool micOn;
   final VoidCallback onToggleMic;
+  final RoomRewardStatus? reward;
+  final VoidCallback onReward;
 
   @override
   Widget build(BuildContext context) {
@@ -1082,7 +1125,7 @@ class _ControlBar extends StatelessWidget {
             icon: Icons.more_horiz_rounded,
             label: l10n.roomControlMore,
           ),
-          const _TreasureChest(),
+          _TreasureChest(status: reward, onTap: onReward),
         ],
       ),
     );
@@ -1138,49 +1181,66 @@ class _ControlButton extends StatelessWidget {
 /// Timed reward chest. The countdown is cosmetic here —
 /// SERVER: the real timer must be authoritative or it will be farmed.
 class _TreasureChest extends StatelessWidget {
-  const _TreasureChest();
+  const _TreasureChest({required this.status, required this.onTap});
+  final RoomRewardStatus? status;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          width: 44,
-          height: 44,
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [AppColors.warning, AppColors.gold],
+    final remaining = status?.readyAt?.difference(DateTime.now());
+    final available =
+        status?.available == true ||
+        (remaining != null && remaining.inSeconds <= 0);
+    final seconds = remaining == null || remaining.inSeconds <= 0
+        ? 0
+        : remaining.inSeconds;
+    final label = status == null
+        ? '--:--'
+        : available
+        ? AppLocalizations.of(context).roomRewardReady
+        : '${(seconds ~/ 60).toString().padLeft(2, '0')}:${(seconds % 60).toString().padLeft(2, '0')}';
+    return GestureDetector(
+      onTap: available ? onTap : null,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 44,
+            height: 44,
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [AppColors.warning, AppColors.gold],
+              ),
+              shape: BoxShape.circle,
             ),
-            shape: BoxShape.circle,
-          ),
-          child: const Icon(
-            Icons.card_giftcard_rounded,
-            size: 22,
-            color: Colors.white,
-          ),
-        ),
-        const SizedBox(height: 5),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
-          decoration: BoxDecoration(
-            color: AppColors.danger,
-            borderRadius: BorderRadius.circular(999),
-          ),
-          child: const Text(
-            '01:59',
-            style: TextStyle(
-              fontFamily: kFontFamily,
-              fontFamilyFallback: kFontFallback,
-              fontSize: 9,
-              fontWeight: FontWeight.w600,
+            child: const Icon(
+              Icons.card_giftcard_rounded,
+              size: 22,
               color: Colors.white,
             ),
           ),
-        ),
-      ],
+          const SizedBox(height: 5),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
+            decoration: BoxDecoration(
+              color: AppColors.danger,
+              borderRadius: BorderRadius.circular(999),
+            ),
+            child: Text(
+              label,
+              style: const TextStyle(
+                fontFamily: kFontFamily,
+                fontFamilyFallback: kFontFallback,
+                fontSize: 9,
+                fontWeight: FontWeight.w600,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

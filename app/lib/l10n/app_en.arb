@@ -82,6 +82,9 @@
   "roomControlEffects": "Effects",
   "roomControlGame": "Game",
   "roomControlMore": "More",
+  "roomRewardReady": "Ready",
+  "roomRewardClaimed": "+{amount} Gold claimed",
+  "@roomRewardClaimed": {"placeholders": {"amount": {"type": "int"}}},
   "roomLiveBadge": "LIVE",
 
   "gamesTitle": "Games",

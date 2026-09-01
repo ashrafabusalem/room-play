@@ -55,6 +55,12 @@ class RoomRepository {
     return ChatMessage.fromJson(raw, currentUserId: currentUserId);
   }
 
+  Future<RoomRewardStatus> rewardStatus(String id) async =>
+      RoomRewardStatus.fromJson(await _api.get('/rooms/$id/reward'));
+
+  Future<RoomRewardStatus> claimReward(String id) async =>
+      RoomRewardStatus.fromJson(await _api.post('/rooms/$id/reward'));
+
   Future<Room> _room(Future<Map<String, dynamic>> request) async {
     final response = await request;
     final raw = response['room'];
@@ -62,5 +68,28 @@ class RoomRepository {
       throw const FormatException('Missing room');
     }
     return Room.fromJson(raw, currentUserId: currentUserId);
+  }
+}
+
+class RoomRewardStatus {
+  const RoomRewardStatus({
+    required this.reward,
+    required this.available,
+    this.readyAt,
+  });
+  final int reward;
+  final bool available;
+  final DateTime? readyAt;
+  factory RoomRewardStatus.fromJson(Map<String, dynamic> json) {
+    final server = DateTime.tryParse(json['server_time'] as String? ?? '');
+    final next = DateTime.tryParse(json['next_claim_at'] as String? ?? '');
+    final readyAt = server == null || next == null
+        ? null
+        : DateTime.now().add(next.difference(server));
+    return RoomRewardStatus(
+      reward: (json['reward'] as num?)?.toInt() ?? 0,
+      available: json['available'] as bool? ?? false,
+      readyAt: readyAt,
+    );
   }
 }
