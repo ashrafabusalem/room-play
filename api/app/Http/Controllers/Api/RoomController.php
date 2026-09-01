@@ -11,6 +11,7 @@ use App\Models\Room;
 use App\Models\RoomMember;
 use App\Models\RoomSeat;
 use App\Models\RoomMessage;
+use App\Models\User;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -117,6 +118,28 @@ class RoomController extends Controller
         return $this->state($room, true);
     }
 
+    public function lockSeat(Request $request, Room $room, int $position): JsonResponse
+    {
+        $this->assertHost($request, $room);
+        $data = $request->validate(['locked' => ['required', 'boolean']]);
+        $seat = RoomSeat::where('room_id', $room->id)->where('position', $position)->firstOrFail();
+        abort_if($data['locked'] && $seat->user_id, 409, 'Remove the occupant before locking this seat.');
+        $seat->update(['is_locked' => $data['locked']]);
+        return $this->state($room, true);
+    }
+
+    public function removeMember(Request $request, Room $room, User $user): JsonResponse
+    {
+        $this->assertHost($request, $room);
+        abort_if($user->id === $room->host_user_id, 422, 'The host cannot be removed.');
+        abort_unless(RoomMember::where(['room_id' => $room->id, 'user_id' => $user->id])->exists(), 404);
+        DB::transaction(function () use ($room, $user) {
+            RoomSeat::where(['room_id' => $room->id, 'user_id' => $user->id])->update(['user_id' => null, 'mic_muted' => true]);
+            RoomMember::where(['room_id' => $room->id, 'user_id' => $user->id])->delete();
+        });
+        return $this->state($room, true);
+    }
+
     public function messages(Request $request, Room $room): JsonResponse
     {
         $this->assertMember($request, $room);
@@ -144,6 +167,12 @@ class RoomController extends Controller
     {
         $this->assertOpen($room);
         abort_unless(RoomMember::where('room_id', $room->id)->where('user_id', $request->user()->id)->exists(), 403, 'Join the room first.');
+    }
+
+    private function assertHost(Request $request, Room $room): void
+    {
+        $this->assertOpen($room);
+        abort_unless($room->host_user_id === $request->user()->id, 403, 'Only the room host can do that.');
     }
 
     private function state(Room $room, bool $broadcast = false): JsonResponse

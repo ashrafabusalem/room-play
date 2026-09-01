@@ -32,6 +32,10 @@ class RoomRepository {
   Future<Room> leaveSeat(String id) => _room(_api.delete('/rooms/$id/seat'));
   Future<Room> microphone(String id, {required bool muted}) =>
       _room(_api.patch('/rooms/$id/microphone', body: {'muted': muted}));
+  Future<Room> lockSeat(String id, int position, {required bool locked}) =>
+      _room(_api.patch('/rooms/$id/seats/$position/lock', body: {'locked': locked}));
+  Future<Room> removeMember(String id, String userId) =>
+      _room(_api.delete('/rooms/$id/members/$userId'));
 
   Future<List<ChatMessage>> messages(String id) async {
     final response = await _api.get('/rooms/$id/messages');

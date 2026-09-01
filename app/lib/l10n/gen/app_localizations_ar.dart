@@ -193,6 +193,24 @@ class AppLocalizationsAr extends AppLocalizations {
   String get roomSeatOpen => 'شاغر';
 
   @override
+  String get roomSeatLocked => 'مقفل';
+
+  @override
+  String get roomTakeSeat => 'الجلوس هنا';
+
+  @override
+  String get roomLockSeat => 'قفل المقعد';
+
+  @override
+  String get roomUnlockSeat => 'فتح المقعد';
+
+  @override
+  String get roomViewProfile => 'عرض الملف الشخصي';
+
+  @override
+  String get roomRemoveMember => 'إزالة من الغرفة';
+
+  @override
   String get roomChatHint => 'اكتب رسالة...';
 
   @override

@@ -422,6 +422,42 @@ abstract class AppLocalizations {
   /// **'Open'**
   String get roomSeatOpen;
 
+  /// No description provided for @roomSeatLocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Locked'**
+  String get roomSeatLocked;
+
+  /// No description provided for @roomTakeSeat.
+  ///
+  /// In en, this message translates to:
+  /// **'Take this seat'**
+  String get roomTakeSeat;
+
+  /// No description provided for @roomLockSeat.
+  ///
+  /// In en, this message translates to:
+  /// **'Lock seat'**
+  String get roomLockSeat;
+
+  /// No description provided for @roomUnlockSeat.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock seat'**
+  String get roomUnlockSeat;
+
+  /// No description provided for @roomViewProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'View profile'**
+  String get roomViewProfile;
+
+  /// No description provided for @roomRemoveMember.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove from room'**
+  String get roomRemoveMember;
+
   /// No description provided for @roomChatHint.
   ///
   /// In en, this message translates to:

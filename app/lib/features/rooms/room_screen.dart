@@ -95,6 +95,69 @@ class _RoomScreenState extends State<RoomScreen> {
     } catch (_) {}
   }
 
+  Future<void> _seatAction(Seat seat) async {
+    final isHost = _room.seats.any(
+      (s) => s.user?.isMe == true && s.user?.isHost == true,
+    );
+    if (!isHost) return _takeSeat(seat);
+    final l = AppLocalizations.of(context);
+    final action = await showModalBottomSheet<String>(
+      context: context,
+      builder: (context) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (seat.user == null && !seat.locked)
+              ListTile(
+                leading: const Icon(Icons.event_seat_rounded),
+                title: Text(l.roomTakeSeat),
+                onTap: () => Navigator.pop(context, 'take'),
+              ),
+            if (seat.user == null)
+              ListTile(
+                leading: Icon(
+                  seat.locked ? Icons.lock_open_rounded : Icons.lock_rounded,
+                ),
+                title: Text(seat.locked ? l.roomUnlockSeat : l.roomLockSeat),
+                onTap: () => Navigator.pop(context, 'lock'),
+              ),
+            if (seat.user != null)
+              ListTile(
+                leading: const Icon(Icons.person_rounded),
+                title: Text(l.roomViewProfile),
+                onTap: () => Navigator.pop(context, 'profile'),
+              ),
+            if (seat.user != null && !seat.user!.isHost && !seat.user!.isMe)
+              ListTile(
+                leading: const Icon(
+                  Icons.person_remove_rounded,
+                  color: AppColors.danger,
+                ),
+                title: Text(l.roomRemoveMember),
+                onTap: () => Navigator.pop(context, 'remove'),
+              ),
+          ],
+        ),
+      ),
+    );
+    if (!mounted || action == null) return;
+    if (action == 'take') return _takeSeat(seat);
+    if (action == 'profile') {
+      await Navigator.of(context).push(
+        MaterialPageRoute<void>(
+          builder: (_) => PublicProfileScreen(userId: seat.user!.id),
+        ),
+      );
+      return;
+    }
+    try {
+      final room = action == 'lock'
+          ? await _rooms!.lockSeat(_room.id, seat.index, locked: !seat.locked)
+          : await _rooms!.removeMember(_room.id, seat.user!.id);
+      if (mounted) setState(() => _room = room);
+    } catch (_) {}
+  }
+
   Future<void> _toggleMic() async {
     final next = !_micOn;
     if (_rooms == null) {
@@ -309,7 +372,11 @@ class _RoomScreenState extends State<RoomScreen> {
                       ),
               ),
               const SizedBox(height: 18),
-              _SeatGrid(seats: room.seats, micOn: _micOn, onSeatTap: _takeSeat),
+              _SeatGrid(
+                seats: room.seats,
+                micOn: _micOn,
+                onSeatTap: _seatAction,
+              ),
               const SizedBox(height: 16),
               Expanded(
                 child: _ChatPanel(
@@ -583,8 +650,8 @@ class _SeatTile extends StatelessWidget {
                 color: Colors.white.withValues(alpha: 0.06),
                 border: Border.all(color: Colors.white.withValues(alpha: 0.10)),
               ),
-              child: const Icon(
-                Icons.add_rounded,
+              child: Icon(
+                seat.locked ? Icons.lock_rounded : Icons.add_rounded,
                 color: AppColors.textSecondary,
                 size: 24,
               ),
@@ -601,7 +668,9 @@ class _SeatTile extends StatelessWidget {
               ),
             ),
             Text(
-              AppLocalizations.of(context).roomSeatOpen,
+              seat.locked
+                  ? AppLocalizations.of(context).roomSeatLocked
+                  : AppLocalizations.of(context).roomSeatOpen,
               style: const TextStyle(
                 fontFamily: kFontFamily,
                 fontFamilyFallback: kFontFallback,

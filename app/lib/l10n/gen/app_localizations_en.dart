@@ -194,6 +194,24 @@ class AppLocalizationsEn extends AppLocalizations {
   String get roomSeatOpen => 'Open';
 
   @override
+  String get roomSeatLocked => 'Locked';
+
+  @override
+  String get roomTakeSeat => 'Take this seat';
+
+  @override
+  String get roomLockSeat => 'Lock seat';
+
+  @override
+  String get roomUnlockSeat => 'Unlock seat';
+
+  @override
+  String get roomViewProfile => 'View profile';
+
+  @override
+  String get roomRemoveMember => 'Remove from room';
+
+  @override
   String get roomChatHint => 'Say something...';
 
   @override

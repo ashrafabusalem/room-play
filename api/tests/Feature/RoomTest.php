@@ -108,6 +108,20 @@ class RoomTest extends TestCase
             ->assertForbidden();
     }
 
+    public function test_only_host_can_lock_seats_and_remove_members(): void
+    {
+        [$room, $host] = $this->room();
+        $member = User::factory()->create();
+        RoomMember::create(['room_id' => $room->id, 'user_id' => $member->id]);
+        RoomSeat::where(['room_id' => $room->id, 'position' => 2])->update(['user_id' => $member->id]);
+
+        $this->actingAs($member, 'sanctum')->patchJson("/api/rooms/{$room->public_id}/seats/3/lock", ['locked' => true])->assertForbidden();
+        $this->actingAs($host, 'sanctum')->patchJson("/api/rooms/{$room->public_id}/seats/3/lock", ['locked' => true])->assertOk()->assertJsonPath('room.seats.2.is_locked', true);
+        $this->deleteJson("/api/rooms/{$room->public_id}/members/{$member->public_id}")->assertOk();
+        $this->assertDatabaseMissing('room_members', ['room_id' => $room->id, 'user_id' => $member->id]);
+        $this->assertDatabaseHas('room_seats', ['room_id' => $room->id, 'position' => 2, 'user_id' => null]);
+    }
+
     private function room(): array
     {
         $host = User::factory()->create();
