@@ -12,7 +12,11 @@ class RoomRealtime {
   Reverb? _client;
   Subscription? _subscription;
 
-  Future<void> listen(String roomId, void Function(Room room) onRoom) async {
+  Future<void> listen(
+    String roomId,
+    void Function(Room room) onRoom, {
+    void Function(ChatMessage message)? onMessage,
+  }) async {
     final api = ApiClient();
     final response = await api.get('/content');
     api.close();
@@ -31,14 +35,22 @@ class RoomRealtime {
       authHeaders: () async => {'Authorization': 'Bearer $token'},
     );
     _client = client;
-    _subscription = client.presence('room.$roomId').listen('.room.updated', (
-      data,
-    ) {
-      final raw = data['room'];
-      if (raw is Map<String, dynamic>) {
-        onRoom(Room.fromJson(raw, currentUserId: currentUserId));
-      }
-    });
+    _subscription = client
+        .presence('room.$roomId')
+        .listen('.room.updated', (data) {
+          final raw = data['room'];
+          if (raw is Map<String, dynamic>) {
+            onRoom(Room.fromJson(raw, currentUserId: currentUserId));
+          }
+        })
+        .listen('.room.message', (data) {
+          final raw = data['message'];
+          if (raw is Map<String, dynamic>) {
+            onMessage?.call(
+              ChatMessage.fromJson(raw, currentUserId: currentUserId),
+            );
+          }
+        });
     await client.connect();
   }
 

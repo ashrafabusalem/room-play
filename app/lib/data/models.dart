@@ -178,6 +178,20 @@ class ChatMessage {
   final AppUser? sender;
   final String text;
   final bool isSystem;
+
+  factory ChatMessage.fromJson(
+    Map<String, dynamic> json, {
+    String? currentUserId,
+  }) {
+    final rawSender = json['sender'];
+    return ChatMessage(
+      text: json['text'] as String? ?? '',
+      isSystem: json['type'] == 'system',
+      sender: rawSender is Map<String, dynamic>
+          ? AppUser.fromJson(rawSender, currentUserId: currentUserId)
+          : null,
+    );
+  }
 }
 
 class Conversation {

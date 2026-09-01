@@ -37,4 +37,6 @@ Route::middleware(['auth:sanctum', 'active'])->group(function () {
     Route::put('/rooms/{room}/seats/{position}', [RoomController::class, 'takeSeat']);
     Route::delete('/rooms/{room}/seat', [RoomController::class, 'leaveSeat']);
     Route::patch('/rooms/{room}/microphone', [RoomController::class, 'microphone']);
+    Route::get('/rooms/{room}/messages', [RoomController::class, 'messages']);
+    Route::post('/rooms/{room}/messages', [RoomController::class, 'sendMessage'])->middleware('throttle:60,1');
 });

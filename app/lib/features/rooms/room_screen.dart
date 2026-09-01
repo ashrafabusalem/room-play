@@ -32,7 +32,9 @@ class _RoomScreenState extends State<RoomScreen> {
   final _chatController = TextEditingController();
   final _scrollController = ScrollController();
 
-  late List<ChatMessage> _messages = _repo.roomChat();
+  late List<ChatMessage> _messages = RegExp(r'^\d{6}$').hasMatch(widget.room.id)
+      ? const []
+      : _repo.roomChat();
   bool _micOn = false;
   bool _following = false;
   late Room _room = widget.room;
@@ -58,9 +60,18 @@ class _RoomScreenState extends State<RoomScreen> {
     try {
       final room = await _rooms!.join(_room.id);
       if (mounted) setState(() => _room = room);
-      await _realtime!.listen(_room.id, (room) {
-        if (mounted) setState(() => _room = room);
-      });
+      final messages = await _rooms!.messages(_room.id);
+      if (mounted) setState(() => _messages = messages);
+      await _realtime!.listen(
+        _room.id,
+        (room) {
+          if (mounted) setState(() => _room = room);
+        },
+        onMessage: (message) {
+          if (mounted) setState(() => _messages = [..._messages, message]);
+          _scrollToNewest();
+        },
+      );
     } catch (_) {
       // Keep the last known room visible if joining or realtime is unavailable.
     }
@@ -102,17 +113,30 @@ class _RoomScreenState extends State<RoomScreen> {
     super.dispose();
   }
 
-  void _send() {
+  Future<void> _send() async {
     final text = _chatController.text.trim();
     if (text.isEmpty) return;
-    setState(() {
-      // SERVER: publish to the room channel instead of appending locally.
-      _messages = [
-        ..._messages,
-        ChatMessage(sender: MockRepository.me, text: text),
-      ];
-      _chatController.clear();
-    });
+    _chatController.clear();
+    if (_rooms == null) {
+      setState(
+        () => _messages = [
+          ..._messages,
+          ChatMessage(sender: MockRepository.me, text: text),
+        ],
+      );
+    } else {
+      try {
+        final message = await _rooms!.sendMessage(_room.id, text);
+        if (mounted) setState(() => _messages = [..._messages, message]);
+      } catch (_) {
+        if (mounted) _chatController.text = text;
+        return;
+      }
+    }
+    _scrollToNewest();
+  }
+
+  void _scrollToNewest() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!_scrollController.hasClients) return;
       // The feed is reversed, so "newest" is offset 0.

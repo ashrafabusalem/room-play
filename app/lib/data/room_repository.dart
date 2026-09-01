@@ -33,6 +33,28 @@ class RoomRepository {
   Future<Room> microphone(String id, {required bool muted}) =>
       _room(_api.patch('/rooms/$id/microphone', body: {'muted': muted}));
 
+  Future<List<ChatMessage>> messages(String id) async {
+    final response = await _api.get('/rooms/$id/messages');
+    final raw = response['messages'];
+    if (raw is! List) throw const FormatException('Missing messages');
+    return raw
+        .whereType<Map<String, dynamic>>()
+        .map((json) => ChatMessage.fromJson(json, currentUserId: currentUserId))
+        .toList(growable: false);
+  }
+
+  Future<ChatMessage> sendMessage(String id, String text) async {
+    final response = await _api.post(
+      '/rooms/$id/messages',
+      body: {'text': text},
+    );
+    final raw = response['message'];
+    if (raw is! Map<String, dynamic>) {
+      throw const FormatException('Missing message');
+    }
+    return ChatMessage.fromJson(raw, currentUserId: currentUserId);
+  }
+
   Future<Room> _room(Future<Map<String, dynamic>> request) async {
     final response = await request;
     final raw = response['room'];

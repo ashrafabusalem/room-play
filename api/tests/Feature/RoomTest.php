@@ -84,6 +84,30 @@ class RoomTest extends TestCase
         $this->postJson('/api/broadcasting/auth')->assertUnauthorized();
     }
 
+    public function test_room_members_can_send_and_read_persistent_messages(): void
+    {
+        [$room, $host] = $this->room();
+
+        $this->actingAs($host, 'sanctum')->postJson("/api/rooms/{$room->public_id}/messages", [
+            'text' => 'Hello room',
+        ])->assertCreated()->assertJsonPath('message.text', 'Hello room')
+            ->assertJsonPath('message.sender.id', $host->public_id);
+
+        $this->getJson("/api/rooms/{$room->public_id}/messages")
+            ->assertOk()->assertJsonCount(1, 'messages')
+            ->assertJsonPath('messages.0.text', 'Hello room');
+    }
+
+    public function test_non_members_cannot_read_or_send_room_messages(): void
+    {
+        [$room] = $this->room();
+        $outsider = User::factory()->create();
+        $this->actingAs($outsider, 'sanctum')
+            ->getJson("/api/rooms/{$room->public_id}/messages")->assertForbidden();
+        $this->postJson("/api/rooms/{$room->public_id}/messages", ['text' => 'Nope'])
+            ->assertForbidden();
+    }
+
     private function room(): array
     {
         $host = User::factory()->create();

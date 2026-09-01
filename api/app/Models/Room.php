@@ -41,4 +41,5 @@ class Room extends Model
     public function host(): BelongsTo { return $this->belongsTo(User::class, 'host_user_id')->withTrashed(); }
     public function members(): HasMany { return $this->hasMany(RoomMember::class); }
     public function seats(): HasMany { return $this->hasMany(RoomSeat::class)->orderBy('position'); }
+    public function messages(): HasMany { return $this->hasMany(RoomMessage::class); }
 }

@@ -3,11 +3,14 @@
 namespace App\Http\Controllers\Api;
 
 use App\Events\RoomStateChanged;
+use App\Events\RoomMessageSent;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\RoomResource;
+use App\Http\Resources\RoomMessageResource;
 use App\Models\Room;
 use App\Models\RoomMember;
 use App\Models\RoomSeat;
+use App\Models\RoomMessage;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -112,6 +115,27 @@ class RoomController extends Controller
         $updated = RoomSeat::where('room_id', $room->id)->where('user_id', $request->user()->id)->update(['mic_muted' => $data['muted']]);
         abort_unless($updated, 409, 'Take a seat before using the microphone.');
         return $this->state($room, true);
+    }
+
+    public function messages(Request $request, Room $room): JsonResponse
+    {
+        $this->assertMember($request, $room);
+        $messages = RoomMessage::where('room_id', $room->id)->with(['user', 'room'])
+            ->latest('id')->limit(100)->get()->reverse()->values();
+        return response()->json(['messages' => RoomMessageResource::collection($messages)->resolve()]);
+    }
+
+    public function sendMessage(Request $request, Room $room): JsonResponse
+    {
+        $this->assertMember($request, $room);
+        $data = $request->validate(['text' => ['required', 'string', 'max:500']]);
+        $message = RoomMessage::create([
+            'room_id' => $room->id,
+            'user_id' => $request->user()->id,
+            'body' => trim($data['text']),
+        ])->load(['user', 'room']);
+        broadcast(new RoomMessageSent($message))->toOthers();
+        return response()->json(['message' => (new RoomMessageResource($message))->resolve()], 201);
     }
 
     private function assertOpen(Room $room): void { abort_if($room->closed_at, 404); }
