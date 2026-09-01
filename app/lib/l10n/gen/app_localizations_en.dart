@@ -399,6 +399,54 @@ class AppLocalizationsEn extends AppLocalizations {
   String get truthDareNext => 'Next turn';
 
   @override
+  String get spyTitle => 'Who’s the Spy?';
+
+  @override
+  String get spyNoGame => 'No spy round is running yet.';
+
+  @override
+  String get spyCreate => 'Create round';
+
+  @override
+  String get spyWaitHost => 'Waiting for the room host…';
+
+  @override
+  String get spyLobbyTitle => 'Ready to investigate?';
+
+  @override
+  String get spyLobbyBody =>
+      'Seat at least three players. Everyone gets the same word except the spy.';
+
+  @override
+  String get spyStart => 'Assign roles';
+
+  @override
+  String get spyYouAreSpy => 'You are the spy';
+
+  @override
+  String get spyYourWord => 'Your secret word';
+
+  @override
+  String get spyBlendIn =>
+      'Listen carefully, blend in, and avoid being discovered.';
+
+  @override
+  String get spyGiveClues =>
+      'Give clues without saying the word. Find the spy together.';
+
+  @override
+  String get spyReveal => 'Reveal the spy';
+
+  @override
+  String spyRevealed(String name) {
+    return 'The spy was $name';
+  }
+
+  @override
+  String get spyRoundFinished =>
+      'Round finished. The host can return and create another round.';
+
+  @override
   String get truthDareEnd => 'End game';
 
   @override

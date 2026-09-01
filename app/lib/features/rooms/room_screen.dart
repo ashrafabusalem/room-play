@@ -16,6 +16,7 @@ import '../../widgets/common.dart';
 import '../auth/auth_controller.dart';
 import '../profile/public_profile_screen.dart';
 import '../games/truth_or_dare_screen.dart';
+import '../games/spy_game_screen.dart';
 
 /// The voice room: nine seats, live chat, and the control bar.
 ///
@@ -538,9 +539,35 @@ class _RoomScreenState extends State<RoomScreen> {
     );
   }
 
-  void _openTruthOrDare() {
-    Navigator.of(context).push(
-      MaterialPageRoute<void>(builder: (_) => TruthOrDareScreen(room: _room)),
+  Future<void> _openGames() async {
+    final l = AppLocalizations.of(context);
+    final game = await showModalBottomSheet<String>(
+      context: context,
+      builder: (context) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Text('🕵️', style: TextStyle(fontSize: 30)),
+              title: Text(l.spyTitle),
+              onTap: () => Navigator.pop(context, 'spy'),
+            ),
+            ListTile(
+              leading: const Text('🎭', style: TextStyle(fontSize: 30)),
+              title: Text(l.truthDareTitle),
+              onTap: () => Navigator.pop(context, 'truth'),
+            ),
+          ],
+        ),
+      ),
+    );
+    if (!mounted || game == null) return;
+    await Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => game == 'spy'
+            ? SpyGameScreen(room: _room)
+            : TruthOrDareScreen(room: _room),
+      ),
     );
   }
 
@@ -566,7 +593,7 @@ class _RoomScreenState extends State<RoomScreen> {
                 following: _following,
                 onFollow: () => setState(() => _following = !_following),
                 onInvite: _inviteFriends,
-                onGame: _openTruthOrDare,
+                onGame: _openGames,
               ),
               const SizedBox(height: 10),
               _RoomMetaPills(room: room),

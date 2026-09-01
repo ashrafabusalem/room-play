@@ -800,6 +800,90 @@ abstract class AppLocalizations {
   /// **'Next turn'**
   String get truthDareNext;
 
+  /// No description provided for @spyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Who’s the Spy?'**
+  String get spyTitle;
+
+  /// No description provided for @spyNoGame.
+  ///
+  /// In en, this message translates to:
+  /// **'No spy round is running yet.'**
+  String get spyNoGame;
+
+  /// No description provided for @spyCreate.
+  ///
+  /// In en, this message translates to:
+  /// **'Create round'**
+  String get spyCreate;
+
+  /// No description provided for @spyWaitHost.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for the room host…'**
+  String get spyWaitHost;
+
+  /// No description provided for @spyLobbyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready to investigate?'**
+  String get spyLobbyTitle;
+
+  /// No description provided for @spyLobbyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Seat at least three players. Everyone gets the same word except the spy.'**
+  String get spyLobbyBody;
+
+  /// No description provided for @spyStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Assign roles'**
+  String get spyStart;
+
+  /// No description provided for @spyYouAreSpy.
+  ///
+  /// In en, this message translates to:
+  /// **'You are the spy'**
+  String get spyYouAreSpy;
+
+  /// No description provided for @spyYourWord.
+  ///
+  /// In en, this message translates to:
+  /// **'Your secret word'**
+  String get spyYourWord;
+
+  /// No description provided for @spyBlendIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Listen carefully, blend in, and avoid being discovered.'**
+  String get spyBlendIn;
+
+  /// No description provided for @spyGiveClues.
+  ///
+  /// In en, this message translates to:
+  /// **'Give clues without saying the word. Find the spy together.'**
+  String get spyGiveClues;
+
+  /// No description provided for @spyReveal.
+  ///
+  /// In en, this message translates to:
+  /// **'Reveal the spy'**
+  String get spyReveal;
+
+  /// No description provided for @spyRevealed.
+  ///
+  /// In en, this message translates to:
+  /// **'The spy was {name}'**
+  String spyRevealed(String name);
+
+  /// No description provided for @spyRoundFinished.
+  ///
+  /// In en, this message translates to:
+  /// **'Round finished. The host can return and create another round.'**
+  String get spyRoundFinished;
+
   /// No description provided for @truthDareEnd.
   ///
   /// In en, this message translates to:

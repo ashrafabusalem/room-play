@@ -397,6 +397,53 @@ class AppLocalizationsAr extends AppLocalizations {
   String get truthDareNext => 'الدور التالي';
 
   @override
+  String get spyTitle => 'من هو الجاسوس؟';
+
+  @override
+  String get spyNoGame => 'لا توجد جولة جاسوس الآن.';
+
+  @override
+  String get spyCreate => 'إنشاء جولة';
+
+  @override
+  String get spyWaitHost => 'بانتظار مضيف الغرفة…';
+
+  @override
+  String get spyLobbyTitle => 'هل أنتم مستعدون للتحقيق؟';
+
+  @override
+  String get spyLobbyBody =>
+      'يجب أن يجلس ثلاثة لاعبين على الأقل. يحصل الجميع على الكلمة نفسها ما عدا الجاسوس.';
+
+  @override
+  String get spyStart => 'توزيع الأدوار';
+
+  @override
+  String get spyYouAreSpy => 'أنت الجاسوس';
+
+  @override
+  String get spyYourWord => 'كلمتك السرية';
+
+  @override
+  String get spyBlendIn => 'استمع جيداً واندمج مع الآخرين كي لا يكتشفوك.';
+
+  @override
+  String get spyGiveClues =>
+      'قدم تلميحات دون ذكر الكلمة، واكتشفوا الجاسوس معاً.';
+
+  @override
+  String get spyReveal => 'كشف الجاسوس';
+
+  @override
+  String spyRevealed(String name) {
+    return 'الجاسوس هو $name';
+  }
+
+  @override
+  String get spyRoundFinished =>
+      'انتهت الجولة. يمكن للمضيف العودة وإنشاء جولة جديدة.';
+
+  @override
   String get truthDareEnd => 'إنهاء اللعبة';
 
   @override

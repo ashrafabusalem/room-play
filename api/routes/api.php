@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\RoomController;
 use App\Http\Controllers\Api\RoomInvitationController;
 use App\Http\Controllers\Api\RoomRewardController;
 use App\Http\Controllers\Api\SearchController;
+use App\Http\Controllers\Api\SpyGameController;
 use App\Http\Controllers\Api\TruthOrDareController;
 use App\Http\Controllers\Api\WalletController;
 use Illuminate\Support\Facades\Route;
@@ -93,6 +94,10 @@ Route::middleware(['auth:sanctum', 'active'])->group(function () {
     Route::post('/game-sessions/{session}/choose', [TruthOrDareController::class, 'choose']);
     Route::post('/game-sessions/{session}/next', [TruthOrDareController::class, 'next']);
     Route::post('/game-sessions/{session}/finish', [TruthOrDareController::class, 'finish']);
+    Route::get('/rooms/{room}/games/spy', [SpyGameController::class, 'show']);
+    Route::post('/rooms/{room}/games/spy', [SpyGameController::class, 'store']);
+    Route::post('/spy-game-sessions/{session}/start', [SpyGameController::class, 'start']);
+    Route::post('/spy-game-sessions/{session}/reveal', [SpyGameController::class, 'reveal']);
     Route::get('/conversations', [DirectMessageController::class, 'index']);
     Route::post('/conversations', [DirectMessageController::class, 'store']);
     Route::get('/conversations/{conversation}', [DirectMessageController::class, 'show']);
