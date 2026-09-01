@@ -1,4 +1,5 @@
-@extends('admin.layout',['title'=>$prompt->exists?'Edit game content':'Add game content'])
+@extends('admin.layout')
+@section('title',$prompt->exists?'Edit game content':'Add game content') @section('heading',$prompt->exists?'Edit game content':'Add game content')
 @section('content')
 @php($editing=$prompt->exists)
 <div class="mb-5"><a class="text-sm text-[#9ca3ae]" href="{{ route('admin.game-prompts.index',['game'=>$prompt->game]) }}">← Back to game content</a></div>@if($errors->any())<div class="mb-5 rounded-xl bg-[#e5484d]/10 p-4 text-[#ff8589]">{{ $errors->first() }}</div>@endif

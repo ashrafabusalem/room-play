@@ -1,8 +1,8 @@
-@extends('admin.layout',['title'=>'Game content'])
+@extends('admin.layout')
+@section('title','Game content') @section('heading','Game content')
 @section('content')
 <div class="mb-7">
-  <h2 class="text-xl font-semibold text-white">Game content</h2>
-  <p class="mt-1 text-sm text-[#9ca3ae]">Choose a game, then manage the content players receive.</p>
+  <p class="text-sm text-[#9ca3ae]">Choose a game, then manage the content players receive.</p>
 </div>
 
 <section class="mb-8">
