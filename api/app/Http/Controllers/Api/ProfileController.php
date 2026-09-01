@@ -119,6 +119,7 @@ class ProfileController extends Controller
             'friendship_status' => $friendship?->status,
             'friend_request_direction' => $friendship?->status === 'pending'
                 ? ($friendship->requester_id === $viewer->id ? 'sent' : 'received') : null,
+            'coin_balance' => $viewer->is($user) ? ($user->wallet?->balance ?? 0) : null,
         ];
     }
 

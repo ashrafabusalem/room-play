@@ -11,7 +11,7 @@ class RoomResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
-        $this->loadMissing(['host', 'members.user', 'seats.user']);
+        $this->loadMissing(['host.wallet', 'members.user.wallet', 'seats.user.wallet']);
 
         return [
             'id' => $this->public_id,
@@ -35,6 +35,6 @@ class RoomResource extends JsonResource
 
     private function user($user, bool $isHost): array
     {
-        return ['id' => $user->public_id, 'name' => $user->name, 'level' => $user->level, 'avatar_url' => $user->avatarUrl(), 'coins' => 0, 'is_host' => $isHost];
+        return ['id' => $user->public_id, 'name' => $user->name, 'level' => $user->level, 'avatar_url' => $user->avatarUrl(), 'coins' => $user->wallet?->balance ?? 0, 'is_host' => $isHost];
     }
 }

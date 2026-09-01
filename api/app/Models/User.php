@@ -89,7 +89,10 @@ class User extends Authenticatable
         static::creating(function (User $user) {
             $user->public_id ??= static::generatePublicId();
         });
+        static::created(fn (User $user) => CoinWallet::firstOrCreate(['user_id' => $user->id]));
     }
+
+    public function wallet() { return $this->hasOne(CoinWallet::class); }
 
     /**
      * A six-digit id that does not start with zero, so it survives being

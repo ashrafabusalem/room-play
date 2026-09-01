@@ -268,6 +268,19 @@ class AppLocalizationsAr extends AppLocalizations {
   String get profileTopUp => 'شحن';
 
   @override
+  String get walletTitle => 'محفظة العملات';
+
+  @override
+  String get walletHistory => 'سجل المعاملات';
+
+  @override
+  String get walletEmpty => 'لا توجد معاملات عملات بعد.';
+
+  @override
+  String get walletPurchasesLater =>
+      'سيتم تفعيل شراء العملات بعد ربط التحقق الآمن من إيصالات Apple وGoogle.';
+
+  @override
   String get profileWallet => 'المحفظة';
 
   @override

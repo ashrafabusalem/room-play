@@ -32,6 +32,7 @@ class UserResource extends JsonResource
             'dm_privacy' => $this->dm_privacy,
             'followers_count' => $this->followers()->count(),
             'following_count' => $this->following()->count(),
+            'coin_balance' => $this->wallet?->balance ?? 0,
         ];
     }
 }

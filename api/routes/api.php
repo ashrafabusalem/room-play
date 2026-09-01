@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\DirectMessageController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\FriendController;
 use App\Http\Controllers\Api\RoomInvitationController;
+use App\Http\Controllers\Api\WalletController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -32,6 +33,7 @@ Route::get('/content', ContentController::class)->middleware('throttle:120,1');
 
 Route::middleware(['auth:sanctum', 'active'])->group(function () {
     Route::get('/me', [AuthController::class, 'me']);
+    Route::get('/wallet', WalletController::class);
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/rooms', [RoomController::class, 'index']);
     Route::post('/rooms', [RoomController::class, 'store'])->middleware('throttle:10,1');

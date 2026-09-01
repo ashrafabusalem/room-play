@@ -11,6 +11,7 @@ import '../../widgets/avatar.dart';
 import '../../widgets/common.dart';
 import '../auth/auth_controller.dart';
 import 'social_hub_screen.dart';
+import 'wallet_screen.dart';
 
 /// Profile tab.
 ///
@@ -272,7 +273,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
             followers: _profile?.followers ?? 0,
           ),
           const SizedBox(height: 20),
-          const _CoinCard(),
+          _CoinCard(
+            balance: _profile?.coinBalance ?? 0,
+            onOpen: () => Navigator.of(context).push(
+              MaterialPageRoute<void>(builder: (_) => const WalletScreen()),
+            ),
+          ),
           const SizedBox(height: 20),
           _MenuGroup(
             items: [
@@ -286,7 +292,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Icons.account_balance_wallet_rounded,
                 l10n.profileWallet,
                 null,
-                null,
+                () => Navigator.of(context).push(
+                  MaterialPageRoute<void>(builder: (_) => const WalletScreen()),
+                ),
               ),
               (Icons.backpack_rounded, l10n.profileBackpack, null, null),
               (
@@ -496,7 +504,9 @@ class _StatsRow extends StatelessWidget {
 }
 
 class _CoinCard extends StatelessWidget {
-  const _CoinCard();
+  const _CoinCard({required this.balance, required this.onOpen});
+  final int balance;
+  final VoidCallback onOpen;
 
   @override
   Widget build(BuildContext context) {
@@ -525,9 +535,9 @@ class _CoinCard extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  '2,480',
-                  style: TextStyle(
+                Text(
+                  _format(balance),
+                  style: const TextStyle(
                     fontFamily: kFontFamily,
                     fontFamilyFallback: kFontFallback,
                     fontSize: 20,
@@ -543,7 +553,7 @@ class _CoinCard extends StatelessWidget {
             ),
             const Spacer(),
             FilledButton(
-              onPressed: () {},
+              onPressed: onOpen,
               style: FilledButton.styleFrom(
                 backgroundColor: AppColors.gold,
                 foregroundColor: const Color(0xFF2A1E52),
@@ -560,6 +570,15 @@ class _CoinCard extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  static String _format(int value) {
+    final digits = value.toString();
+    final parts = <String>[];
+    for (var end = digits.length; end > 0; end -= 3) {
+      parts.insert(0, digits.substring(end > 3 ? end - 3 : 0, end));
+    }
+    return parts.join(',');
   }
 }
 

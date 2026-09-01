@@ -33,6 +33,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
     Route::post('/users/{user}/block', [UserController::class, 'toggleBlock'])->name('users.block');
     Route::put('/users/{user}/password', [UserController::class, 'password'])->name('users.password');
+    Route::post('/users/{user}/coins', [UserController::class, 'coins'])->name('users.coins');
     Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
     Route::post('/users/{user}/restore', [UserController::class, 'restore'])->name('users.restore');
     Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');

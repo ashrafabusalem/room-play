@@ -270,6 +270,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profileTopUp => 'Top Up';
 
   @override
+  String get walletTitle => 'Coin wallet';
+
+  @override
+  String get walletHistory => 'Transaction history';
+
+  @override
+  String get walletEmpty => 'No coin transactions yet.';
+
+  @override
+  String get walletPurchasesLater =>
+      'Coin purchases will be enabled after secure Apple and Google receipt verification is connected.';
+
+  @override
   String get profileWallet => 'Wallet';
 
   @override

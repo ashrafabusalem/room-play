@@ -45,6 +45,7 @@ class SocialProfile {
     this.dmPrivacy = 'everyone',
     this.friendshipStatus,
     this.friendRequestDirection,
+    this.coinBalance = 0,
   });
 
   final String id;
@@ -61,6 +62,7 @@ class SocialProfile {
   final String dmPrivacy;
   final String? friendshipStatus;
   final String? friendRequestDirection;
+  final int coinBalance;
 
   factory SocialProfile.fromJson(Map<String, dynamic> json) => SocialProfile(
     id: json['id'] as String? ?? '',
@@ -77,6 +79,7 @@ class SocialProfile {
     dmPrivacy: json['dm_privacy'] as String? ?? 'everyone',
     friendshipStatus: json['friendship_status'] as String?,
     friendRequestDirection: json['friend_request_direction'] as String?,
+    coinBalance: (json['coin_balance'] as num?)?.toInt() ?? 0,
   );
 }
 

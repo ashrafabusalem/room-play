@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
+use App\Services\CoinLedger;
 
 class UserController extends Controller
 {
@@ -66,7 +67,12 @@ class UserController extends Controller
 
     public function edit(string $user): View
     {
-        return view('admin.users.form', ['managedUser' => $this->findUser($user)]);
+        $managedUser = $this->findUser($user);
+        $managedUser->load('wallet');
+        return view('admin.users.form', [
+            'managedUser' => $managedUser,
+            'coinTransactions' => $managedUser->wallet?->transactions()->with('creator')->limit(20)->get() ?? collect(),
+        ]);
     }
 
     public function update(Request $request, string $user): RedirectResponse
@@ -120,6 +126,21 @@ class UserController extends Controller
         $this->audit($request, 'user.password_changed', $managedUser);
 
         return back()->with('success', 'Temporary password set and all sessions revoked.');
+    }
+
+    public function coins(Request $request, string $user, CoinLedger $ledger): RedirectResponse
+    {
+        $managedUser = $this->findUser($user);
+        abort_if($managedUser->trashed() || $managedUser->is_admin, 409);
+        $data = $request->validate([
+            'amount' => ['required', 'integer', 'not_in:0', 'min:-1000000000', 'max:1000000000'],
+            'reason' => ['required', 'string', 'min:3', 'max:255'],
+        ]);
+        $transaction = $ledger->post($managedUser, (int) $data['amount'], 'admin_adjustment', trim($data['reason']), $request->user());
+        $this->audit($request, 'wallet.adjusted', $managedUser, [
+            'reference' => $transaction->reference, 'amount' => $transaction->amount, 'balance_after' => $transaction->balance_after,
+        ]);
+        return back()->with('success', 'Coin balance adjusted.');
     }
 
     public function destroy(Request $request, string $user): RedirectResponse

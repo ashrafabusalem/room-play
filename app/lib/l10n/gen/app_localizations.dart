@@ -602,6 +602,30 @@ abstract class AppLocalizations {
   /// **'Top Up'**
   String get profileTopUp;
 
+  /// No description provided for @walletTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Coin wallet'**
+  String get walletTitle;
+
+  /// No description provided for @walletHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Transaction history'**
+  String get walletHistory;
+
+  /// No description provided for @walletEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No coin transactions yet.'**
+  String get walletEmpty;
+
+  /// No description provided for @walletPurchasesLater.
+  ///
+  /// In en, this message translates to:
+  /// **'Coin purchases will be enabled after secure Apple and Google receipt verification is connected.'**
+  String get walletPurchasesLater;
+
   /// No description provided for @profileWallet.
   ///
   /// In en, this message translates to:
