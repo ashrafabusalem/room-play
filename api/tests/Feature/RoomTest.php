@@ -44,7 +44,9 @@ class RoomTest extends TestCase
         [$room] = $this->room();
         $first = User::factory()->create();
         $second = User::factory()->create();
-        foreach ([$first, $second] as $user) RoomMember::create(['room_id' => $room->id, 'user_id' => $user->id]);
+        foreach ([$first, $second] as $user) {
+            RoomMember::create(['room_id' => $room->id, 'user_id' => $user->id]);
+        }
 
         $this->actingAs($first, 'sanctum')->putJson("/api/rooms/{$room->public_id}/seats/2")->assertOk();
         $this->actingAs($second, 'sanctum')->putJson("/api/rooms/{$room->public_id}/seats/2")->assertConflict();
@@ -134,12 +136,27 @@ class RoomTest extends TestCase
         $this->assertNotNull($room->refresh()->closed_at);
     }
 
+    public function test_host_can_ban_and_unban_a_member(): void
+    {
+        [$room, $host] = $this->room();
+        $member = User::factory()->create();
+        RoomMember::create(['room_id' => $room->id, 'user_id' => $member->id]);
+        $this->actingAs($host, 'sanctum')->postJson("/api/rooms/{$room->public_id}/bans/{$member->public_id}")->assertOk();
+        $this->actingAs($member, 'sanctum')->postJson("/api/rooms/{$room->public_id}/join")->assertForbidden();
+        $this->actingAs($host, 'sanctum')->getJson("/api/rooms/{$room->public_id}/bans")->assertOk()->assertJsonPath('users.0.id', $member->public_id);
+        $this->deleteJson("/api/rooms/{$room->public_id}/bans/{$member->public_id}")->assertOk();
+        $this->actingAs($member, 'sanctum')->postJson("/api/rooms/{$room->public_id}/join")->assertOk();
+    }
+
     private function room(): array
     {
         $host = User::factory()->create();
         $room = Room::create(['host_user_id' => $host->id, 'name' => 'Room', 'language' => 'EN']);
         RoomMember::create(['room_id' => $room->id, 'user_id' => $host->id, 'role' => 'host']);
-        foreach (range(1, 9) as $position) RoomSeat::create(['room_id' => $room->id, 'position' => $position, 'user_id' => $position === 1 ? $host->id : null]);
+        foreach (range(1, 9) as $position) {
+            RoomSeat::create(['room_id' => $room->id, 'position' => $position, 'user_id' => $position === 1 ? $host->id : null]);
+        }
+
         return [$room, $host];
     }
 }

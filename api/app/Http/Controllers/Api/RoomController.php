@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Events\RoomStateChanged;
 use App\Events\RoomMessageSent;
+use App\Events\RoomStateChanged;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\RoomResource;
 use App\Http\Resources\RoomMessageResource;
+use App\Http\Resources\RoomResource;
 use App\Models\Room;
+use App\Models\RoomBan;
 use App\Models\RoomMember;
-use App\Models\RoomSeat;
 use App\Models\RoomMessage;
+use App\Models\RoomSeat;
 use App\Models\User;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\JsonResponse;
@@ -33,6 +34,7 @@ class RoomController extends Controller
     public function show(Room $room): RoomResource
     {
         abort_if($room->closed_at, 404);
+
         return new RoomResource($room);
     }
 
@@ -54,6 +56,7 @@ class RoomController extends Controller
             foreach (range(1, $room->seat_count) as $position) {
                 RoomSeat::create(['room_id' => $room->id, 'position' => $position, 'user_id' => $position === 1 ? $request->user()->id : null]);
             }
+
             return $room;
         });
 
@@ -63,6 +66,7 @@ class RoomController extends Controller
     public function join(Request $request, Room $room): JsonResponse
     {
         $this->assertOpen($room);
+        abort_if(RoomBan::where(['room_id' => $room->id, 'user_id' => $request->user()->id])->exists(), 403, 'You are banned from this room.');
         DB::transaction(function () use ($request, $room) {
             $locked = Room::lockForUpdate()->findOrFail($room->id);
             abort_if($locked->is_locked, 403, 'This room is locked.');
@@ -70,6 +74,7 @@ class RoomController extends Controller
             abort_if($count >= $locked->max_members, 409, 'This room is full.');
             RoomMember::updateOrCreate(['room_id' => $room->id, 'user_id' => $request->user()->id], ['last_seen_at' => now()]);
         });
+
         return $this->state($room, true);
     }
 
@@ -80,6 +85,7 @@ class RoomController extends Controller
             RoomSeat::where('room_id', $room->id)->where('user_id', $request->user()->id)->update(['user_id' => null, 'mic_muted' => true]);
             RoomMember::where('room_id', $room->id)->where('user_id', $request->user()->id)->delete();
         });
+
         return $this->state($room, true);
     }
 
@@ -107,6 +113,7 @@ class RoomController extends Controller
     {
         abort_if($room->host_user_id === $request->user()->id, 409, 'The host must remain seated.');
         RoomSeat::where('room_id', $room->id)->where('user_id', $request->user()->id)->update(['user_id' => null, 'mic_muted' => true]);
+
         return $this->state($room, true);
     }
 
@@ -115,6 +122,7 @@ class RoomController extends Controller
         $data = $request->validate(['muted' => ['required', 'boolean']]);
         $updated = RoomSeat::where('room_id', $room->id)->where('user_id', $request->user()->id)->update(['mic_muted' => $data['muted']]);
         abort_unless($updated, 409, 'Take a seat before using the microphone.');
+
         return $this->state($room, true);
     }
 
@@ -125,6 +133,7 @@ class RoomController extends Controller
         $seat = RoomSeat::where('room_id', $room->id)->where('position', $position)->firstOrFail();
         abort_if($data['locked'] && $seat->user_id, 409, 'Remove the occupant before locking this seat.');
         $seat->update(['is_locked' => $data['locked']]);
+
         return $this->state($room, true);
     }
 
@@ -137,7 +146,36 @@ class RoomController extends Controller
             RoomSeat::where(['room_id' => $room->id, 'user_id' => $user->id])->update(['user_id' => null, 'mic_muted' => true]);
             RoomMember::where(['room_id' => $room->id, 'user_id' => $user->id])->delete();
         });
+
         return $this->state($room, true);
+    }
+
+    public function banMember(Request $request, Room $room, User $user): JsonResponse
+    {
+        $this->assertHost($request, $room);
+        abort_if($user->id === $room->host_user_id, 422, 'The host cannot be banned.');
+        DB::transaction(function () use ($request, $room, $user) {
+            RoomBan::updateOrCreate(['room_id' => $room->id, 'user_id' => $user->id], ['banned_by' => $request->user()->id]);
+            RoomSeat::where(['room_id' => $room->id, 'user_id' => $user->id])->update(['user_id' => null, 'mic_muted' => true]);
+            RoomMember::where(['room_id' => $room->id, 'user_id' => $user->id])->delete();
+        });
+
+        return $this->state($room, true);
+    }
+
+    public function bans(Request $request, Room $room): JsonResponse
+    {
+        $this->assertHost($request, $room);
+
+        return response()->json(['users' => RoomBan::where('room_id', $room->id)->with('user')->latest()->get()->map(fn ($ban) => ['id' => $ban->user->public_id, 'name' => $ban->user->name, 'avatar_url' => $ban->user->avatarUrl()])->values()]);
+    }
+
+    public function unban(Request $request, Room $room, User $user): JsonResponse
+    {
+        $this->assertHost($request, $room);
+        RoomBan::where(['room_id' => $room->id, 'user_id' => $user->id])->delete();
+
+        return response()->json(['message' => 'Room ban removed.']);
     }
 
     public function updateSettings(Request $request, Room $room): JsonResponse
@@ -150,6 +188,7 @@ class RoomController extends Controller
             'is_locked' => ['required', 'boolean'],
         ]);
         $room->update($data);
+
         return $this->state($room, true);
     }
 
@@ -157,6 +196,7 @@ class RoomController extends Controller
     {
         $this->assertHost($request, $room);
         $room->update(['closed_at' => now()]);
+
         return $this->state($room, true);
     }
 
@@ -165,6 +205,7 @@ class RoomController extends Controller
         $this->assertMember($request, $room);
         $messages = RoomMessage::where('room_id', $room->id)->with(['user', 'room'])
             ->latest('id')->limit(100)->get()->reverse()->values();
+
         return response()->json(['messages' => RoomMessageResource::collection($messages)->resolve()]);
     }
 
@@ -178,10 +219,14 @@ class RoomController extends Controller
             'body' => trim($data['text']),
         ])->load(['user', 'room']);
         broadcast(new RoomMessageSent($message))->toOthers();
+
         return response()->json(['message' => (new RoomMessageResource($message))->resolve()], 201);
     }
 
-    private function assertOpen(Room $room): void { abort_if($room->closed_at, 404); }
+    private function assertOpen(Room $room): void
+    {
+        abort_if($room->closed_at, 404);
+    }
 
     private function assertMember(Request $request, Room $room): void
     {
@@ -198,7 +243,10 @@ class RoomController extends Controller
     private function state(Room $room, bool $broadcast = false): JsonResponse
     {
         $room = $room->fresh(['host', 'members.user', 'seats.user']);
-        if ($broadcast) broadcast(new RoomStateChanged($room))->toOthers();
+        if ($broadcast) {
+            broadcast(new RoomStateChanged($room))->toOthers();
+        }
+
         return response()->json(['room' => (new RoomResource($room))->resolve()]);
     }
 }

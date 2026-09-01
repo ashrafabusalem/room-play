@@ -212,6 +212,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get roomRemoveMember => 'Remove from room';
 
   @override
+  String get roomBanMember => 'Remove and ban';
+
+  @override
+  String get roomBannedUsers => 'Banned users';
+
+  @override
+  String get roomNoBannedUsers => 'No one is banned from this room.';
+
+  @override
+  String get roomUnban => 'Unban';
+
+  @override
   String get roomSettingsTitle => 'Room settings';
 
   @override

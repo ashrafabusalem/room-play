@@ -2,18 +2,18 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ContentController;
-use App\Http\Controllers\Api\RoomController;
 use App\Http\Controllers\Api\DirectMessageController;
-use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\FriendController;
-use App\Http\Controllers\Api\RoomInvitationController;
-use App\Http\Controllers\Api\WalletController;
-use App\Http\Controllers\Api\TruthOrDareController;
-use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\GiftController;
-use App\Http\Controllers\Api\RoomRewardController;
+use App\Http\Controllers\Api\NotificationController;
+use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\RankingController;
+use App\Http\Controllers\Api\RoomController;
+use App\Http\Controllers\Api\RoomInvitationController;
+use App\Http\Controllers\Api\RoomRewardController;
 use App\Http\Controllers\Api\SearchController;
+use App\Http\Controllers\Api\TruthOrDareController;
+use App\Http\Controllers\Api\WalletController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -60,6 +60,9 @@ Route::middleware(['auth:sanctum', 'active'])->group(function () {
     Route::patch('/rooms/{room}/microphone', [RoomController::class, 'microphone']);
     Route::patch('/rooms/{room}/seats/{position}/lock', [RoomController::class, 'lockSeat']);
     Route::delete('/rooms/{room}/members/{user:public_id}', [RoomController::class, 'removeMember'])->withoutScopedBindings();
+    Route::post('/rooms/{room}/bans/{user:public_id}', [RoomController::class, 'banMember'])->withoutScopedBindings();
+    Route::get('/rooms/{room}/bans', [RoomController::class, 'bans']);
+    Route::delete('/rooms/{room}/bans/{user:public_id}', [RoomController::class, 'unban'])->withoutScopedBindings();
     Route::patch('/rooms/{room}/settings', [RoomController::class, 'updateSettings']);
     Route::delete('/rooms/{room}', [RoomController::class, 'close']);
     Route::get('/rooms/{room}/messages', [RoomController::class, 'messages']);

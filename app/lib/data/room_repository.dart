@@ -38,6 +38,22 @@ class RoomRepository {
       );
   Future<Room> removeMember(String id, String userId) =>
       _room(_api.delete('/rooms/$id/members/$userId'));
+  Future<Room> banMember(String id, String userId) =>
+      _room(_api.post('/rooms/$id/bans/$userId'));
+  Future<List<AppUser>> bannedUsers(String id) async {
+    final response = await _api.get('/rooms/$id/bans');
+    final raw = response['users'];
+    if (raw is! List) throw const FormatException('Missing banned users');
+    return raw
+        .whereType<Map<String, dynamic>>()
+        .map(AppUser.fromJson)
+        .toList(growable: false);
+  }
+
+  Future<void> unban(String id, String userId) async {
+    await _api.delete('/rooms/$id/bans/$userId');
+  }
+
   Future<Room> updateSettings(
     String id, {
     required String name,

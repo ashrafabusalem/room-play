@@ -141,6 +141,15 @@ class _RoomScreenState extends State<RoomScreen> {
                 title: Text(l.roomRemoveMember),
                 onTap: () => Navigator.pop(context, 'remove'),
               ),
+            if (seat.user != null && !seat.user!.isHost && !seat.user!.isMe)
+              ListTile(
+                leading: const Icon(
+                  Icons.block_rounded,
+                  color: AppColors.danger,
+                ),
+                title: Text(l.roomBanMember),
+                onTap: () => Navigator.pop(context, 'ban'),
+              ),
           ],
         ),
       ),
@@ -156,9 +165,15 @@ class _RoomScreenState extends State<RoomScreen> {
       return;
     }
     try {
-      final room = action == 'lock'
-          ? await _rooms!.lockSeat(_room.id, seat.index, locked: !seat.locked)
-          : await _rooms!.removeMember(_room.id, seat.user!.id);
+      final room = switch (action) {
+        'lock' => await _rooms!.lockSeat(
+          _room.id,
+          seat.index,
+          locked: !seat.locked,
+        ),
+        'ban' => await _rooms!.banMember(_room.id, seat.user!.id),
+        _ => await _rooms!.removeMember(_room.id, seat.user!.id),
+      };
       if (mounted) setState(() => _room = room);
     } catch (_) {}
   }
@@ -222,6 +237,17 @@ class _RoomScreenState extends State<RoomScreen> {
                   value: locked,
                   onChanged: (v) => setDialogState(() => locked = v),
                 ),
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  leading: const Icon(Icons.block_rounded),
+                  title: Text(l.roomBannedUsers),
+                  trailing: Icon(
+                    Directionality.of(context) == TextDirection.rtl
+                        ? Icons.chevron_left_rounded
+                        : Icons.chevron_right_rounded,
+                  ),
+                  onTap: () => Navigator.pop(dialogContext, 'bans'),
+                ),
               ],
             ),
           ),
@@ -248,6 +274,10 @@ class _RoomScreenState extends State<RoomScreen> {
     final roomName = name.text.trim();
     name.dispose();
     if (!mounted || action == null) return;
+    if (action == 'bans') {
+      await _manageRoomBans();
+      return;
+    }
     if (action == 'close') {
       final confirmed = await showDialog<bool>(
         context: context,
@@ -281,6 +311,59 @@ class _RoomScreenState extends State<RoomScreen> {
       isLocked: locked,
     );
     if (mounted) setState(() => _room = room);
+  }
+
+  Future<void> _manageRoomBans() async {
+    final l = AppLocalizations.of(context);
+    List<AppUser> users;
+    try {
+      users = await _rooms!.bannedUsers(_room.id);
+    } catch (_) {
+      return;
+    }
+    if (!mounted) return;
+    await showModalBottomSheet<void>(
+      context: context,
+      builder: (sheetContext) => StatefulBuilder(
+        builder: (context, setSheetState) => SafeArea(
+          child: Material(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ListTile(title: Text(l.roomBannedUsers)),
+                if (users.isEmpty)
+                  Padding(
+                    padding: const EdgeInsetsDirectional.fromSTEB(
+                      24,
+                      8,
+                      24,
+                      24,
+                    ),
+                    child: Text(l.roomNoBannedUsers),
+                  ),
+                for (final user in users)
+                  ListTile(
+                    leading: AvatarCircle(user: user, size: 40),
+                    title: Text(
+                      user.name,
+                      textDirection: directionOf(user.name),
+                    ),
+                    trailing: TextButton(
+                      onPressed: () async {
+                        try {
+                          await _rooms!.unban(_room.id, user.id);
+                          setSheetState(() => users = [...users]..remove(user));
+                        } catch (_) {}
+                      },
+                      child: Text(l.roomUnban),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   Future<void> _toggleMic() async {

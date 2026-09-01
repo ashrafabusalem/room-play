@@ -211,6 +211,18 @@ class AppLocalizationsAr extends AppLocalizations {
   String get roomRemoveMember => 'إزالة من الغرفة';
 
   @override
+  String get roomBanMember => 'إزالة وحظر';
+
+  @override
+  String get roomBannedUsers => 'المستخدمون المحظورون';
+
+  @override
+  String get roomNoBannedUsers => 'لا يوجد مستخدمون محظورون من هذه الغرفة.';
+
+  @override
+  String get roomUnban => 'إلغاء الحظر';
+
+  @override
   String get roomSettingsTitle => 'إعدادات الغرفة';
 
   @override

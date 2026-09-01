@@ -458,6 +458,30 @@ abstract class AppLocalizations {
   /// **'Remove from room'**
   String get roomRemoveMember;
 
+  /// No description provided for @roomBanMember.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove and ban'**
+  String get roomBanMember;
+
+  /// No description provided for @roomBannedUsers.
+  ///
+  /// In en, this message translates to:
+  /// **'Banned users'**
+  String get roomBannedUsers;
+
+  /// No description provided for @roomNoBannedUsers.
+  ///
+  /// In en, this message translates to:
+  /// **'No one is banned from this room.'**
+  String get roomNoBannedUsers;
+
+  /// No description provided for @roomUnban.
+  ///
+  /// In en, this message translates to:
+  /// **'Unban'**
+  String get roomUnban;
+
   /// No description provided for @roomSettingsTitle.
   ///
   /// In en, this message translates to:
