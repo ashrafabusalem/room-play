@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Models\UserReport;
+use App\Models\FriendRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -77,6 +78,9 @@ class ProfileController extends Controller
             DB::table('user_follows')->where(fn ($q) => $q
                 ->where(['follower_id' => $viewer->id, 'followed_id' => $user->id])
                 ->orWhere(['follower_id' => $user->id, 'followed_id' => $viewer->id]))->delete();
+            DB::table('friend_requests')->where(fn ($q) => $q
+                ->where(['requester_id' => $viewer->id, 'addressee_id' => $user->id])
+                ->orWhere(['requester_id' => $user->id, 'addressee_id' => $viewer->id]))->delete();
         });
         return response()->json(['message' => 'User blocked.']);
     }
@@ -100,6 +104,9 @@ class ProfileController extends Controller
 
     private function profile(User $user, User $viewer): array
     {
+        $friendship = FriendRequest::where(fn ($q) => $q
+            ->where(['requester_id' => $viewer->id, 'addressee_id' => $user->id])
+            ->orWhere(['requester_id' => $user->id, 'addressee_id' => $viewer->id]))->first();
         return [
             'id' => $user->public_id, 'name' => $user->name, 'level' => $user->level,
             'bio' => $user->bio, 'avatar_url' => $user->avatarUrl(),
@@ -109,6 +116,9 @@ class ProfileController extends Controller
             'is_blocked' => $viewer->blockedUsers()->whereKey($user->id)->exists(),
             'blocked_by' => $user->blockedUsers()->whereKey($viewer->id)->exists(),
             'dm_privacy' => $viewer->is($user) ? $user->dm_privacy : null,
+            'friendship_status' => $friendship?->status,
+            'friend_request_direction' => $friendship?->status === 'pending'
+                ? ($friendship->requester_id === $viewer->id ? 'sent' : 'received') : null,
         ];
     }
 

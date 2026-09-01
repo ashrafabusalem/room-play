@@ -8,6 +8,7 @@ import '../../data/mock_data.dart';
 import '../../data/models.dart';
 import '../../data/room_realtime.dart';
 import '../../data/room_repository.dart';
+import '../../data/social_repository.dart';
 import '../../l10n/gen/app_localizations.dart';
 import '../../widgets/avatar.dart';
 import '../../widgets/common.dart';
@@ -149,6 +150,47 @@ class _RoomScreenState extends State<RoomScreen> {
     });
   }
 
+  Future<void> _inviteFriends() async {
+    final l10n = AppLocalizations.of(context);
+    final social = SocialRepository(AuthScope.of(context).api);
+    final friends = await social.friends();
+    if (!mounted) return;
+    await showDialog<void>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(l10n.socialInvite),
+        content: SizedBox(
+          width: 360,
+          child: friends.isEmpty
+              ? Text(l10n.socialEmptyFriends)
+              : ListView(
+                  shrinkWrap: true,
+                  children: friends
+                      .map(
+                        (friend) => ListTile(
+                          leading: AvatarCircle(user: friend, size: 42),
+                          title: Text(friend.name),
+                          trailing: const Icon(Icons.send_rounded),
+                          onTap: () async {
+                            await social.inviteToRoom(_room.id, friend.id);
+                            if (dialogContext.mounted) {
+                              Navigator.pop(dialogContext);
+                            }
+                            if (mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text(l10n.socialInvited)),
+                              );
+                            }
+                          },
+                        ),
+                      )
+                      .toList(),
+                ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final room = _room;
@@ -170,6 +212,7 @@ class _RoomScreenState extends State<RoomScreen> {
                 room: room,
                 following: _following,
                 onFollow: () => setState(() => _following = !_following),
+                onInvite: _inviteFriends,
               ),
               const SizedBox(height: 10),
               _RoomMetaPills(room: room),
@@ -200,11 +243,13 @@ class _RoomHeader extends StatelessWidget {
     required this.room,
     required this.following,
     required this.onFollow,
+    required this.onInvite,
   });
 
   final Room room;
   final bool following;
   final VoidCallback onFollow;
+  final VoidCallback onInvite;
 
   @override
   Widget build(BuildContext context) {
@@ -288,9 +333,10 @@ class _RoomHeader extends StatelessWidget {
           ),
           const SizedBox(width: 6),
           CircleIconButton(
-            icon: Icons.more_horiz_rounded,
+            icon: Icons.person_add_alt_1_rounded,
             background: Colors.white.withValues(alpha: 0.10),
             size: 36,
+            onTap: onInvite,
           ),
         ],
       ),

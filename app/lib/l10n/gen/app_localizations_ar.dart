@@ -362,6 +362,60 @@ class AppLocalizationsAr extends AppLocalizations {
   String get commonCancel => 'إلغاء';
 
   @override
+  String get socialTitle => 'الأصدقاء والتواصل';
+
+  @override
+  String get socialFriends => 'الأصدقاء';
+
+  @override
+  String get socialRequests => 'الطلبات';
+
+  @override
+  String get socialInvitations => 'دعوات الغرف';
+
+  @override
+  String get socialAccept => 'قبول';
+
+  @override
+  String get socialDecline => 'رفض';
+
+  @override
+  String get socialAddFriend => 'إضافة صديق';
+
+  @override
+  String get socialRequestSent => 'تم إرسال طلب الصداقة.';
+
+  @override
+  String get socialRequestPending => 'الطلب معلّق';
+
+  @override
+  String get socialRequestReceived => 'طلب وارد';
+
+  @override
+  String get socialAlreadyFriends => 'أصدقاء';
+
+  @override
+  String get socialRemoveFriend => 'إزالة الصديق';
+
+  @override
+  String get socialInvite => 'دعوة الأصدقاء';
+
+  @override
+  String get socialInvited => 'تم إرسال دعوة الغرفة.';
+
+  @override
+  String get socialEmptyFriends => 'لا يوجد أصدقاء بعد.';
+
+  @override
+  String get socialEmptyRequests => 'لا توجد طلبات صداقة معلقة.';
+
+  @override
+  String get socialEmptyInvites => 'لا توجد دعوات غرف معلقة.';
+
+  @override
+  String get socialJoinRoom => 'الانضمام للغرفة';
+
+  @override
   String get roomsTitle => 'الغرف';
 
   @override

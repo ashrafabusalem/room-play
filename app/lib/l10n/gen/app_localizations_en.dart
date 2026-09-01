@@ -364,6 +364,60 @@ class AppLocalizationsEn extends AppLocalizations {
   String get commonCancel => 'Cancel';
 
   @override
+  String get socialTitle => 'Friends & social';
+
+  @override
+  String get socialFriends => 'Friends';
+
+  @override
+  String get socialRequests => 'Requests';
+
+  @override
+  String get socialInvitations => 'Room invites';
+
+  @override
+  String get socialAccept => 'Accept';
+
+  @override
+  String get socialDecline => 'Decline';
+
+  @override
+  String get socialAddFriend => 'Add friend';
+
+  @override
+  String get socialRequestSent => 'Friend request sent.';
+
+  @override
+  String get socialRequestPending => 'Request pending';
+
+  @override
+  String get socialRequestReceived => 'Request received';
+
+  @override
+  String get socialAlreadyFriends => 'Friends';
+
+  @override
+  String get socialRemoveFriend => 'Remove friend';
+
+  @override
+  String get socialInvite => 'Invite friends';
+
+  @override
+  String get socialInvited => 'Room invitation sent.';
+
+  @override
+  String get socialEmptyFriends => 'No friends yet.';
+
+  @override
+  String get socialEmptyRequests => 'No pending friend requests.';
+
+  @override
+  String get socialEmptyInvites => 'No pending room invitations.';
+
+  @override
+  String get socialJoinRoom => 'Join room';
+
+  @override
   String get roomsTitle => 'Rooms';
 
   @override

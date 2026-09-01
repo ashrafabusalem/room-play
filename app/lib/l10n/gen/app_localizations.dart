@@ -788,6 +788,114 @@ abstract class AppLocalizations {
   /// **'Cancel'**
   String get commonCancel;
 
+  /// No description provided for @socialTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Friends & social'**
+  String get socialTitle;
+
+  /// No description provided for @socialFriends.
+  ///
+  /// In en, this message translates to:
+  /// **'Friends'**
+  String get socialFriends;
+
+  /// No description provided for @socialRequests.
+  ///
+  /// In en, this message translates to:
+  /// **'Requests'**
+  String get socialRequests;
+
+  /// No description provided for @socialInvitations.
+  ///
+  /// In en, this message translates to:
+  /// **'Room invites'**
+  String get socialInvitations;
+
+  /// No description provided for @socialAccept.
+  ///
+  /// In en, this message translates to:
+  /// **'Accept'**
+  String get socialAccept;
+
+  /// No description provided for @socialDecline.
+  ///
+  /// In en, this message translates to:
+  /// **'Decline'**
+  String get socialDecline;
+
+  /// No description provided for @socialAddFriend.
+  ///
+  /// In en, this message translates to:
+  /// **'Add friend'**
+  String get socialAddFriend;
+
+  /// No description provided for @socialRequestSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Friend request sent.'**
+  String get socialRequestSent;
+
+  /// No description provided for @socialRequestPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Request pending'**
+  String get socialRequestPending;
+
+  /// No description provided for @socialRequestReceived.
+  ///
+  /// In en, this message translates to:
+  /// **'Request received'**
+  String get socialRequestReceived;
+
+  /// No description provided for @socialAlreadyFriends.
+  ///
+  /// In en, this message translates to:
+  /// **'Friends'**
+  String get socialAlreadyFriends;
+
+  /// No description provided for @socialRemoveFriend.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove friend'**
+  String get socialRemoveFriend;
+
+  /// No description provided for @socialInvite.
+  ///
+  /// In en, this message translates to:
+  /// **'Invite friends'**
+  String get socialInvite;
+
+  /// No description provided for @socialInvited.
+  ///
+  /// In en, this message translates to:
+  /// **'Room invitation sent.'**
+  String get socialInvited;
+
+  /// No description provided for @socialEmptyFriends.
+  ///
+  /// In en, this message translates to:
+  /// **'No friends yet.'**
+  String get socialEmptyFriends;
+
+  /// No description provided for @socialEmptyRequests.
+  ///
+  /// In en, this message translates to:
+  /// **'No pending friend requests.'**
+  String get socialEmptyRequests;
+
+  /// No description provided for @socialEmptyInvites.
+  ///
+  /// In en, this message translates to:
+  /// **'No pending room invitations.'**
+  String get socialEmptyInvites;
+
+  /// No description provided for @socialJoinRoom.
+  ///
+  /// In en, this message translates to:
+  /// **'Join room'**
+  String get socialJoinRoom;
+
   /// No description provided for @roomsTitle.
   ///
   /// In en, this message translates to:

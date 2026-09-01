@@ -55,6 +55,16 @@ class _PublicProfileScreenState extends State<PublicProfileScreen> {
     if (mounted) await _load();
   }
 
+  Future<void> _addFriend() async {
+    final l10n = AppLocalizations.of(context);
+    await _repo.sendFriendRequest(widget.userId);
+    await _load();
+    if (mounted) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(l10n.socialRequestSent)));
+    }
+  }
+
   Future<void> _report() async {
     final l10n = AppLocalizations.of(context);
     var reason = 'harassment';
@@ -196,13 +206,42 @@ class _PublicProfileScreenState extends State<PublicProfileScreen> {
                 ),
                 if (!profile.isMe && !profile.blockedBy) ...[
                   const SizedBox(height: 24),
-                  FilledButton(
-                    onPressed: _busy || profile.isBlocked ? null : _follow,
-                    child: Text(
-                      profile.isFollowing
-                          ? l10n.profileUnfollow
-                          : l10n.profileFollow,
-                    ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: FilledButton(
+                          onPressed: _busy || profile.isBlocked
+                              ? null
+                              : _follow,
+                          child: Text(
+                            profile.isFollowing
+                                ? l10n.profileUnfollow
+                                : l10n.profileFollow,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: OutlinedButton(
+                          onPressed:
+                              _busy ||
+                                  profile.isBlocked ||
+                                  profile.friendshipStatus == 'accepted' ||
+                                  profile.friendshipStatus == 'pending'
+                              ? null
+                              : _addFriend,
+                          child: Text(
+                            profile.friendshipStatus == 'accepted'
+                                ? l10n.socialAlreadyFriends
+                                : profile.friendshipStatus == 'pending'
+                                ? (profile.friendRequestDirection == 'received'
+                                      ? l10n.socialRequestReceived
+                                      : l10n.socialRequestPending)
+                                : l10n.socialAddFriend,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ],

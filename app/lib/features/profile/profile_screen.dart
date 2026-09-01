@@ -10,6 +10,7 @@ import '../../l10n/gen/app_localizations.dart';
 import '../../widgets/avatar.dart';
 import '../../widgets/common.dart';
 import '../auth/auth_controller.dart';
+import 'social_hub_screen.dart';
 
 /// Profile tab.
 ///
@@ -294,7 +295,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 null,
                 null,
               ),
-              (Icons.group_rounded, l10n.profileFriends, null, null),
+              (
+                Icons.group_rounded,
+                l10n.profileFriends,
+                null,
+                () => Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (_) => const SocialHubScreen(),
+                  ),
+                ),
+              ),
               (Icons.help_outline_rounded, l10n.profileHelp, null, null),
               (
                 Icons.logout_rounded,
