@@ -148,6 +148,29 @@ class AppLocalizationsAr extends AppLocalizations {
   String get roomChatHint => 'اكتب رسالة...';
 
   @override
+  String get giftSendTitle => 'إرسال هدية';
+
+  @override
+  String get giftRecipient => 'إرسال إلى';
+
+  @override
+  String get giftNoRecipients => 'لا يوجد شخص آخر في الغرفة بعد.';
+
+  @override
+  String giftPrice(int amount) {
+    return '$amount ذهب';
+  }
+
+  @override
+  String giftSent(String name) {
+    return 'تم إرسال الهدية إلى $name';
+  }
+
+  @override
+  String get giftFailed =>
+      'تعذّر إرسال الهدية. تحقّق من رصيد الذهب وحاول مجدداً.';
+
+  @override
   String get roomSystemSender => 'النظام';
 
   @override

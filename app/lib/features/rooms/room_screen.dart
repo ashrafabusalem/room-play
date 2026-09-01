@@ -9,6 +9,7 @@ import '../../data/models.dart';
 import '../../data/room_realtime.dart';
 import '../../data/room_repository.dart';
 import '../../data/social_repository.dart';
+import '../../data/gift_repository.dart';
 import '../../l10n/gen/app_localizations.dart';
 import '../../widgets/avatar.dart';
 import '../../widgets/common.dart';
@@ -151,6 +152,37 @@ class _RoomScreenState extends State<RoomScreen> {
     });
   }
 
+  Future<void> _openGifts() async {
+    if (_rooms == null) return;
+    final auth = AuthScope.of(context);
+    final recipients = _room.members
+        .where((user) => user.id != auth.publicId)
+        .toList();
+    final gifts = await GiftRepository(auth.api).gifts();
+    if (!mounted) return;
+    await showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      builder: (sheetContext) => _GiftSheet(
+        gifts: gifts,
+        recipients: recipients,
+        onSend: (gift, recipient) async {
+          await GiftRepository(auth.api).send(_room.id, gift.id, recipient.id);
+          if (sheetContext.mounted) Navigator.pop(sheetContext);
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  AppLocalizations.of(context).giftSent(recipient.name),
+                ),
+              ),
+            );
+          }
+        },
+      ),
+    );
+  }
+
   Future<void> _inviteFriends() async {
     final l10n = AppLocalizations.of(context);
     final social = SocialRepository(AuthScope.of(context).api);
@@ -233,6 +265,7 @@ class _RoomScreenState extends State<RoomScreen> {
                   controller: _chatController,
                   scrollController: _scrollController,
                   onSend: _send,
+                  onGift: _openGifts,
                 ),
               ),
               _ControlBar(micOn: _micOn, onToggleMic: _toggleMic),
@@ -590,12 +623,14 @@ class _ChatPanel extends StatelessWidget {
     required this.controller,
     required this.scrollController,
     required this.onSend,
+    required this.onGift,
   });
 
   final List<ChatMessage> messages;
   final TextEditingController controller;
   final ScrollController scrollController;
   final VoidCallback onSend;
+  final VoidCallback onGift;
 
   @override
   Widget build(BuildContext context) {
@@ -622,7 +657,7 @@ class _ChatPanel extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8),
-          _ChatInput(controller: controller, onSend: onSend),
+          _ChatInput(controller: controller, onSend: onSend, onGift: onGift),
         ],
       ),
     );
@@ -745,11 +780,133 @@ class _ChatRow extends StatelessWidget {
   }
 }
 
+class _GiftSheet extends StatefulWidget {
+  const _GiftSheet({
+    required this.gifts,
+    required this.recipients,
+    required this.onSend,
+  });
+  final List<GiftItem> gifts;
+  final List<AppUser> recipients;
+  final Future<void> Function(GiftItem, AppUser) onSend;
+  @override
+  State<_GiftSheet> createState() => _GiftSheetState();
+}
+
+class _GiftSheetState extends State<_GiftSheet> {
+  AppUser? recipient;
+  bool busy = false;
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              l.giftSendTitle,
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
+            const SizedBox(height: 14),
+            if (widget.recipients.isEmpty)
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: Text(l.giftNoRecipients),
+              )
+            else ...[
+              DropdownButtonFormField<AppUser>(
+                initialValue: recipient,
+                decoration: InputDecoration(labelText: l.giftRecipient),
+                items: widget.recipients
+                    .map((u) => DropdownMenuItem(value: u, child: Text(u.name)))
+                    .toList(),
+                onChanged: busy ? null : (u) => setState(() => recipient = u),
+              ),
+              const SizedBox(height: 16),
+              GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
+                  childAspectRatio: .9,
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 10,
+                ),
+                itemCount: widget.gifts.length,
+                itemBuilder: (_, i) {
+                  final gift = widget.gifts[i];
+                  return Material(
+                    color: AppColors.surfaceHigh,
+                    borderRadius: BorderRadius.circular(16),
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(16),
+                      onTap: busy || recipient == null
+                          ? null
+                          : () async {
+                              setState(() => busy = true);
+                              try {
+                                await widget.onSend(gift, recipient!);
+                              } catch (_) {
+                                if (mounted) {
+                                  ScaffoldMessenger.of(this.context)
+                                      .showSnackBar(
+                                        SnackBar(content: Text(l.giftFailed)),
+                                      );
+                                }
+                              } finally {
+                                if (mounted) setState(() => busy = false);
+                              }
+                            },
+                      child: Padding(
+                        padding: const EdgeInsets.all(8),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              gift.emoji,
+                              style: const TextStyle(fontSize: 30),
+                            ),
+                            const SizedBox(height: 5),
+                            Text(
+                              gift.name,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            Text(
+                              l.giftPrice(gift.price),
+                              style: const TextStyle(
+                                color: AppColors.gold,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class _ChatInput extends StatelessWidget {
-  const _ChatInput({required this.controller, required this.onSend});
+  const _ChatInput({
+    required this.controller,
+    required this.onSend,
+    required this.onGift,
+  });
 
   final TextEditingController controller;
   final VoidCallback onSend;
+  final VoidCallback onGift;
 
   @override
   Widget build(BuildContext context) {
@@ -785,21 +942,24 @@ class _ChatInput extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 8),
-        Container(
-          width: 40,
-          height: 40,
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [AppColors.danger, AppColors.warning],
+        GestureDetector(
+          onTap: onGift,
+          child: Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [AppColors.danger, AppColors.warning],
+              ),
+              borderRadius: BorderRadius.circular(12),
             ),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: const Icon(
-            Icons.card_giftcard_rounded,
-            size: 20,
-            color: Colors.white,
+            child: const Icon(
+              Icons.card_giftcard_rounded,
+              size: 20,
+              color: Colors.white,
+            ),
           ),
         ),
         const SizedBox(width: 8),

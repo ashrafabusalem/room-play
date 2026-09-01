@@ -149,6 +149,29 @@ class AppLocalizationsEn extends AppLocalizations {
   String get roomChatHint => 'Say something...';
 
   @override
+  String get giftSendTitle => 'Send a gift';
+
+  @override
+  String get giftRecipient => 'Send to';
+
+  @override
+  String get giftNoRecipients => 'There is nobody else in the room yet.';
+
+  @override
+  String giftPrice(int amount) {
+    return '$amount Gold';
+  }
+
+  @override
+  String giftSent(String name) {
+    return 'Gift sent to $name';
+  }
+
+  @override
+  String get giftFailed =>
+      'The gift could not be sent. Check your Gold balance and try again.';
+
+  @override
   String get roomSystemSender => 'System';
 
   @override

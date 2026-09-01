@@ -344,6 +344,42 @@ abstract class AppLocalizations {
   /// **'Say something...'**
   String get roomChatHint;
 
+  /// No description provided for @giftSendTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Send a gift'**
+  String get giftSendTitle;
+
+  /// No description provided for @giftRecipient.
+  ///
+  /// In en, this message translates to:
+  /// **'Send to'**
+  String get giftRecipient;
+
+  /// No description provided for @giftNoRecipients.
+  ///
+  /// In en, this message translates to:
+  /// **'There is nobody else in the room yet.'**
+  String get giftNoRecipients;
+
+  /// No description provided for @giftPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} Gold'**
+  String giftPrice(int amount);
+
+  /// No description provided for @giftSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Gift sent to {name}'**
+  String giftSent(String name);
+
+  /// No description provided for @giftFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'The gift could not be sent. Check your Gold balance and try again.'**
+  String get giftFailed;
+
   /// No description provided for @roomSystemSender.
   ///
   /// In en, this message translates to:

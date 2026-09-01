@@ -24,6 +24,7 @@
                 <a class="admin-nav {{ request()->routeIs('admin.banners.*') ? 'admin-nav-active' : '' }}" href="{{ route('admin.banners.index') }}">Banners</a>
                 <a class="admin-nav {{ request()->routeIs('admin.offers.*') ? 'admin-nav-active' : '' }}" href="{{ route('admin.offers.index') }}">Offers</a>
                 <a class="admin-nav {{ request()->routeIs('admin.game-prompts.*') ? 'admin-nav-active' : '' }}" href="{{ route('admin.game-prompts.index') }}">Game prompts</a>
+                <a class="admin-nav {{ request()->routeIs('admin.gifts.*') ? 'admin-nav-active' : '' }}" href="{{ route('admin.gifts.index') }}">Gifts</a>
                 <a class="admin-nav {{ request()->routeIs('admin.audit.*') ? 'admin-nav-active' : '' }}" href="{{ route('admin.audit.index') }}">Audit log</a>
                 <a class="admin-nav {{ request()->routeIs('admin.settings.*') ? 'admin-nav-active' : '' }}" href="{{ route('admin.settings.edit') }}">App settings</a>
             </nav>
