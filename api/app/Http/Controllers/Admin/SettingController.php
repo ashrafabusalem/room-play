@@ -27,6 +27,8 @@ class SettingController extends Controller
             'privacy_url' => ['nullable', 'url', 'max:500'],
             'minimum_android_version' => ['nullable', 'regex:/^\d+(\.\d+){0,3}$/', 'max:30'],
             'minimum_ios_version' => ['nullable', 'regex:/^\d+(\.\d+){0,3}$/', 'max:30'],
+            'room_reward_gold' => ['sometimes', 'required', 'integer', 'min:1', 'max:100000'],
+            'room_reward_cooldown_minutes' => ['sometimes', 'required', 'integer', 'min:1', 'max:10080'],
         ]);
         $data['registration_enabled'] = $request->boolean('registration_enabled');
         $data['maintenance_enabled'] = $request->boolean('maintenance_enabled');

@@ -1,8 +1,8 @@
 <?php
 namespace App\Http\Controllers\Admin;
-use App\Http\Controllers\Controller;use App\Models\{AdminAudit,Gift};use Illuminate\Http\{RedirectResponse,Request};use Illuminate\View\View;
+use App\Http\Controllers\Controller;use App\Models\{AdminAudit,Gift,RoomGift};use Illuminate\Http\{RedirectResponse,Request};use Illuminate\View\View;
 class GiftController extends Controller{
- public function index():View{return view('admin.gifts.index',['gifts'=>Gift::orderBy('sort_order')->get()]);}
+ public function index():View{return view('admin.gifts.index',['gifts'=>Gift::withCount('roomGifts')->withSum('roomGifts','price')->orderBy('sort_order')->get(),'totalSends'=>RoomGift::count(),'totalGold'=>(int)RoomGift::sum('price'),'weekSends'=>RoomGift::where('created_at','>=',now()->subDays(7))->count()]);}
  public function create():View{return view('admin.gifts.form',['gift'=>new Gift]);}
  public function store(Request $r):RedirectResponse{$gift=Gift::create($this->data($r));$this->audit($r,'gift.created',$gift);return redirect()->route('admin.gifts.edit',$gift)->with('success','Gift created.');}
  public function edit(Gift $gift):View{return view('admin.gifts.form',compact('gift'));}

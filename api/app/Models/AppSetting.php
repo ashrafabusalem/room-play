@@ -14,6 +14,8 @@ class AppSetting extends Model
             'registration_enabled' => 'boolean',
             'maintenance_enabled' => 'boolean',
             'force_update' => 'boolean',
+            'room_reward_gold' => 'integer',
+            'room_reward_cooldown_minutes' => 'integer',
         ];
     }
 
