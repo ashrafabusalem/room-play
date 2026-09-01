@@ -140,7 +140,7 @@ class UserController extends Controller
         $this->audit($request, 'wallet.adjusted', $managedUser, [
             'reference' => $transaction->reference, 'amount' => $transaction->amount, 'balance_after' => $transaction->balance_after,
         ]);
-        return back()->with('success', 'Coin balance adjusted.');
+        return back()->with('success', 'Gold balance adjusted.');
     }
 
     public function destroy(Request $request, string $user): RedirectResponse

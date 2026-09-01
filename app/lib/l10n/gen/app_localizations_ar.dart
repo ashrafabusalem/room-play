@@ -76,7 +76,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get bannerTournamentSubtitle =>
-      'اربح العملات في لودو ويونو\nطوال عطلة الأسبوع.';
+      'اربح الذهب في لودو ويونو\nطوال عطلة الأسبوع.';
 
   @override
   String get bannerTournamentCta => 'انضم';
@@ -262,23 +262,23 @@ class AppLocalizationsAr extends AppLocalizations {
   String get profileFriends => 'الأصدقاء';
 
   @override
-  String get profileCoinBalance => 'رصيد العملات';
+  String get profileCoinBalance => 'رصيد الذهب';
 
   @override
   String get profileTopUp => 'شحن';
 
   @override
-  String get walletTitle => 'محفظة العملات';
+  String get walletTitle => 'محفظة الذهب';
 
   @override
   String get walletHistory => 'سجل المعاملات';
 
   @override
-  String get walletEmpty => 'لا توجد معاملات عملات بعد.';
+  String get walletEmpty => 'لا توجد معاملات ذهب بعد.';
 
   @override
   String get walletPurchasesLater =>
-      'سيتم تفعيل شراء العملات بعد ربط التحقق الآمن من إيصالات Apple وGoogle.';
+      'سيتم تفعيل شراء الذهب بعد ربط التحقق الآمن من إيصالات Apple وGoogle.';
 
   @override
   String get profileWallet => 'المحفظة';

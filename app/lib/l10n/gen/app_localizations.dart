@@ -227,7 +227,7 @@ abstract class AppLocalizations {
   /// No description provided for @bannerTournamentSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Win coins in Ludo and UNO\nall weekend long.'**
+  /// **'Win Gold in Ludo and UNO\nall weekend long.'**
   String get bannerTournamentSubtitle;
 
   /// No description provided for @bannerTournamentCta.
@@ -593,7 +593,7 @@ abstract class AppLocalizations {
   /// No description provided for @profileCoinBalance.
   ///
   /// In en, this message translates to:
-  /// **'Coin balance'**
+  /// **'Gold balance'**
   String get profileCoinBalance;
 
   /// No description provided for @profileTopUp.
@@ -605,7 +605,7 @@ abstract class AppLocalizations {
   /// No description provided for @walletTitle.
   ///
   /// In en, this message translates to:
-  /// **'Coin wallet'**
+  /// **'Gold wallet'**
   String get walletTitle;
 
   /// No description provided for @walletHistory.
@@ -617,13 +617,13 @@ abstract class AppLocalizations {
   /// No description provided for @walletEmpty.
   ///
   /// In en, this message translates to:
-  /// **'No coin transactions yet.'**
+  /// **'No Gold transactions yet.'**
   String get walletEmpty;
 
   /// No description provided for @walletPurchasesLater.
   ///
   /// In en, this message translates to:
-  /// **'Coin purchases will be enabled after secure Apple and Google receipt verification is connected.'**
+  /// **'Gold purchases will be enabled after secure Apple and Google receipt verification is connected.'**
   String get walletPurchasesLater;
 
   /// No description provided for @profileWallet.

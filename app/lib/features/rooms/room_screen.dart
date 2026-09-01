@@ -405,7 +405,7 @@ class _SeatGrid extends StatelessWidget {
           crossAxisCount: 3,
           mainAxisSpacing: 14,
           crossAxisSpacing: 8,
-          // Sized to the seat contents (avatar + name + coins); a looser ratio
+          // Sized to the seat contents (avatar + name + Gold); a looser ratio
           // leaves dead space between the rows.
           childAspectRatio: 1.05,
         ),

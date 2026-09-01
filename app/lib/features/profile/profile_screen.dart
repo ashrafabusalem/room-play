@@ -162,7 +162,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final l10n = AppLocalizations.of(context);
     final auth = AuthScope.of(context);
 
-    // Real account details now. Everything else on this screen — coins, the
+    // Real account details now. Everything else on this screen — Gold, the
     // follower counts — is still mock and stays that way until Phase 4.
     final displayName = auth.name?.trim().isNotEmpty == true
         ? auth.name!.trim()

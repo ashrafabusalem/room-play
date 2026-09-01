@@ -123,7 +123,7 @@ void main() {
     await tester.tap(find.text('Profile'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Coin balance'), findsOneWidget);
+    expect(find.text('Gold balance'), findsOneWidget);
   });
 
   testWidgets('see all opens the games catalogue', (tester) async {
@@ -174,7 +174,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('حسابي'), findsWidgets);
-    expect(find.text('رصيد العملات'), findsOneWidget);
+    expect(find.text('رصيد الذهب'), findsOneWidget);
   });
 
   testWidgets('language choice is written to preferences', (tester) async {

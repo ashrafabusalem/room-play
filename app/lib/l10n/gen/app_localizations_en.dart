@@ -77,7 +77,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get bannerTournamentSubtitle =>
-      'Win coins in Ludo and UNO\nall weekend long.';
+      'Win Gold in Ludo and UNO\nall weekend long.';
 
   @override
   String get bannerTournamentCta => 'Join';
@@ -264,23 +264,23 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profileFriends => 'Friends';
 
   @override
-  String get profileCoinBalance => 'Coin balance';
+  String get profileCoinBalance => 'Gold balance';
 
   @override
   String get profileTopUp => 'Top Up';
 
   @override
-  String get walletTitle => 'Coin wallet';
+  String get walletTitle => 'Gold wallet';
 
   @override
   String get walletHistory => 'Transaction history';
 
   @override
-  String get walletEmpty => 'No coin transactions yet.';
+  String get walletEmpty => 'No Gold transactions yet.';
 
   @override
   String get walletPurchasesLater =>
-      'Coin purchases will be enabled after secure Apple and Google receipt verification is connected.';
+      'Gold purchases will be enabled after secure Apple and Google receipt verification is connected.';
 
   @override
   String get profileWallet => 'Wallet';
