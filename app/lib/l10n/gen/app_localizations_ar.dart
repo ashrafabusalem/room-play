@@ -244,6 +244,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get messagesTitle => 'الرسائل';
 
   @override
+  String get messagesNewChat => 'رسالة جديدة';
+
+  @override
   String get messagesVoiceNote => 'رسالة صوتية';
 
   @override

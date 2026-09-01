@@ -554,6 +554,12 @@ abstract class AppLocalizations {
   /// **'Messages'**
   String get messagesTitle;
 
+  /// No description provided for @messagesNewChat.
+  ///
+  /// In en, this message translates to:
+  /// **'New message'**
+  String get messagesNewChat;
+
   /// No description provided for @messagesVoiceNote.
   ///
   /// In en, this message translates to:

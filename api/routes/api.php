@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ContentController;
 use App\Http\Controllers\Api\RoomController;
+use App\Http\Controllers\Api\DirectMessageController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -39,4 +40,9 @@ Route::middleware(['auth:sanctum', 'active'])->group(function () {
     Route::patch('/rooms/{room}/microphone', [RoomController::class, 'microphone']);
     Route::get('/rooms/{room}/messages', [RoomController::class, 'messages']);
     Route::post('/rooms/{room}/messages', [RoomController::class, 'sendMessage'])->middleware('throttle:60,1');
+    Route::get('/users/search', [DirectMessageController::class, 'search']);
+    Route::get('/conversations', [DirectMessageController::class, 'index']);
+    Route::post('/conversations', [DirectMessageController::class, 'store']);
+    Route::get('/conversations/{conversation}', [DirectMessageController::class, 'show']);
+    Route::post('/conversations/{conversation}/messages', [DirectMessageController::class, 'send'])->middleware('throttle:60,1');
 });

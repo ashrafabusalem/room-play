@@ -205,6 +205,7 @@ class Conversation {
     this.verified = false,
     this.isVoiceNote = false,
     this.isGroup = false,
+    this.userId,
   });
 
   final String id;
@@ -220,6 +221,23 @@ class Conversation {
   final bool verified;
   final bool isVoiceNote;
   final bool isGroup;
+  final String? userId;
+
+  factory Conversation.fromJson(Map<String, dynamic> json) {
+    final user = json['user'] as Map<String, dynamic>? ?? const {};
+    final last = json['last_message'] as Map<String, dynamic>?;
+    final created = DateTime.tryParse(last?['created_at'] as String? ?? '');
+    return Conversation(
+      id: json['id'] as String? ?? '',
+      userId: user['id'] as String?,
+      name: user['name'] as String? ?? '',
+      preview: last?['text'] as String? ?? '',
+      time: created == null
+          ? ''
+          : '${created.hour.toString().padLeft(2, '0')}:${created.minute.toString().padLeft(2, '0')}',
+      unread: (json['unread_count'] as num?)?.toInt() ?? 0,
+    );
+  }
 }
 
 class HeroBanner {

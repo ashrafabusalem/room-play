@@ -246,6 +246,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get messagesTitle => 'Messages';
 
   @override
+  String get messagesNewChat => 'New message';
+
+  @override
   String get messagesVoiceNote => 'Voice message';
 
   @override
