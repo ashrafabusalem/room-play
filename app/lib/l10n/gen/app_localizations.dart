@@ -284,6 +284,48 @@ abstract class AppLocalizations {
   /// **'Search'**
   String get actionSearch;
 
+  /// No description provided for @searchTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Search'**
+  String get searchTitle;
+
+  /// No description provided for @searchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search people, names, rooms, or IDs'**
+  String get searchHint;
+
+  /// No description provided for @searchPeople.
+  ///
+  /// In en, this message translates to:
+  /// **'People'**
+  String get searchPeople;
+
+  /// No description provided for @searchRooms.
+  ///
+  /// In en, this message translates to:
+  /// **'Rooms'**
+  String get searchRooms;
+
+  /// No description provided for @searchEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No matching people or rooms'**
+  String get searchEmpty;
+
+  /// No description provided for @searchUserId.
+  ///
+  /// In en, this message translates to:
+  /// **'ID {id}'**
+  String searchUserId(String id);
+
+  /// No description provided for @searchRoomDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Room {id} · {count} members'**
+  String searchRoomDetails(String id, int count);
+
   /// No description provided for @actionPlay.
   ///
   /// In en, this message translates to:

@@ -16,6 +16,7 @@ import '../rooms/room_screen.dart';
 import '../auth/auth_controller.dart';
 import '../notifications/notifications_screen.dart';
 import '../rankings/rankings_screen.dart';
+import '../search/search_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key, required this.onSeeAllGames});
@@ -106,6 +107,9 @@ class _HomeScreenState extends State<HomeScreen> {
             onRankings: () => Navigator.of(context).push(
               MaterialPageRoute<void>(builder: (_) => const RankingsScreen()),
             ),
+            onSearch: () => Navigator.of(context).push(
+              MaterialPageRoute<void>(builder: (_) => const SearchScreen()),
+            ),
           ),
           const SizedBox(height: AppSizes.gapL),
           _HeroCarousel(banners: _banners ?? _fallback.banners(l10n)),
@@ -136,11 +140,13 @@ class _HomeHeader extends StatelessWidget {
     required this.unreadNotifications,
     required this.onNotifications,
     required this.onRankings,
+    required this.onSearch,
   });
 
   final int unreadNotifications;
   final VoidCallback onNotifications;
   final VoidCallback onRankings;
+  final VoidCallback onSearch;
 
   @override
   Widget build(BuildContext context) {
@@ -187,7 +193,7 @@ class _HomeHeader extends StatelessWidget {
           const Spacer(),
           _HeaderIcon(icon: Icons.emoji_events_rounded, onTap: onRankings),
           const SizedBox(width: 4),
-          const _HeaderIcon(icon: Icons.search_rounded),
+          _HeaderIcon(icon: Icons.search_rounded, onTap: onSearch),
           const SizedBox(width: 4),
           _HeaderIcon(
             icon: Icons.notifications_rounded,

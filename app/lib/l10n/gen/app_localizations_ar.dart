@@ -115,6 +115,31 @@ class AppLocalizationsAr extends AppLocalizations {
   String get actionSearch => 'بحث';
 
   @override
+  String get searchTitle => 'البحث';
+
+  @override
+  String get searchHint => 'ابحث عن أشخاص أو غرف أو أرقام تعريف';
+
+  @override
+  String get searchPeople => 'الأشخاص';
+
+  @override
+  String get searchRooms => 'الغرف';
+
+  @override
+  String get searchEmpty => 'لا يوجد أشخاص أو غرف مطابقة';
+
+  @override
+  String searchUserId(String id) {
+    return 'المعرّف $id';
+  }
+
+  @override
+  String searchRoomDetails(String id, int count) {
+    return 'الغرفة $id · $count أعضاء';
+  }
+
+  @override
   String get actionPlay => 'العب';
 
   @override

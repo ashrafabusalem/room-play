@@ -115,6 +115,31 @@ class AppLocalizationsEn extends AppLocalizations {
   String get actionSearch => 'Search';
 
   @override
+  String get searchTitle => 'Search';
+
+  @override
+  String get searchHint => 'Search people, names, rooms, or IDs';
+
+  @override
+  String get searchPeople => 'People';
+
+  @override
+  String get searchRooms => 'Rooms';
+
+  @override
+  String get searchEmpty => 'No matching people or rooms';
+
+  @override
+  String searchUserId(String id) {
+    return 'ID $id';
+  }
+
+  @override
+  String searchRoomDetails(String id, int count) {
+    return 'Room $id · $count members';
+  }
+
+  @override
   String get actionPlay => 'Play';
 
   @override
