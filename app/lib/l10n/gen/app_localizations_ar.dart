@@ -438,6 +438,32 @@ class AppLocalizationsAr extends AppLocalizations {
   String get profileUnblock => 'إلغاء الحظر';
 
   @override
+  String get privacySafetyTitle => 'الخصوصية والأمان';
+
+  @override
+  String get privacyMessagesDescription =>
+      'اختر من يمكنه بدء محادثة مباشرة معك.';
+
+  @override
+  String get privacyBlockedAccounts => 'الحسابات المحظورة';
+
+  @override
+  String get privacyBlockedDescription =>
+      'لا يمكن للمحظورين عرض ملفك أو مراسلتك أو متابعتك أو إرسال الدعوات.';
+
+  @override
+  String get privacyNoBlockedAccounts => 'لم تحظر أي شخص';
+
+  @override
+  String privacyUnblockTitle(String name) {
+    return 'إلغاء حظر $name؟';
+  }
+
+  @override
+  String get privacyUnblockBody =>
+      'سيتمكن من العثور عليك والتواصل معك مجدداً وفق إعدادات الخصوصية.';
+
+  @override
   String get profileReport => 'الإبلاغ عن المستخدم';
 
   @override

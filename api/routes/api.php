@@ -53,6 +53,7 @@ Route::middleware(['auth:sanctum', 'active'])->group(function () {
     Route::get('/users/search', [DirectMessageController::class, 'search']);
     Route::get('/profiles/{user:public_id}', [ProfileController::class, 'show']);
     Route::patch('/profile', [ProfileController::class, 'update']);
+    Route::get('/profile/blocked-users', [ProfileController::class, 'blocked']);
     Route::post('/profile/avatar', [ProfileController::class, 'avatar'])->middleware('throttle:10,1');
     Route::post('/profiles/{user:public_id}/follow', [ProfileController::class, 'follow']);
     Route::delete('/profiles/{user:public_id}/follow', [ProfileController::class, 'unfollow']);

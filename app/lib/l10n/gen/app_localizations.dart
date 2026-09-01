@@ -908,6 +908,48 @@ abstract class AppLocalizations {
   /// **'Unblock user'**
   String get profileUnblock;
 
+  /// No description provided for @privacySafetyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy & safety'**
+  String get privacySafetyTitle;
+
+  /// No description provided for @privacyMessagesDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose who can start a direct conversation with you.'**
+  String get privacyMessagesDescription;
+
+  /// No description provided for @privacyBlockedAccounts.
+  ///
+  /// In en, this message translates to:
+  /// **'Blocked accounts'**
+  String get privacyBlockedAccounts;
+
+  /// No description provided for @privacyBlockedDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Blocked people cannot view your profile, message you, follow you, or send invitations.'**
+  String get privacyBlockedDescription;
+
+  /// No description provided for @privacyNoBlockedAccounts.
+  ///
+  /// In en, this message translates to:
+  /// **'You haven\'t blocked anyone'**
+  String get privacyNoBlockedAccounts;
+
+  /// No description provided for @privacyUnblockTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Unblock {name}?'**
+  String privacyUnblockTitle(String name);
+
+  /// No description provided for @privacyUnblockBody.
+  ///
+  /// In en, this message translates to:
+  /// **'They will be able to find and contact you again based on your privacy settings.'**
+  String get privacyUnblockBody;
+
   /// No description provided for @profileReport.
   ///
   /// In en, this message translates to:

@@ -93,6 +93,17 @@ class ProfileController extends Controller
         return response()->json(['message' => 'User unblocked.']);
     }
 
+    public function blocked(Request $request): JsonResponse
+    {
+        $users = $request->user()->blockedUsers()->latest('user_blocks.created_at')->get();
+
+        return response()->json(['users' => $users->map(fn (User $user) => [
+            'id' => $user->public_id,
+            'name' => $user->name,
+            'avatar_url' => $user->avatarUrl(),
+        ])->values()]);
+    }
+
     public function report(Request $request, User $user): JsonResponse
     {
         abort_if($request->user()->is($user), 422, 'You cannot report yourself.');

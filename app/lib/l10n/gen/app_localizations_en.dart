@@ -441,6 +441,32 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profileUnblock => 'Unblock user';
 
   @override
+  String get privacySafetyTitle => 'Privacy & safety';
+
+  @override
+  String get privacyMessagesDescription =>
+      'Choose who can start a direct conversation with you.';
+
+  @override
+  String get privacyBlockedAccounts => 'Blocked accounts';
+
+  @override
+  String get privacyBlockedDescription =>
+      'Blocked people cannot view your profile, message you, follow you, or send invitations.';
+
+  @override
+  String get privacyNoBlockedAccounts => 'You haven\'t blocked anyone';
+
+  @override
+  String privacyUnblockTitle(String name) {
+    return 'Unblock $name?';
+  }
+
+  @override
+  String get privacyUnblockBody =>
+      'They will be able to find and contact you again based on your privacy settings.';
+
+  @override
   String get profileReport => 'Report user';
 
   @override

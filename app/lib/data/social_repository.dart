@@ -127,6 +127,12 @@ class SocialRepository {
       ? _api.post('/profiles/$id/block').then((_) {})
       : _api.delete('/profiles/$id/block').then((_) {});
 
+  Future<List<AppUser>> blockedUsers() =>
+      _users('/profile/blocked-users', 'users');
+
+  Future<void> updateMessagePrivacy(String value) =>
+      _api.patch('/profile', body: {'dm_privacy': value}).then((_) {});
+
   Future<void> report(String id, String reason, String details) => _api
       .post(
         '/profiles/$id/reports',

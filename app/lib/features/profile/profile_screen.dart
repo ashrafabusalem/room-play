@@ -11,6 +11,7 @@ import '../../widgets/avatar.dart';
 import '../../widgets/common.dart';
 import '../auth/auth_controller.dart';
 import 'social_hub_screen.dart';
+import 'privacy_safety_screen.dart';
 import 'wallet_screen.dart';
 
 /// Profile tab.
@@ -310,6 +311,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 () => Navigator.of(context).push(
                   MaterialPageRoute<void>(
                     builder: (_) => const SocialHubScreen(),
+                  ),
+                ),
+              ),
+              (
+                Icons.shield_rounded,
+                l10n.privacySafetyTitle,
+                null,
+                () => Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (_) => PrivacySafetyScreen(
+                      messagePrivacy: _profile?.dmPrivacy ?? 'everyone',
+                    ),
                   ),
                 ),
               ),

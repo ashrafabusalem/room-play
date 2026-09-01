@@ -37,6 +37,21 @@ class ProfileTest extends TestCase
         $this->actingAs($me)->deleteJson("/api/profiles/{$other->public_id}/block")->assertOk();
     }
 
+    public function test_user_can_list_and_unblock_blocked_accounts(): void
+    {
+        $me = User::factory()->create();
+        $blocked = User::factory()->create(['name' => 'Blocked Person']);
+        $me->blockedUsers()->attach($blocked);
+
+        $this->actingAs($me)->getJson('/api/profile/blocked-users')
+            ->assertOk()
+            ->assertJsonPath('users.0.id', $blocked->public_id)
+            ->assertJsonPath('users.0.name', 'Blocked Person');
+
+        $this->actingAs($me)->deleteJson("/api/profiles/{$blocked->public_id}/block")->assertOk();
+        $this->assertDatabaseMissing('user_blocks', ['blocker_id' => $me->id, 'blocked_id' => $blocked->id]);
+    }
+
     public function test_blocking_and_privacy_prevent_direct_messages(): void
     {
         $sender = User::factory()->create();
