@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
-import '../../data/mock_data.dart';
 import '../../data/models.dart';
 import '../../data/room_repository.dart';
 import '../auth/auth_controller.dart';
@@ -26,9 +25,9 @@ class RoomsScreen extends StatefulWidget {
 }
 
 class _RoomsScreenState extends State<RoomsScreen> {
-  static const _repo = MockRepository();
-  List<Room> _rooms = _repo.rooms();
+  List<Room> _rooms = const [];
   bool _loaded = false;
+  bool _loading = false;
 
   @override
   void didChangeDependencies() {
@@ -39,6 +38,8 @@ class _RoomsScreenState extends State<RoomsScreen> {
   }
 
   Future<void> _load() async {
+    if (_loading) return;
+    setState(() => _loading = true);
     final auth = AuthScope.of(context);
     try {
       final rooms = await RoomRepository(
@@ -47,7 +48,9 @@ class _RoomsScreenState extends State<RoomsScreen> {
       ).rooms();
       if (mounted) setState(() => _rooms = rooms);
     } catch (_) {
-      // Keep the built-in rooms available while offline.
+      // Pull to refresh gives the user a direct retry when offline.
+    } finally {
+      if (mounted) setState(() => _loading = false);
     }
   }
 
@@ -85,21 +88,46 @@ class _RoomsScreenState extends State<RoomsScreen> {
           ),
           const SizedBox(height: 12),
           Expanded(
-            child: GridView.builder(
-              padding: const EdgeInsets.fromLTRB(
-                AppSizes.gutter,
-                0,
-                AppSizes.gutter,
-                24,
-              ),
-              itemCount: rooms.length,
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                mainAxisSpacing: 12,
-                crossAxisSpacing: 12,
-                childAspectRatio: 0.92,
-              ),
-              itemBuilder: (context, i) => _RoomCard(room: rooms[i]),
+            child: RefreshIndicator(
+              onRefresh: _load,
+              child: rooms.isEmpty
+                  ? ListView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      children: [
+                        SizedBox(
+                          height: 320,
+                          child: Center(
+                            child: _loading
+                                ? const CircularProgressIndicator()
+                                : Padding(
+                                    padding: const EdgeInsets.all(24),
+                                    child: Text(
+                                      AppLocalizations.of(context).gameNoRooms,
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                          ),
+                        ),
+                      ],
+                    )
+                  : GridView.builder(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      padding: const EdgeInsets.fromLTRB(
+                        AppSizes.gutter,
+                        0,
+                        AppSizes.gutter,
+                        24,
+                      ),
+                      itemCount: rooms.length,
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            mainAxisSpacing: 12,
+                            crossAxisSpacing: 12,
+                            childAspectRatio: 0.92,
+                          ),
+                      itemBuilder: (context, i) => _RoomCard(room: rooms[i]),
+                    ),
             ),
           ),
         ],

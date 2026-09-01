@@ -7,7 +7,6 @@ import '../../data/room_repository.dart';
 import '../../l10n/gen/app_localizations.dart';
 import '../auth/auth_controller.dart';
 import '../auth/widgets/auth_field.dart';
-import '../rooms/room_screen.dart';
 
 class CreateRoomScreen extends StatefulWidget {
   const CreateRoomScreen({super.key});
@@ -43,9 +42,7 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
         currentUserId: auth.publicId,
       ).create(name: _name.text.trim(), language: _language, tag: _tag);
       if (!mounted) return;
-      await Navigator.of(context).pushReplacement(
-        MaterialPageRoute<void>(builder: (_) => RoomScreen(room: room)),
-      );
+      Navigator.of(context).pop(room);
     } on ApiException catch (error) {
       if (mounted) {
         setState(

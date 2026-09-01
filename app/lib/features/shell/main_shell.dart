@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
 import '../../data/mock_data.dart';
+import '../../data/models.dart';
 import '../../l10n/gen/app_localizations.dart';
 import '../../widgets/common.dart';
 import '../create/create_screen.dart';
@@ -12,6 +13,7 @@ import '../home/home_screen.dart';
 import '../messages/messages_screen.dart';
 import '../profile/profile_screen.dart';
 import '../rooms/rooms_screen.dart';
+import '../rooms/room_screen.dart';
 
 /// Bottom-nav container: Home · Rooms · (+) · Messages · Profile.
 ///
@@ -27,6 +29,7 @@ class MainShell extends StatefulWidget {
 class _MainShellState extends State<MainShell> {
   static const _repo = MockRepository();
   int _index = 0;
+  int _roomsVersion = 0;
 
   /// Games is not a nav destination in the mockup — it is pushed on top, so
   /// the back arrow in its app bar has somewhere to go.
@@ -43,9 +46,25 @@ class _MainShellState extends State<MainShell> {
       builder: (_) => const CreateScreen(),
     );
     if (!mounted || action != 'room') return;
-    await Navigator.of(
-      context,
-    ).push(MaterialPageRoute<void>(builder: (_) => const CreateRoomScreen()));
+    final room = await Navigator.of(context).push<Room>(
+      MaterialPageRoute<Room>(builder: (_) => const CreateRoomScreen()),
+    );
+    if (!mounted || room == null) return;
+    await Navigator.of(context)
+        .push(MaterialPageRoute<void>(builder: (_) => RoomScreen(room: room)));
+    if (mounted) {
+      setState(() {
+        _index = 1;
+        _roomsVersion++;
+      });
+    }
+  }
+
+  void _selectTab(int index) {
+    setState(() {
+      _index = index;
+      if (index == 1) _roomsVersion++;
+    });
   }
 
   @override
@@ -57,7 +76,7 @@ class _MainShellState extends State<MainShell> {
         index: _index,
         children: [
           HomeScreen(onSeeAllGames: _openGames),
-          const RoomsScreen(),
+          RoomsScreen(key: ValueKey(_roomsVersion)),
           const MessagesScreen(),
           const ProfileScreen(),
         ],
@@ -65,7 +84,7 @@ class _MainShellState extends State<MainShell> {
       bottomNavigationBar: _BottomNav(
         current: _index,
         unread: _repo.unreadTotal,
-        onTap: (i) => setState(() => _index = i),
+        onTap: _selectTab,
         onCreate: _openCreate,
       ),
     );

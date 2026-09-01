@@ -148,6 +148,45 @@ void main() {
     expect(find.text('Open Room'), findsOneWidget);
   });
 
+  testWidgets('created room appears when returning to the Rooms tab', (
+    tester,
+  ) async {
+    const room = {
+      'id': '123456',
+      'name': 'My Test Room',
+      'language': 'EN',
+      'tag': 'chatting',
+      'member_count': 1,
+      'members': <Object>[],
+      'seats': <Object>[],
+    };
+    final server = MockClient((request) async {
+      if (request.url.path == '/api/rooms' && request.method == 'POST') {
+        return _json({'room': room}, 201);
+      }
+      if (request.url.path == '/api/rooms' && request.method == 'GET') {
+        return _json({
+          'data': [room],
+        });
+      }
+      return _json({'message': 'ok'});
+    });
+    await _pumpApp(tester, server: server);
+
+    await tester.tap(find.byIcon(Icons.add_rounded));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Create Room'));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byType(TextFormField).first, 'My Test Room');
+    await tester.tap(find.text('Open Room'));
+    await tester.pumpAndSettle();
+    expect(find.text('ID: 123456'), findsOneWidget);
+
+    await tester.tap(find.byIcon(Icons.keyboard_arrow_down_rounded));
+    await tester.pumpAndSettle();
+    expect(find.text('My Test Room'), findsOneWidget);
+  });
+
   testWidgets('see all opens the games catalogue', (tester) async {
     await _pumpApp(tester);
 
