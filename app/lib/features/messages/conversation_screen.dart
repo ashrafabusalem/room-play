@@ -7,6 +7,7 @@ import '../../data/direct_message_repository.dart';
 import '../../data/models.dart';
 import '../../l10n/gen/app_localizations.dart';
 import '../auth/auth_controller.dart';
+import '../profile/public_profile_screen.dart';
 
 class ConversationScreen extends StatefulWidget {
   const ConversationScreen({super.key, required this.conversation});
@@ -55,7 +56,19 @@ class _ConversationScreenState extends State<ConversationScreen> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: Text(widget.conversation.name)),
+    appBar: AppBar(
+      title: InkWell(
+        onTap: widget.conversation.userId == null
+            ? null
+            : () => Navigator.of(context).push(
+                MaterialPageRoute<void>(
+                  builder: (_) =>
+                      PublicProfileScreen(userId: widget.conversation.userId!),
+                ),
+              ),
+        child: Text(widget.conversation.name),
+      ),
+    ),
     body: SafeArea(
       child: Column(
         children: [

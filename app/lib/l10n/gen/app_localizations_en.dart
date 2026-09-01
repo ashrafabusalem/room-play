@@ -289,6 +289,75 @@ class AppLocalizationsEn extends AppLocalizations {
       'This screen was not in the mockup — layout is a proposal.';
 
   @override
+  String get profileEdit => 'Edit profile';
+
+  @override
+  String get profileBio => 'Bio';
+
+  @override
+  String get profileBioHint => 'Tell people a little about yourself';
+
+  @override
+  String get profileSave => 'Save changes';
+
+  @override
+  String get profileMessagePrivacy => 'Who can message me';
+
+  @override
+  String get profilePrivacyEveryone => 'Everyone';
+
+  @override
+  String get profilePrivacyFollowers => 'Followers';
+
+  @override
+  String get profilePrivacyNobody => 'Nobody';
+
+  @override
+  String get profileFollow => 'Follow';
+
+  @override
+  String get profileUnfollow => 'Following';
+
+  @override
+  String get profileMessage => 'Message';
+
+  @override
+  String get profileBlock => 'Block user';
+
+  @override
+  String get profileUnblock => 'Unblock user';
+
+  @override
+  String get profileReport => 'Report user';
+
+  @override
+  String get profileReportReason => 'Reason';
+
+  @override
+  String get profileReportDetails => 'Additional details';
+
+  @override
+  String get profileReportSent => 'Report sent to the moderation team.';
+
+  @override
+  String get profileReportHarassment => 'Harassment';
+
+  @override
+  String get profileReportSpam => 'Spam';
+
+  @override
+  String get profileReportImpersonation => 'Impersonation';
+
+  @override
+  String get profileReportInappropriate => 'Inappropriate content';
+
+  @override
+  String get profileReportOther => 'Other';
+
+  @override
+  String get commonCancel => 'Cancel';
+
+  @override
   String get roomsTitle => 'Rooms';
 
   @override

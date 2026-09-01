@@ -76,6 +76,11 @@ class AuthController extends ChangeNotifier {
     await _run(() => _api.post('/forgot-password', body: {'email': email}));
   }
 
+  Future<void> applyProfileUpdate(Map<String, dynamic> user) async {
+    if (_token == null) return;
+    await _persist(token: _token!, user: user);
+  }
+
   /// Revokes the token server-side, then clears it locally.
   ///
   /// The local clear happens even if the network call fails: the user asked to

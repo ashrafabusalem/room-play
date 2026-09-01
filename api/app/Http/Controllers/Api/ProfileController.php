@@ -94,6 +94,7 @@ class ProfileController extends Controller
             'is_following' => $viewer->following()->whereKey($user->id)->exists(),
             'is_blocked' => $viewer->blockedUsers()->whereKey($user->id)->exists(),
             'blocked_by' => $user->blockedUsers()->whereKey($viewer->id)->exists(),
+            'dm_privacy' => $viewer->is($user) ? $user->dm_privacy : null,
         ];
     }
 

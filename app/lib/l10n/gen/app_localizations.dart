@@ -638,6 +638,144 @@ abstract class AppLocalizations {
   /// **'This screen was not in the mockup — layout is a proposal.'**
   String get profileNotDesignedNote;
 
+  /// No description provided for @profileEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit profile'**
+  String get profileEdit;
+
+  /// No description provided for @profileBio.
+  ///
+  /// In en, this message translates to:
+  /// **'Bio'**
+  String get profileBio;
+
+  /// No description provided for @profileBioHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Tell people a little about yourself'**
+  String get profileBioHint;
+
+  /// No description provided for @profileSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save changes'**
+  String get profileSave;
+
+  /// No description provided for @profileMessagePrivacy.
+  ///
+  /// In en, this message translates to:
+  /// **'Who can message me'**
+  String get profileMessagePrivacy;
+
+  /// No description provided for @profilePrivacyEveryone.
+  ///
+  /// In en, this message translates to:
+  /// **'Everyone'**
+  String get profilePrivacyEveryone;
+
+  /// No description provided for @profilePrivacyFollowers.
+  ///
+  /// In en, this message translates to:
+  /// **'Followers'**
+  String get profilePrivacyFollowers;
+
+  /// No description provided for @profilePrivacyNobody.
+  ///
+  /// In en, this message translates to:
+  /// **'Nobody'**
+  String get profilePrivacyNobody;
+
+  /// No description provided for @profileFollow.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow'**
+  String get profileFollow;
+
+  /// No description provided for @profileUnfollow.
+  ///
+  /// In en, this message translates to:
+  /// **'Following'**
+  String get profileUnfollow;
+
+  /// No description provided for @profileMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Message'**
+  String get profileMessage;
+
+  /// No description provided for @profileBlock.
+  ///
+  /// In en, this message translates to:
+  /// **'Block user'**
+  String get profileBlock;
+
+  /// No description provided for @profileUnblock.
+  ///
+  /// In en, this message translates to:
+  /// **'Unblock user'**
+  String get profileUnblock;
+
+  /// No description provided for @profileReport.
+  ///
+  /// In en, this message translates to:
+  /// **'Report user'**
+  String get profileReport;
+
+  /// No description provided for @profileReportReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Reason'**
+  String get profileReportReason;
+
+  /// No description provided for @profileReportDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Additional details'**
+  String get profileReportDetails;
+
+  /// No description provided for @profileReportSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Report sent to the moderation team.'**
+  String get profileReportSent;
+
+  /// No description provided for @profileReportHarassment.
+  ///
+  /// In en, this message translates to:
+  /// **'Harassment'**
+  String get profileReportHarassment;
+
+  /// No description provided for @profileReportSpam.
+  ///
+  /// In en, this message translates to:
+  /// **'Spam'**
+  String get profileReportSpam;
+
+  /// No description provided for @profileReportImpersonation.
+  ///
+  /// In en, this message translates to:
+  /// **'Impersonation'**
+  String get profileReportImpersonation;
+
+  /// No description provided for @profileReportInappropriate.
+  ///
+  /// In en, this message translates to:
+  /// **'Inappropriate content'**
+  String get profileReportInappropriate;
+
+  /// No description provided for @profileReportOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get profileReportOther;
+
+  /// No description provided for @commonCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get commonCancel;
+
   /// No description provided for @roomsTitle.
   ///
   /// In en, this message translates to:

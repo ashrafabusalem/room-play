@@ -287,6 +287,75 @@ class AppLocalizationsAr extends AppLocalizations {
       'هذه الشاشة لم تكن ضمن التصميم — التخطيط مقترح.';
 
   @override
+  String get profileEdit => 'تعديل الحساب';
+
+  @override
+  String get profileBio => 'النبذة';
+
+  @override
+  String get profileBioHint => 'اكتب نبذة قصيرة عن نفسك';
+
+  @override
+  String get profileSave => 'حفظ التغييرات';
+
+  @override
+  String get profileMessagePrivacy => 'من يمكنه مراسلتي';
+
+  @override
+  String get profilePrivacyEveryone => 'الجميع';
+
+  @override
+  String get profilePrivacyFollowers => 'المتابعون';
+
+  @override
+  String get profilePrivacyNobody => 'لا أحد';
+
+  @override
+  String get profileFollow => 'متابعة';
+
+  @override
+  String get profileUnfollow => 'تتابعه';
+
+  @override
+  String get profileMessage => 'رسالة';
+
+  @override
+  String get profileBlock => 'حظر المستخدم';
+
+  @override
+  String get profileUnblock => 'إلغاء الحظر';
+
+  @override
+  String get profileReport => 'الإبلاغ عن المستخدم';
+
+  @override
+  String get profileReportReason => 'السبب';
+
+  @override
+  String get profileReportDetails => 'تفاصيل إضافية';
+
+  @override
+  String get profileReportSent => 'تم إرسال البلاغ إلى فريق الإشراف.';
+
+  @override
+  String get profileReportHarassment => 'مضايقة';
+
+  @override
+  String get profileReportSpam => 'رسائل مزعجة';
+
+  @override
+  String get profileReportImpersonation => 'انتحال شخصية';
+
+  @override
+  String get profileReportInappropriate => 'محتوى غير لائق';
+
+  @override
+  String get profileReportOther => 'أخرى';
+
+  @override
+  String get commonCancel => 'إلغاء';
+
+  @override
   String get roomsTitle => 'الغرف';
 
   @override

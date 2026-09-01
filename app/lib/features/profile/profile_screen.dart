@@ -4,6 +4,7 @@ import '../../core/locale/locale_controller.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
 import '../../data/models.dart';
+import '../../data/social_repository.dart';
 import '../../l10n/gen/app_localizations.dart';
 import '../../widgets/avatar.dart';
 import '../../widgets/common.dart';
@@ -16,8 +17,117 @@ import '../auth/auth_controller.dart';
 ///
 /// It is also where the language picker lives for now; it belongs in a proper
 /// Settings screen once one is designed.
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
+
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  SocialProfile? _profile;
+  bool _loading = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_profile == null && !_loading) _load();
+  }
+
+  Future<void> _load() async {
+    final auth = AuthScope.of(context);
+    if (auth.publicId == null) return;
+    setState(() => _loading = true);
+    try {
+      final profile = await SocialRepository(auth.api).profile(auth.publicId!);
+      if (mounted) setState(() => _profile = profile);
+    } catch (_) {
+      // Keep showing the locally cached account details while offline.
+    } finally {
+      if (mounted) setState(() => _loading = false);
+    }
+  }
+
+  Future<void> _edit() async {
+    final l10n = AppLocalizations.of(context);
+    final auth = AuthScope.of(context);
+    final profile = _profile;
+    if (profile == null) return;
+    final name = TextEditingController(text: profile.name);
+    final bio = TextEditingController(text: profile.bio ?? '');
+    var privacy = profile.dmPrivacy;
+    final saved = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => StatefulBuilder(
+        builder: (context, setDialogState) => AlertDialog(
+          title: Text(l10n.profileEdit),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: name,
+                  maxLength: 80,
+                  decoration: InputDecoration(labelText: l10n.authUsername),
+                ),
+                TextField(
+                  controller: bio,
+                  maxLength: 240,
+                  maxLines: 3,
+                  decoration: InputDecoration(
+                    labelText: l10n.profileBio,
+                    hintText: l10n.profileBioHint,
+                  ),
+                ),
+                DropdownButtonFormField<String>(
+                  initialValue: privacy,
+                  decoration: InputDecoration(
+                    labelText: l10n.profileMessagePrivacy,
+                  ),
+                  items:
+                      [
+                            ('everyone', l10n.profilePrivacyEveryone),
+                            ('followers', l10n.profilePrivacyFollowers),
+                            ('nobody', l10n.profilePrivacyNobody),
+                          ]
+                          .map(
+                            (item) => DropdownMenuItem(
+                              value: item.$1,
+                              child: Text(item.$2),
+                            ),
+                          )
+                          .toList(),
+                  onChanged: (value) => setDialogState(() => privacy = value!),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext, false),
+              child: Text(l10n.commonCancel),
+            ),
+            FilledButton(
+              onPressed: () async {
+                if (name.text.trim().length < 2) return;
+                final user = await SocialRepository(auth.api).updateProfile(
+                  name: name.text.trim(),
+                  bio: bio.text.trim(),
+                  dmPrivacy: privacy,
+                );
+                await auth.applyProfileUpdate(user);
+                if (dialogContext.mounted) Navigator.pop(dialogContext, true);
+              },
+              child: Text(l10n.profileSave),
+            ),
+          ],
+        ),
+      ),
+    );
+    name.dispose();
+    bio.dispose();
+    if (saved == true && mounted) await _load();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -55,11 +165,12 @@ class ProfileScreen extends StatelessWidget {
                   style: Theme.of(context).textTheme.displaySmall,
                 ),
                 const Spacer(),
-                const CircleIconButton(
+                CircleIconButton(
                   icon: Icons.settings_rounded,
                   background: Colors.transparent,
                   size: 36,
                   iconSize: 22,
+                  onTap: _edit,
                 ),
               ],
             ),
@@ -82,11 +193,25 @@ class ProfileScreen extends StatelessWidget {
                     icon: Icons.badge_rounded,
                   ),
                 ],
+                if (_profile?.bio?.isNotEmpty == true) ...[
+                  const SizedBox(height: 10),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 32),
+                    child: Text(
+                      _profile!.bio!,
+                      textAlign: TextAlign.center,
+                      textDirection: directionOf(_profile!.bio!),
+                    ),
+                  ),
+                ],
               ],
             ),
           ),
           const SizedBox(height: 24),
-          const _StatsRow(),
+          _StatsRow(
+            following: _profile?.following ?? 0,
+            followers: _profile?.followers ?? 0,
+          ),
           const SizedBox(height: 20),
           const _CoinCard(),
           const SizedBox(height: 20),
@@ -257,15 +382,16 @@ class _LanguageTile extends StatelessWidget {
 }
 
 class _StatsRow extends StatelessWidget {
-  const _StatsRow();
+  const _StatsRow({required this.following, required this.followers});
+  final int following;
+  final int followers;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final stats = [
-      ('128', l10n.profileFollowing),
-      ('1.4K', l10n.profileFollowers),
-      ('46', l10n.profileFriends),
+      ('$following', l10n.profileFollowing),
+      ('$followers', l10n.profileFollowers),
     ];
 
     return Row(
