@@ -46,6 +46,7 @@ class User extends Authenticatable
      */
     protected $attributes = [
         'level' => 1,
+        'dm_privacy' => 'everyone',
     ];
 
     /**
@@ -61,6 +62,26 @@ class User extends Authenticatable
             'blocked_at' => 'datetime',
             'must_change_password' => 'boolean',
         ];
+    }
+
+    public function followers()
+    {
+        return $this->belongsToMany(self::class, 'user_follows', 'followed_id', 'follower_id')->withTimestamps();
+    }
+
+    public function following()
+    {
+        return $this->belongsToMany(self::class, 'user_follows', 'follower_id', 'followed_id')->withTimestamps();
+    }
+
+    public function blockedUsers()
+    {
+        return $this->belongsToMany(self::class, 'user_blocks', 'blocker_id', 'blocked_id')->withTimestamps();
+    }
+
+    public function avatarUrl(): ?string
+    {
+        return $this->avatar_path ? asset('storage/'.$this->avatar_path) : null;
     }
 
     protected static function booted(): void

@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ContentController;
 use App\Http\Controllers\Api\RoomController;
 use App\Http\Controllers\Api\DirectMessageController;
+use App\Http\Controllers\Api\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -41,6 +42,13 @@ Route::middleware(['auth:sanctum', 'active'])->group(function () {
     Route::get('/rooms/{room}/messages', [RoomController::class, 'messages']);
     Route::post('/rooms/{room}/messages', [RoomController::class, 'sendMessage'])->middleware('throttle:60,1');
     Route::get('/users/search', [DirectMessageController::class, 'search']);
+    Route::get('/profiles/{user:public_id}', [ProfileController::class, 'show']);
+    Route::patch('/profile', [ProfileController::class, 'update']);
+    Route::post('/profiles/{user:public_id}/follow', [ProfileController::class, 'follow']);
+    Route::delete('/profiles/{user:public_id}/follow', [ProfileController::class, 'unfollow']);
+    Route::post('/profiles/{user:public_id}/block', [ProfileController::class, 'block']);
+    Route::delete('/profiles/{user:public_id}/block', [ProfileController::class, 'unblock']);
+    Route::post('/profiles/{user:public_id}/reports', [ProfileController::class, 'report'])->middleware('throttle:10,1');
     Route::get('/conversations', [DirectMessageController::class, 'index']);
     Route::post('/conversations', [DirectMessageController::class, 'store']);
     Route::get('/conversations/{conversation}', [DirectMessageController::class, 'show']);

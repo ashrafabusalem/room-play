@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\AuditController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\RoomController as AdminRoomController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\ReportController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -34,6 +35,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::put('/users/{user}/password', [UserController::class, 'password'])->name('users.password');
     Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
     Route::post('/users/{user}/restore', [UserController::class, 'restore'])->name('users.restore');
+    Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
+    Route::put('/reports/{report}', [ReportController::class, 'update'])->name('reports.update');
 
     Route::resource('banners', BannerController::class)->except('show');
     Route::resource('offers', OfferController::class)->except('show');
