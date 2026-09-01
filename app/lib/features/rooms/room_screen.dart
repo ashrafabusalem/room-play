@@ -14,6 +14,7 @@ import '../../widgets/avatar.dart';
 import '../../widgets/common.dart';
 import '../auth/auth_controller.dart';
 import '../profile/public_profile_screen.dart';
+import '../games/truth_or_dare_screen.dart';
 
 /// The voice room: nine seats, live chat, and the control bar.
 ///
@@ -191,6 +192,12 @@ class _RoomScreenState extends State<RoomScreen> {
     );
   }
 
+  void _openTruthOrDare() {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(builder: (_) => TruthOrDareScreen(room: _room)),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final room = _room;
@@ -213,6 +220,7 @@ class _RoomScreenState extends State<RoomScreen> {
                 following: _following,
                 onFollow: () => setState(() => _following = !_following),
                 onInvite: _inviteFriends,
+                onGame: _openTruthOrDare,
               ),
               const SizedBox(height: 10),
               _RoomMetaPills(room: room),
@@ -244,12 +252,14 @@ class _RoomHeader extends StatelessWidget {
     required this.following,
     required this.onFollow,
     required this.onInvite,
+    required this.onGame,
   });
 
   final Room room;
   final bool following;
   final VoidCallback onFollow;
   final VoidCallback onInvite;
+  final VoidCallback onGame;
 
   @override
   Widget build(BuildContext context) {
@@ -307,29 +317,22 @@ class _RoomHeader extends StatelessWidget {
               ],
             ),
           ),
-          GestureDetector(
+          CircleIconButton(
+            icon: following
+                ? Icons.favorite_rounded
+                : Icons.favorite_border_rounded,
+            background: following
+                ? AppColors.primary
+                : Colors.white.withValues(alpha: 0.10),
+            size: 36,
             onTap: onFollow,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              decoration: BoxDecoration(
-                color: following
-                    ? AppColors.primary
-                    : Colors.white.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(999),
-              ),
-              child: Text(
-                following
-                    ? AppLocalizations.of(context).roomFollowing
-                    : AppLocalizations.of(context).roomFollow,
-                style: const TextStyle(
-                  fontFamily: kFontFamily,
-                  fontFamilyFallback: kFontFallback,
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
-                ),
-              ),
-            ),
+          ),
+          const SizedBox(width: 6),
+          CircleIconButton(
+            icon: Icons.casino_rounded,
+            background: Colors.white.withValues(alpha: 0.10),
+            size: 36,
+            onTap: onGame,
           ),
           const SizedBox(width: 6),
           CircleIconButton(

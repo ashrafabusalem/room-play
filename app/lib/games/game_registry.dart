@@ -104,7 +104,9 @@ class _NotImplementedSheet extends StatelessWidget {
           ),
           const SizedBox(height: 20),
           Text(
-            l10n.gameNotBuiltTitle,
+            game.id == 'truthordare'
+                ? l10n.truthDareRoomOnlyTitle
+                : l10n.gameNotBuiltTitle,
             style: const TextStyle(
               fontFamily: kFontFamily,
               fontFamilyFallback: kFontFallback,
@@ -115,7 +117,9 @@ class _NotImplementedSheet extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            l10n.gameNotBuiltBody,
+            game.id == 'truthordare'
+                ? l10n.truthDareRoomOnlyBody
+                : l10n.gameNotBuiltBody,
             style: Theme.of(context).textTheme.bodySmall,
           ),
           if (sync != null) ...[

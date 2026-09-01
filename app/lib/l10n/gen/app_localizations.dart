@@ -440,6 +440,108 @@ abstract class AppLocalizations {
   /// **'Planned: realtime sync'**
   String get gameSyncRealtime;
 
+  /// No description provided for @truthDareTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Truth or Dare'**
+  String get truthDareTitle;
+
+  /// No description provided for @truthDareNoGame.
+  ///
+  /// In en, this message translates to:
+  /// **'No Truth or Dare game is running in this room.'**
+  String get truthDareNoGame;
+
+  /// No description provided for @truthDareCreate.
+  ///
+  /// In en, this message translates to:
+  /// **'Create game'**
+  String get truthDareCreate;
+
+  /// No description provided for @truthDareLobbyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Game lobby'**
+  String get truthDareLobbyTitle;
+
+  /// No description provided for @truthDareLobbyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'At least two people must be seated before the host starts.'**
+  String get truthDareLobbyBody;
+
+  /// No description provided for @truthDareStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Start game'**
+  String get truthDareStart;
+
+  /// No description provided for @truthDareWaitHost.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for the room host…'**
+  String get truthDareWaitHost;
+
+  /// No description provided for @truthDareYourChoice.
+  ///
+  /// In en, this message translates to:
+  /// **'It’s your turn. Choose Truth or Dare.'**
+  String get truthDareYourChoice;
+
+  /// No description provided for @truthDareWaitingChoice.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for the current player to choose…'**
+  String get truthDareWaitingChoice;
+
+  /// No description provided for @truthDareTruth.
+  ///
+  /// In en, this message translates to:
+  /// **'Truth'**
+  String get truthDareTruth;
+
+  /// No description provided for @truthDareDare.
+  ///
+  /// In en, this message translates to:
+  /// **'Dare'**
+  String get truthDareDare;
+
+  /// No description provided for @truthDareNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Next turn'**
+  String get truthDareNext;
+
+  /// No description provided for @truthDareEnd.
+  ///
+  /// In en, this message translates to:
+  /// **'End game'**
+  String get truthDareEnd;
+
+  /// No description provided for @truthDareOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Open game'**
+  String get truthDareOpen;
+
+  /// No description provided for @truthDareRoomOnlyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Play inside a room'**
+  String get truthDareRoomOnlyTitle;
+
+  /// No description provided for @truthDareRoomOnlyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Join a room, take a seat, then tap the game button in the room header.'**
+  String get truthDareRoomOnlyBody;
+
+  /// No description provided for @truthDareTurn.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn {number}'**
+  String truthDareTurn(int number);
+
   /// No description provided for @createTitle.
   ///
   /// In en, this message translates to:

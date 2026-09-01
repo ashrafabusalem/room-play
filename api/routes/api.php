@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\FriendController;
 use App\Http\Controllers\Api\RoomInvitationController;
 use App\Http\Controllers\Api\WalletController;
+use App\Http\Controllers\Api\TruthOrDareController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -64,6 +65,12 @@ Route::middleware(['auth:sanctum', 'active'])->group(function () {
     Route::get('/room-invitations', [RoomInvitationController::class, 'index']);
     Route::post('/rooms/{room}/invitations/{user:public_id}', [RoomInvitationController::class, 'store'])->withoutScopedBindings()->middleware('throttle:30,1');
     Route::patch('/room-invitations/{invitation}', [RoomInvitationController::class, 'respond']);
+    Route::get('/rooms/{room}/games/truth-or-dare', [TruthOrDareController::class, 'show']);
+    Route::post('/rooms/{room}/games/truth-or-dare', [TruthOrDareController::class, 'store']);
+    Route::post('/game-sessions/{session}/start', [TruthOrDareController::class, 'start']);
+    Route::post('/game-sessions/{session}/choose', [TruthOrDareController::class, 'choose']);
+    Route::post('/game-sessions/{session}/next', [TruthOrDareController::class, 'next']);
+    Route::post('/game-sessions/{session}/finish', [TruthOrDareController::class, 'finish']);
     Route::get('/conversations', [DirectMessageController::class, 'index']);
     Route::post('/conversations', [DirectMessageController::class, 'store']);
     Route::get('/conversations/{conversation}', [DirectMessageController::class, 'show']);

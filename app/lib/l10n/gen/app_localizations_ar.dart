@@ -187,6 +187,62 @@ class AppLocalizationsAr extends AppLocalizations {
   String get gameSyncRealtime => 'مخطط: مزامنة فورية';
 
   @override
+  String get truthDareTitle => 'صراحة أم جرأة';
+
+  @override
+  String get truthDareNoGame =>
+      'لا توجد لعبة صراحة أم جرأة جارية في هذه الغرفة.';
+
+  @override
+  String get truthDareCreate => 'إنشاء لعبة';
+
+  @override
+  String get truthDareLobbyTitle => 'ردهة اللعبة';
+
+  @override
+  String get truthDareLobbyBody =>
+      'يجب أن يجلس لاعبان على الأقل قبل أن يبدأ المضيف.';
+
+  @override
+  String get truthDareStart => 'بدء اللعبة';
+
+  @override
+  String get truthDareWaitHost => 'بانتظار مضيف الغرفة…';
+
+  @override
+  String get truthDareYourChoice => 'دورك الآن. اختر صراحة أو جرأة.';
+
+  @override
+  String get truthDareWaitingChoice => 'بانتظار اختيار اللاعب الحالي…';
+
+  @override
+  String get truthDareTruth => 'صراحة';
+
+  @override
+  String get truthDareDare => 'جرأة';
+
+  @override
+  String get truthDareNext => 'الدور التالي';
+
+  @override
+  String get truthDareEnd => 'إنهاء اللعبة';
+
+  @override
+  String get truthDareOpen => 'فتح اللعبة';
+
+  @override
+  String get truthDareRoomOnlyTitle => 'العب داخل غرفة';
+
+  @override
+  String get truthDareRoomOnlyBody =>
+      'انضم إلى غرفة واجلس على مقعد، ثم اضغط زر اللعبة في أعلى الغرفة.';
+
+  @override
+  String truthDareTurn(int number) {
+    return 'الدور $number';
+  }
+
+  @override
   String get createTitle => 'إنشاء';
 
   @override

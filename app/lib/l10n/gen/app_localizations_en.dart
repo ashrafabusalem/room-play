@@ -188,6 +188,63 @@ class AppLocalizationsEn extends AppLocalizations {
   String get gameSyncRealtime => 'Planned: realtime sync';
 
   @override
+  String get truthDareTitle => 'Truth or Dare';
+
+  @override
+  String get truthDareNoGame =>
+      'No Truth or Dare game is running in this room.';
+
+  @override
+  String get truthDareCreate => 'Create game';
+
+  @override
+  String get truthDareLobbyTitle => 'Game lobby';
+
+  @override
+  String get truthDareLobbyBody =>
+      'At least two people must be seated before the host starts.';
+
+  @override
+  String get truthDareStart => 'Start game';
+
+  @override
+  String get truthDareWaitHost => 'Waiting for the room host…';
+
+  @override
+  String get truthDareYourChoice => 'It’s your turn. Choose Truth or Dare.';
+
+  @override
+  String get truthDareWaitingChoice =>
+      'Waiting for the current player to choose…';
+
+  @override
+  String get truthDareTruth => 'Truth';
+
+  @override
+  String get truthDareDare => 'Dare';
+
+  @override
+  String get truthDareNext => 'Next turn';
+
+  @override
+  String get truthDareEnd => 'End game';
+
+  @override
+  String get truthDareOpen => 'Open game';
+
+  @override
+  String get truthDareRoomOnlyTitle => 'Play inside a room';
+
+  @override
+  String get truthDareRoomOnlyBody =>
+      'Join a room, take a seat, then tap the game button in the room header.';
+
+  @override
+  String truthDareTurn(int number) {
+    return 'Turn $number';
+  }
+
+  @override
   String get createTitle => 'Create';
 
   @override
