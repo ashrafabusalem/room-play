@@ -45,6 +45,8 @@ class _RoomScreenState extends State<RoomScreen> {
   RoomRepository? _rooms;
   RoomRealtime? _realtime;
   bool _connected = false;
+  LiveGift? _liveGift;
+  Timer? _giftTimer;
 
   @override
   void didChangeDependencies() {
@@ -75,6 +77,7 @@ class _RoomScreenState extends State<RoomScreen> {
           if (mounted) setState(() => _messages = [..._messages, message]);
           _scrollToNewest();
         },
+        onGift: _showGift,
       );
     } catch (_) {
       // Keep the last known room visible if joining or realtime is unavailable.
@@ -114,6 +117,7 @@ class _RoomScreenState extends State<RoomScreen> {
     unawaited(_realtime?.dispose());
     _chatController.dispose();
     _scrollController.dispose();
+    _giftTimer?.cancel();
     super.dispose();
   }
 
@@ -149,6 +153,14 @@ class _RoomScreenState extends State<RoomScreen> {
         duration: const Duration(milliseconds: 220),
         curve: Curves.easeOut,
       );
+    });
+  }
+
+  void _showGift(LiveGift gift) {
+    _giftTimer?.cancel();
+    if (mounted) setState(() => _liveGift = gift);
+    _giftTimer = Timer(const Duration(seconds: 4), () {
+      if (mounted) setState(() => _liveGift = null);
     });
   }
 
@@ -256,6 +268,15 @@ class _RoomScreenState extends State<RoomScreen> {
               ),
               const SizedBox(height: 10),
               _RoomMetaPills(room: room),
+              AnimatedSwitcher(
+                duration: const Duration(milliseconds: 250),
+                child: _liveGift == null
+                    ? const SizedBox.shrink()
+                    : _LiveGiftBanner(
+                        key: ValueKey(_liveGift),
+                        gift: _liveGift!,
+                      ),
+              ),
               const SizedBox(height: 18),
               _SeatGrid(seats: room.seats, micOn: _micOn, onSeatTap: _takeSeat),
               const SizedBox(height: 16),
@@ -373,6 +394,47 @@ class _RoomHeader extends StatelessWidget {
             background: Colors.white.withValues(alpha: 0.10),
             size: 36,
             onTap: onInvite,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _LiveGiftBanner extends StatelessWidget {
+  const _LiveGiftBanner({super.key, required this.gift});
+  final LiveGift gift;
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final name = gift.name(Localizations.localeOf(context).languageCode);
+    return Container(
+      margin: const EdgeInsetsDirectional.fromSTEB(20, 10, 20, 0),
+      padding: const EdgeInsetsDirectional.fromSTEB(14, 10, 14, 10),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [AppColors.primary, AppColors.accent],
+        ),
+        borderRadius: BorderRadius.circular(18),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(gift.emoji, style: const TextStyle(fontSize: 28)),
+          const SizedBox(width: 10),
+          Flexible(
+            child: Text(
+              l.giftLive(gift.senderName, name, gift.recipientName),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              textDirection: directionOf(
+                l.giftLive(gift.senderName, name, gift.recipientName),
+              ),
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
           ),
         ],
       ),

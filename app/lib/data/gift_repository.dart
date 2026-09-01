@@ -19,6 +19,33 @@ class GiftItem {
   );
 }
 
+class LiveGift {
+  const LiveGift({
+    required this.emoji,
+    required this.nameEn,
+    required this.nameAr,
+    required this.senderName,
+    required this.recipientName,
+  });
+  final String emoji;
+  final String nameEn;
+  final String nameAr;
+  final String senderName;
+  final String recipientName;
+  String name(String languageCode) => languageCode == 'ar' ? nameAr : nameEn;
+  factory LiveGift.fromJson(Map<String, dynamic> json) {
+    final sender = json['sender'] as Map<String, dynamic>? ?? {};
+    final recipient = json['recipient'] as Map<String, dynamic>? ?? {};
+    return LiveGift(
+      emoji: json['emoji'] as String? ?? '🎁',
+      nameEn: json['name_en'] as String? ?? '',
+      nameAr: json['name_ar'] as String? ?? '',
+      senderName: sender['name'] as String? ?? '',
+      recipientName: recipient['name'] as String? ?? '',
+    );
+  }
+}
+
 class GiftRepository {
   const GiftRepository(this._api);
   final ApiClient _api;

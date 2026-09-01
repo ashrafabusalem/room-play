@@ -171,6 +171,16 @@ class AppLocalizationsAr extends AppLocalizations {
       'تعذّر إرسال الهدية. تحقّق من رصيد الذهب وحاول مجدداً.';
 
   @override
+  String giftLive(String sender, String gift, String recipient) {
+    return 'أرسل $sender هدية $gift إلى $recipient';
+  }
+
+  @override
+  String notificationGiftReceived(String name) {
+    return 'أرسل إليك $name هدية';
+  }
+
+  @override
   String get roomSystemSender => 'النظام';
 
   @override

@@ -380,6 +380,18 @@ abstract class AppLocalizations {
   /// **'The gift could not be sent. Check your Gold balance and try again.'**
   String get giftFailed;
 
+  /// No description provided for @giftLive.
+  ///
+  /// In en, this message translates to:
+  /// **'{sender} sent {gift} to {recipient}'**
+  String giftLive(String sender, String gift, String recipient);
+
+  /// No description provided for @notificationGiftReceived.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} sent you a gift'**
+  String notificationGiftReceived(String name);
+
   /// No description provided for @roomSystemSender.
   ///
   /// In en, this message translates to:

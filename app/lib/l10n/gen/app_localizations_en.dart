@@ -172,6 +172,16 @@ class AppLocalizationsEn extends AppLocalizations {
       'The gift could not be sent. Check your Gold balance and try again.';
 
   @override
+  String giftLive(String sender, String gift, String recipient) {
+    return '$sender sent $gift to $recipient';
+  }
+
+  @override
+  String notificationGiftReceived(String name) {
+    return '$name sent you a gift';
+  }
+
+  @override
   String get roomSystemSender => 'System';
 
   @override

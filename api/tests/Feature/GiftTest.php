@@ -10,6 +10,7 @@ class GiftTest extends TestCase{use RefreshDatabase;
   $this->assertSame(60,$sender->wallet->refresh()->balance);$this->assertSame(40,$recipient->wallet->refresh()->balance);
   $this->assertDatabaseHas('coin_transactions',['wallet_id'=>$sender->wallet->id,'amount'=>-40,'type'=>'gift_sent']);
   $this->assertDatabaseHas('coin_transactions',['wallet_id'=>$recipient->wallet->id,'amount'=>40,'type'=>'gift_received']);
+  $this->assertDatabaseHas('app_notifications',['user_id'=>$recipient->id,'actor_id'=>$sender->id,'type'=>'gift_received']);
  }
  public function test_gift_rejects_insufficient_gold_and_non_member_recipient():void{
   $sender=User::factory()->create();$recipient=User::factory()->create();$room=Room::create(['name'=>'Party','host_user_id'=>$sender->id]);RoomMember::create(['room_id'=>$room->id,'user_id'=>$sender->id]);

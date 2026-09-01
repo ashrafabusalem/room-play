@@ -155,16 +155,21 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       'friend_accepted' => l10n.notificationFriendAccepted(name),
       'room_invitation' => l10n.notificationRoomInvitation(name),
       'direct_message' => l10n.notificationDirectMessage(name),
+      'gift_received' => l10n.notificationGiftReceived(name),
       _ => l10n.notificationsTitle,
     };
   }
 
-  String? _body(AppLocalizations l10n, InboxNotification item) =>
-      switch (item.type) {
-        'room_invitation' => item.data['room_name']?.toString(),
-        'direct_message' => item.data['preview']?.toString(),
-        _ => null,
-      };
+  String? _body(
+    AppLocalizations l10n,
+    InboxNotification item,
+  ) => switch (item.type) {
+    'room_invitation' => item.data['room_name']?.toString(),
+    'direct_message' => item.data['preview']?.toString(),
+    'gift_received' =>
+      '${item.data['emoji'] ?? '🎁'} ${Localizations.localeOf(context).languageCode == 'ar' ? item.data['gift_name_ar'] : item.data['gift_name_en']}',
+    _ => null,
+  };
 }
 
 class _NotificationAvatar extends StatelessWidget {

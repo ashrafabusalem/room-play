@@ -1,7 +1,7 @@
 <?php
 namespace App\Http\Controllers\Api;
-use App\Http\Controllers\Controller;use App\Models\{Gift,Room,User};use App\Services\GiftService;use Illuminate\Http\{JsonResponse,Request};
+use App\Events\RoomGiftSent;use App\Http\Controllers\Controller;use App\Models\{Gift,Room,User};use App\Services\{GiftService,InAppNotifier};use Illuminate\Http\{JsonResponse,Request};
 class GiftController extends Controller{
  public function index(Request $r):JsonResponse{$lang=$r->getPreferredLanguage(['ar','en'])==='ar'?'ar':'en';return response()->json(['gifts'=>Gift::where('is_active',true)->orderBy('sort_order')->get()->map(fn($g)=>['id'=>$g->id,'name'=>$g->{'name_'.$lang},'emoji'=>$g->emoji,'price'=>$g->price])]);}
- public function send(Request $r,Room $room,Gift $gift,GiftService $service):JsonResponse{$data=$r->validate(['recipient_id'=>['required','string']]);$recipient=User::where('public_id',$data['recipient_id'])->firstOrFail();$sent=$service->send($room,$gift,$r->user(),$recipient);return response()->json(['gift'=>['id'=>$sent->id,'name'=>$gift->name_en,'emoji'=>$gift->emoji,'price'=>$sent->price],'balance'=>$r->user()->wallet()->value('balance')],201);}
+ public function send(Request $r,Room $room,Gift $gift,GiftService $service,InAppNotifier $notifier):JsonResponse{$data=$r->validate(['recipient_id'=>['required','string']]);$recipient=User::where('public_id',$data['recipient_id'])->firstOrFail();$sent=$service->send($room,$gift,$r->user(),$recipient);$notifier->send($recipient,'gift_received',$r->user(),['gift_name_en'=>$gift->name_en,'gift_name_ar'=>$gift->name_ar,'emoji'=>$gift->emoji,'price'=>$gift->price,'room_id'=>$room->public_id,'room_name'=>$room->name]);broadcast(new RoomGiftSent($sent));return response()->json(['gift'=>['id'=>$sent->id,'name'=>$gift->name_en,'emoji'=>$gift->emoji,'price'=>$sent->price],'balance'=>$r->user()->wallet()->value('balance')],201);}
 }

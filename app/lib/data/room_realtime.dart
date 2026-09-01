@@ -3,6 +3,7 @@ import 'package:laravel_reverb/laravel_reverb.dart';
 import '../core/api/api_client.dart';
 import '../core/api/api_config.dart';
 import 'models.dart';
+import 'gift_repository.dart';
 
 class RoomRealtime {
   RoomRealtime({required this.token, required this.currentUserId});
@@ -16,6 +17,7 @@ class RoomRealtime {
     String roomId,
     void Function(Room room) onRoom, {
     void Function(ChatMessage message)? onMessage,
+    void Function(LiveGift gift)? onGift,
   }) async {
     final api = ApiClient();
     final response = await api.get('/content');
@@ -50,6 +52,10 @@ class RoomRealtime {
               ChatMessage.fromJson(raw, currentUserId: currentUserId),
             );
           }
+        })
+        .listen('.room.gift', (data) {
+          final raw = data['gift'];
+          if (raw is Map<String, dynamic>) onGift?.call(LiveGift.fromJson(raw));
         });
     await client.connect();
   }
