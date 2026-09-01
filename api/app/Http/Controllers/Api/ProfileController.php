@@ -9,6 +9,7 @@ use App\Models\UserReport;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 
 class ProfileController extends Controller
@@ -35,6 +36,19 @@ class ProfileController extends Controller
         }
         unset($data['avatar']);
         $user->forceFill($data)->save();
+
+        return response()->json(['user' => new UserResource($user->refresh())]);
+    }
+
+    public function avatar(Request $request): JsonResponse
+    {
+        $request->validate(['avatar' => ['required', 'image', 'max:4096']]);
+        $user = $request->user();
+        $oldPath = $user->avatar_path;
+        $user->forceFill([
+            'avatar_path' => $request->file('avatar')->store('avatars', 'public'),
+        ])->save();
+        if ($oldPath) Storage::disk('public')->delete($oldPath);
 
         return response()->json(['user' => new UserResource($user->refresh())]);
     }

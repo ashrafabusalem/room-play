@@ -12,6 +12,7 @@ import '../../l10n/gen/app_localizations.dart';
 import '../../widgets/avatar.dart';
 import '../../widgets/common.dart';
 import '../auth/auth_controller.dart';
+import '../profile/public_profile_screen.dart';
 
 /// The voice room: nine seats, live chat, and the control bar.
 ///
@@ -446,12 +447,21 @@ class _SeatTile extends StatelessWidget {
             alignment: Alignment.center,
             clipBehavior: Clip.none,
             children: [
-              AvatarCircle(
-                user: user,
-                size: 56,
-                ringColor: user.isHost
-                    ? AppColors.danger
-                    : AppColors.primary.withValues(alpha: 0.8),
+              GestureDetector(
+                onTap: user.isMe
+                    ? onTap
+                    : () => Navigator.of(context).push(
+                        MaterialPageRoute<void>(
+                          builder: (_) => PublicProfileScreen(userId: user.id),
+                        ),
+                      ),
+                child: AvatarCircle(
+                  user: user,
+                  size: 56,
+                  ringColor: user.isHost
+                      ? AppColors.danger
+                      : AppColors.primary.withValues(alpha: 0.8),
+                ),
               ),
               if (user.isHost)
                 const Positioned(
@@ -627,7 +637,16 @@ class _ChatRow extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        AvatarCircle(user: sender, size: 26),
+        GestureDetector(
+          onTap: sender.isMe
+              ? null
+              : () => Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (_) => PublicProfileScreen(userId: sender.id),
+                  ),
+                ),
+          child: AvatarCircle(user: sender, size: 26),
+        ),
         const SizedBox(width: 8),
         Flexible(
           child: Row(

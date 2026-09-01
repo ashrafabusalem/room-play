@@ -35,6 +35,6 @@ class RoomResource extends JsonResource
 
     private function user($user, bool $isHost): array
     {
-        return ['id' => $user->public_id, 'name' => $user->name, 'level' => $user->level, 'coins' => 0, 'is_host' => $isHost];
+        return ['id' => $user->public_id, 'name' => $user->name, 'level' => $user->level, 'avatar_url' => $user->avatarUrl(), 'coins' => 0, 'is_host' => $isHost];
     }
 }

@@ -103,6 +103,8 @@
   "profileLanguage": "اللغة",
   "profileNotDesignedNote": "هذه الشاشة لم تكن ضمن التصميم — التخطيط مقترح.",
   "profileEdit": "تعديل الحساب",
+  "profileChangePhoto": "تغيير صورة الحساب",
+  "profilePhotoUpdated": "تم تحديث صورة الحساب.",
   "profileBio": "النبذة",
   "profileBioHint": "اكتب نبذة قصيرة عن نفسك",
   "profileSave": "حفظ التغييرات",

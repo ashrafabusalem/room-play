@@ -178,7 +178,11 @@ class _ConversationRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = conversation;
-    final user = AppUser(id: c.id, name: c.name);
+    final user = AppUser(
+      id: c.userId ?? c.id,
+      name: c.name,
+      avatarUrl: c.avatarUrl,
+    );
 
     return InkWell(
       onTap: onTap,

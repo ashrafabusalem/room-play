@@ -290,6 +290,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get profileEdit => 'تعديل الحساب';
 
   @override
+  String get profileChangePhoto => 'تغيير صورة الحساب';
+
+  @override
+  String get profilePhotoUpdated => 'تم تحديث صورة الحساب.';
+
+  @override
   String get profileBio => 'النبذة';
 
   @override

@@ -113,6 +113,8 @@
   "profileLanguage": "Language",
   "profileNotDesignedNote": "This screen was not in the mockup — layout is a proposal.",
   "profileEdit": "Edit profile",
+  "profileChangePhoto": "Change profile photo",
+  "profilePhotoUpdated": "Profile photo updated.",
   "profileBio": "Bio",
   "profileBioHint": "Tell people a little about yourself",
   "profileSave": "Save changes",

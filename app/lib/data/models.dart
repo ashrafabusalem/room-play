@@ -18,6 +18,7 @@ class AppUser {
     this.micMuted = false,
     this.isHost = false,
     this.isMe = false,
+    this.avatarUrl,
   });
 
   final String id;
@@ -28,6 +29,7 @@ class AppUser {
   final bool micMuted;
   final bool isHost;
   final bool isMe;
+  final String? avatarUrl;
 
   factory AppUser.fromJson(
     Map<String, dynamic> json, {
@@ -40,6 +42,7 @@ class AppUser {
     micMuted: json['mic_muted'] as bool? ?? false,
     isHost: json['is_host'] as bool? ?? false,
     isMe: json['id'] == currentUserId,
+    avatarUrl: json['avatar_url'] as String?,
   );
 
   String get initials {
@@ -206,6 +209,7 @@ class Conversation {
     this.isVoiceNote = false,
     this.isGroup = false,
     this.userId,
+    this.avatarUrl,
   });
 
   final String id;
@@ -222,6 +226,7 @@ class Conversation {
   final bool isVoiceNote;
   final bool isGroup;
   final String? userId;
+  final String? avatarUrl;
 
   factory Conversation.fromJson(Map<String, dynamic> json) {
     final user = json['user'] as Map<String, dynamic>? ?? const {};
@@ -231,6 +236,7 @@ class Conversation {
       id: json['id'] as String? ?? '',
       userId: user['id'] as String?,
       name: user['name'] as String? ?? '',
+      avatarUrl: user['avatar_url'] as String?,
       preview: last?['text'] as String? ?? '',
       time: created == null
           ? ''

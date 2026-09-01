@@ -36,17 +36,25 @@ class AvatarCircle extends StatelessWidget {
         ),
       ),
       alignment: Alignment.center,
-      child: Text(
-        user.initials,
-        style: TextStyle(
-          fontFamily: kFontFamily,
-          fontFamilyFallback: kFontFallback,
-          fontSize: size * 0.36,
-          fontWeight: FontWeight.w700,
-          color: Colors.white,
-          letterSpacing: -0.5,
-        ),
-      ),
+      clipBehavior: Clip.antiAlias,
+      child: user.avatarUrl != null
+          ? Image.network(
+              user.avatarUrl!,
+              width: size,
+              height: size,
+              fit: BoxFit.cover,
+            )
+          : Text(
+              user.initials,
+              style: TextStyle(
+                fontFamily: kFontFamily,
+                fontFamilyFallback: kFontFallback,
+                fontSize: size * 0.36,
+                fontWeight: FontWeight.w700,
+                color: Colors.white,
+                letterSpacing: -0.5,
+              ),
+            ),
     );
 
     if (ringColor == null) return avatar;

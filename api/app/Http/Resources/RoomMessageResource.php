@@ -18,6 +18,7 @@ class RoomMessageResource extends JsonResource
                 'id' => $this->user->public_id,
                 'name' => $this->user->name,
                 'level' => $this->user->level,
+                'avatar_url' => $this->user->avatarUrl(),
                 'is_host' => $this->user_id === $this->room->host_user_id,
             ] : null,
         ];

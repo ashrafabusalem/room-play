@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../../core/locale/locale_controller.dart';
 import '../../core/theme/app_colors.dart';
@@ -129,6 +130,31 @@ class _ProfileScreenState extends State<ProfileScreen> {
     if (saved == true && mounted) await _load();
   }
 
+  Future<void> _pickAvatar() async {
+    final image = await ImagePicker().pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 85,
+      maxWidth: 1200,
+      maxHeight: 1200,
+    );
+    if (image == null || !mounted) return;
+    final auth = AuthScope.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+    final successMessage = AppLocalizations.of(context).profilePhotoUpdated;
+    setState(() => _loading = true);
+    try {
+      final user = await SocialRepository(auth.api)
+          .updateAvatar(await image.readAsBytes(), image.name);
+      await auth.applyProfileUpdate(user);
+      if (mounted) {
+        await _load();
+        messenger.showSnackBar(SnackBar(content: Text(successMessage)));
+      }
+    } finally {
+      if (mounted) setState(() => _loading = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
@@ -144,6 +170,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       name: displayName,
       level: auth.level,
       isMe: true,
+      avatarUrl: _profile?.avatarUrl,
     );
 
     return SafeArea(
@@ -179,7 +206,38 @@ class _ProfileScreenState extends State<ProfileScreen> {
           Center(
             child: Column(
               children: [
-                AvatarCircle(user: me, size: 88, ringColor: AppColors.primary),
+                Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    GestureDetector(
+                      onTap: _loading ? null : _pickAvatar,
+                      child: AvatarCircle(
+                        user: me,
+                        size: 88,
+                        ringColor: AppColors.primary,
+                      ),
+                    ),
+                    PositionedDirectional(
+                      end: -2,
+                      bottom: -2,
+                      child: Material(
+                        color: AppColors.primary,
+                        shape: const CircleBorder(),
+                        child: IconButton(
+                          tooltip: l10n.profileChangePhoto,
+                          onPressed: _loading ? null : _pickAvatar,
+                          icon: const Icon(Icons.camera_alt_rounded, size: 17),
+                          color: Colors.white,
+                          constraints: const BoxConstraints.tightFor(
+                            width: 34,
+                            height: 34,
+                          ),
+                          padding: EdgeInsets.zero,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
                 const SizedBox(height: 12),
                 Text(
                   displayName,

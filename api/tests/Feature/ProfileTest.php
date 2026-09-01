@@ -2,8 +2,11 @@
 
 namespace Tests\Feature;
 
+use Illuminate\Http\Testing\File;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class ProfileTest extends TestCase
@@ -52,5 +55,30 @@ class ProfileTest extends TestCase
         $reported = User::factory()->create();
         $this->actingAs($reporter)->postJson("/api/profiles/{$reported->public_id}/reports", ['reason' => 'spam', 'details' => 'Repeated ads'])->assertCreated();
         $this->assertDatabaseHas('user_reports', ['reporter_id' => $reporter->id, 'reported_id' => $reported->id, 'status' => 'pending']);
+    }
+
+    public function test_user_can_upload_and_replace_an_avatar(): void
+    {
+        Storage::fake('public');
+        $user = User::factory()->create();
+        $first = $this->actingAs($user)->post('/api/profile/avatar', [
+            'avatar' => $this->fakePng('first.png'),
+        ])->assertOk()->json('user.avatar_url');
+        $oldPath = $user->refresh()->avatar_path;
+        Storage::disk('public')->assertExists($oldPath);
+
+        $this->actingAs($user)->post('/api/profile/avatar', [
+            'avatar' => $this->fakePng('second.png'),
+        ])->assertOk();
+        Storage::disk('public')->assertMissing($oldPath);
+        $this->assertNotNull($first);
+    }
+
+    private function fakePng(string $name): File
+    {
+        return UploadedFile::fake()->createWithContent(
+            $name,
+            base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII='),
+        );
     }
 }

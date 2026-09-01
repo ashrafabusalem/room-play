@@ -66,6 +66,18 @@ class SocialRepository {
     return json['user'] as Map<String, dynamic>;
   }
 
+  Future<Map<String, dynamic>> updateAvatar(
+    List<int> bytes,
+    String filename,
+  ) async {
+    final json = await _api.postMultipart(
+      '/profile/avatar',
+      bytes: bytes,
+      filename: filename,
+    );
+    return json['user'] as Map<String, dynamic>;
+  }
+
   Future<SocialProfile> follow(String id, bool follow) async {
     final json = follow
         ? await _api.post('/profiles/$id/follow')
