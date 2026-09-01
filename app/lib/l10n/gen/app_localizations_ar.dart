@@ -211,6 +211,22 @@ class AppLocalizationsAr extends AppLocalizations {
   String get roomRemoveMember => 'إزالة من الغرفة';
 
   @override
+  String get roomSettingsTitle => 'إعدادات الغرفة';
+
+  @override
+  String get roomLockEntry => 'قفل دخول الغرفة';
+
+  @override
+  String get roomCloseRoom => 'إغلاق الغرفة';
+
+  @override
+  String get roomCloseConfirmTitle => 'إغلاق هذه الغرفة؟';
+
+  @override
+  String get roomCloseConfirmBody =>
+      'سيتم فصل الجميع ولن تظهر الغرفة في البحث بعد الآن.';
+
+  @override
   String get roomChatHint => 'اكتب رسالة...';
 
   @override

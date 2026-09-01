@@ -458,6 +458,36 @@ abstract class AppLocalizations {
   /// **'Remove from room'**
   String get roomRemoveMember;
 
+  /// No description provided for @roomSettingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Room settings'**
+  String get roomSettingsTitle;
+
+  /// No description provided for @roomLockEntry.
+  ///
+  /// In en, this message translates to:
+  /// **'Lock room entry'**
+  String get roomLockEntry;
+
+  /// No description provided for @roomCloseRoom.
+  ///
+  /// In en, this message translates to:
+  /// **'Close room'**
+  String get roomCloseRoom;
+
+  /// No description provided for @roomCloseConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Close this room?'**
+  String get roomCloseConfirmTitle;
+
+  /// No description provided for @roomCloseConfirmBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Everyone will be disconnected and the room will no longer appear in discovery.'**
+  String get roomCloseConfirmBody;
+
   /// No description provided for @roomChatHint.
   ///
   /// In en, this message translates to:

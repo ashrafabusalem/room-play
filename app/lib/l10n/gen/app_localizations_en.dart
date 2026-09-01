@@ -212,6 +212,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get roomRemoveMember => 'Remove from room';
 
   @override
+  String get roomSettingsTitle => 'Room settings';
+
+  @override
+  String get roomLockEntry => 'Lock room entry';
+
+  @override
+  String get roomCloseRoom => 'Close room';
+
+  @override
+  String get roomCloseConfirmTitle => 'Close this room?';
+
+  @override
+  String get roomCloseConfirmBody =>
+      'Everyone will be disconnected and the room will no longer appear in discovery.';
+
+  @override
   String get roomChatHint => 'Say something...';
 
   @override

@@ -140,6 +140,26 @@ class RoomController extends Controller
         return $this->state($room, true);
     }
 
+    public function updateSettings(Request $request, Room $room): JsonResponse
+    {
+        $this->assertHost($request, $room);
+        $data = $request->validate([
+            'name' => ['required', 'string', 'min:2', 'max:80'],
+            'language' => ['required', Rule::in(['EN', 'AR'])],
+            'tag' => ['required', Rule::in(['chatting', 'gaming', 'music', 'party'])],
+            'is_locked' => ['required', 'boolean'],
+        ]);
+        $room->update($data);
+        return $this->state($room, true);
+    }
+
+    public function close(Request $request, Room $room): JsonResponse
+    {
+        $this->assertHost($request, $room);
+        $room->update(['closed_at' => now()]);
+        return $this->state($room, true);
+    }
+
     public function messages(Request $request, Room $room): JsonResponse
     {
         $this->assertMember($request, $room);

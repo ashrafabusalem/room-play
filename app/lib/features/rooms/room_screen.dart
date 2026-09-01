@@ -74,7 +74,12 @@ class _RoomScreenState extends State<RoomScreen> {
       await _realtime!.listen(
         _room.id,
         (room) {
-          if (mounted) setState(() => _room = room);
+          if (!mounted) return;
+          if (room.isClosed) {
+            Navigator.of(context).maybePop();
+          } else {
+            setState(() => _room = room);
+          }
         },
         onMessage: (message) {
           if (mounted) setState(() => _messages = [..._messages, message]);
@@ -156,6 +161,126 @@ class _RoomScreenState extends State<RoomScreen> {
           : await _rooms!.removeMember(_room.id, seat.user!.id);
       if (mounted) setState(() => _room = room);
     } catch (_) {}
+  }
+
+  Future<void> _roomSettings() async {
+    final isHost = _room.seats.any(
+      (s) => s.user?.isMe == true && s.user?.isHost == true,
+    );
+    if (!isHost || _rooms == null) return;
+    final l = AppLocalizations.of(context);
+    final name = TextEditingController(text: _room.name);
+    var language = _room.language;
+    var tag = _room.tag.toLowerCase();
+    var locked = _room.isLocked;
+    final action = await showDialog<String>(
+      context: context,
+      builder: (dialogContext) => StatefulBuilder(
+        builder: (context, setDialogState) => AlertDialog(
+          title: Text(l.roomSettingsTitle),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: name,
+                  maxLength: 80,
+                  decoration: InputDecoration(labelText: l.createRoomName),
+                ),
+                DropdownButtonFormField<String>(
+                  initialValue: language,
+                  decoration: InputDecoration(labelText: l.createRoomLanguage),
+                  items: const [
+                    DropdownMenuItem(value: 'EN', child: Text('English')),
+                    DropdownMenuItem(value: 'AR', child: Text('العربية')),
+                  ],
+                  onChanged: (v) => setDialogState(() => language = v!),
+                ),
+                const SizedBox(height: 12),
+                DropdownButtonFormField<String>(
+                  initialValue: tag,
+                  decoration: InputDecoration(labelText: l.createRoomTopic),
+                  items:
+                      [
+                            ('chatting', l.createRoomTopicChatting),
+                            ('gaming', l.createRoomTopicGaming),
+                            ('music', l.createRoomTopicMusic),
+                            ('party', l.createRoomTopicParty),
+                          ]
+                          .map(
+                            (v) => DropdownMenuItem(
+                              value: v.$1,
+                              child: Text(v.$2),
+                            ),
+                          )
+                          .toList(),
+                  onChanged: (v) => setDialogState(() => tag = v!),
+                ),
+                SwitchListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: Text(l.roomLockEntry),
+                  value: locked,
+                  onChanged: (v) => setDialogState(() => locked = v),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext, 'close'),
+              child: Text(
+                l.roomCloseRoom,
+                style: const TextStyle(color: AppColors.danger),
+              ),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext),
+              child: Text(l.commonCancel),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.pop(dialogContext, 'save'),
+              child: Text(l.profileSave),
+            ),
+          ],
+        ),
+      ),
+    );
+    final roomName = name.text.trim();
+    name.dispose();
+    if (!mounted || action == null) return;
+    if (action == 'close') {
+      final confirmed = await showDialog<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text(l.roomCloseConfirmTitle),
+          content: Text(l.roomCloseConfirmBody),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: Text(l.commonCancel),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: Text(l.roomCloseRoom),
+            ),
+          ],
+        ),
+      );
+      if (confirmed == true) {
+        await _rooms!.close(_room.id);
+        if (mounted) Navigator.of(context).pop();
+      }
+      return;
+    }
+    if (roomName.length < 2) return;
+    final room = await _rooms!.updateSettings(
+      _room.id,
+      name: roomName,
+      language: language,
+      tag: tag,
+      isLocked: locked,
+    );
+    if (mounted) setState(() => _room = room);
   }
 
   Future<void> _toggleMic() async {
@@ -392,6 +517,7 @@ class _RoomScreenState extends State<RoomScreen> {
                 onToggleMic: _toggleMic,
                 reward: _reward,
                 onReward: _claimReward,
+                onMore: _roomSettings,
               ),
             ],
           ),
@@ -1156,12 +1282,14 @@ class _ControlBar extends StatelessWidget {
     required this.onToggleMic,
     required this.reward,
     required this.onReward,
+    required this.onMore,
   });
 
   final bool micOn;
   final VoidCallback onToggleMic;
   final RoomRewardStatus? reward;
   final VoidCallback onReward;
+  final VoidCallback onMore;
 
   @override
   Widget build(BuildContext context) {
@@ -1193,6 +1321,7 @@ class _ControlBar extends StatelessWidget {
           _ControlButton(
             icon: Icons.more_horiz_rounded,
             label: l10n.roomControlMore,
+            onTap: onMore,
           ),
           _TreasureChest(status: reward, onTap: onReward),
         ],

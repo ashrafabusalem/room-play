@@ -21,6 +21,7 @@ class RoomResource extends JsonResource
             'member_count' => $this->members->count(),
             'max_members' => $this->max_members,
             'is_locked' => $this->is_locked,
+            'is_closed' => $this->closed_at !== null,
             'is_featured' => $this->is_featured,
             'host' => $this->user($this->host, true),
             'members' => $this->members->take(8)->map(fn ($member) => $this->user($member->user, $member->role === 'host'))->values(),

@@ -122,6 +122,18 @@ class RoomTest extends TestCase
         $this->assertDatabaseHas('room_seats', ['room_id' => $room->id, 'position' => 2, 'user_id' => null]);
     }
 
+    public function test_only_host_can_update_and_close_room(): void
+    {
+        [$room, $host] = $this->room();
+        $member = User::factory()->create();
+        RoomMember::create(['room_id' => $room->id, 'user_id' => $member->id]);
+        $settings = ['name' => 'New name', 'language' => 'AR', 'tag' => 'gaming', 'is_locked' => true];
+        $this->actingAs($member, 'sanctum')->patchJson("/api/rooms/{$room->public_id}/settings", $settings)->assertForbidden();
+        $this->actingAs($host, 'sanctum')->patchJson("/api/rooms/{$room->public_id}/settings", $settings)->assertOk()->assertJsonPath('room.name', 'New name')->assertJsonPath('room.is_locked', true);
+        $this->deleteJson("/api/rooms/{$room->public_id}")->assertOk()->assertJsonPath('room.is_closed', true);
+        $this->assertNotNull($room->refresh()->closed_at);
+    }
+
     private function room(): array
     {
         $host = User::factory()->create();

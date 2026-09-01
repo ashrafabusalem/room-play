@@ -96,6 +96,8 @@ class Room {
     this.tag = 'Chatting',
     this.seats = const [],
     this.following = false,
+    this.isLocked = false,
+    this.isClosed = false,
   });
 
   final String id;
@@ -109,6 +111,8 @@ class Room {
   final String tag;
   final List<Seat> seats;
   final bool following;
+  final bool isLocked;
+  final bool isClosed;
 
   factory Room.fromJson(Map<String, dynamic> json, {String? currentUserId}) {
     final members = (json['members'] as List? ?? const [])
@@ -129,6 +133,8 @@ class Room {
       members: members,
       tag: json['tag'] as String? ?? 'chatting',
       seats: seats,
+      isLocked: json['is_locked'] as bool? ?? false,
+      isClosed: json['is_closed'] as bool? ?? false,
     );
   }
 }

@@ -60,6 +60,8 @@ Route::middleware(['auth:sanctum', 'active'])->group(function () {
     Route::patch('/rooms/{room}/microphone', [RoomController::class, 'microphone']);
     Route::patch('/rooms/{room}/seats/{position}/lock', [RoomController::class, 'lockSeat']);
     Route::delete('/rooms/{room}/members/{user:public_id}', [RoomController::class, 'removeMember'])->withoutScopedBindings();
+    Route::patch('/rooms/{room}/settings', [RoomController::class, 'updateSettings']);
+    Route::delete('/rooms/{room}', [RoomController::class, 'close']);
     Route::get('/rooms/{room}/messages', [RoomController::class, 'messages']);
     Route::post('/rooms/{room}/messages', [RoomController::class, 'sendMessage'])->middleware('throttle:60,1');
     Route::get('/users/search', [DirectMessageController::class, 'search']);
