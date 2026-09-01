@@ -7,6 +7,7 @@ use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Models\UserReport;
 use App\Models\FriendRequest;
+use App\Services\InAppNotifier;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -59,7 +60,8 @@ class ProfileController extends Controller
         $viewer = $request->user();
         abort_if($viewer->is($user), 422, 'You cannot follow yourself.');
         abort_if($this->blockedEitherWay($viewer, $user), 403, 'This profile is unavailable.');
-        $viewer->following()->syncWithoutDetaching([$user->id]);
+        $changes = $viewer->following()->syncWithoutDetaching([$user->id]);
+        if ($changes['attached']) app(InAppNotifier::class)->send($user, 'new_follower', $viewer, ['user_id'=>$viewer->public_id]);
         return response()->json(['profile' => $this->profile($user, $viewer)]);
     }
 

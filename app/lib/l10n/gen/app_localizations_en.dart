@@ -25,6 +25,43 @@ class AppLocalizationsEn extends AppLocalizations {
   String get navProfile => 'Profile';
 
   @override
+  String get notificationsTitle => 'Notifications';
+
+  @override
+  String get notificationsMarkAllRead => 'Mark all read';
+
+  @override
+  String get notificationsEmpty => 'You\'re all caught up';
+
+  @override
+  String get notificationsSomeone => 'Someone';
+
+  @override
+  String notificationNewFollower(String name) {
+    return '$name started following you';
+  }
+
+  @override
+  String notificationFriendRequest(String name) {
+    return '$name sent you a friend request';
+  }
+
+  @override
+  String notificationFriendAccepted(String name) {
+    return '$name accepted your friend request';
+  }
+
+  @override
+  String notificationRoomInvitation(String name) {
+    return '$name invited you to a room';
+  }
+
+  @override
+  String notificationDirectMessage(String name) {
+    return 'New message from $name';
+  }
+
+  @override
   String get categoryGames => 'Games';
 
   @override

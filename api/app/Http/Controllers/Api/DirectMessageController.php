@@ -9,6 +9,7 @@ use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Services\InAppNotifier;
 
 class DirectMessageController extends Controller {
  public function index(Request $request): JsonResponse {
@@ -38,6 +39,7 @@ class DirectMessageController extends Controller {
   $this->authorizeUser($request,$conversation); $this->authorizeMessaging($request->user(),$conversation->other($request->user())); $data=$request->validate(['text'=>['required','string','max:1000']]);
   $message=DB::transaction(function()use($request,$conversation,$data){$m=DirectMessage::create(['direct_conversation_id'=>$conversation->id,'sender_id'=>$request->user()->id,'body'=>trim($data['text'])]);$conversation->touch();return $m->load('sender');});
   $recipient=$conversation->other($request->user())->public_id; broadcast(new DirectMessageSent($message,$recipient))->toOthers();
+  $recipientUser=$conversation->other($request->user()); app(InAppNotifier::class)->send($recipientUser,'direct_message',$request->user(),['conversation_id'=>(string)$conversation->id,'preview'=>mb_substr($message->body,0,120)]);
   return response()->json(['message'=>(new DirectMessageResource($message))->resolve()],201);
  }
  private function authorizeUser(Request $r,DirectConversation $c): void { abort_unless($c->includes($r->user()),403); }

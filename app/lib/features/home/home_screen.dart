@@ -7,12 +7,14 @@ import '../../core/theme/app_theme.dart';
 import '../../data/mock_data.dart';
 import '../../data/content_repository.dart';
 import '../../data/models.dart';
+import '../../data/notification_repository.dart';
 import '../../data/room_repository.dart';
 import '../../l10n/gen/app_localizations.dart';
 import '../../widgets/avatar.dart';
 import '../../widgets/common.dart';
 import '../rooms/room_screen.dart';
 import '../auth/auth_controller.dart';
+import '../notifications/notifications_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key, required this.onSeeAllGames});
@@ -29,6 +31,7 @@ class _HomeScreenState extends State<HomeScreen> {
   List<HeroBanner>? _banners;
   List<Room>? _rooms;
   String? _loadedLocale;
+  int _unreadNotifications = 0;
 
   @override
   void didChangeDependencies() {
@@ -39,6 +42,22 @@ class _HomeScreenState extends State<HomeScreen> {
     _banners = _fallback.banners(AppLocalizations.of(context));
     unawaited(_loadBanners(locale));
     unawaited(_loadRooms());
+    unawaited(_loadNotifications());
+  }
+
+  Future<void> _loadNotifications() async {
+    try {
+      final feed = await NotificationRepository(AuthScope.of(context).api)
+          .load();
+      if (mounted) setState(() => _unreadNotifications = feed.unreadCount);
+    } catch (_) {}
+  }
+
+  Future<void> _openNotifications() async {
+    await Navigator.of(context).push<bool>(
+      MaterialPageRoute<bool>(builder: (_) => const NotificationsScreen()),
+    );
+    if (mounted) await _loadNotifications();
   }
 
   Future<void> _loadRooms() async {
@@ -80,7 +99,10 @@ class _HomeScreenState extends State<HomeScreen> {
       child: ListView(
         padding: const EdgeInsets.only(bottom: 24),
         children: [
-          const _HomeHeader(),
+          _HomeHeader(
+            unreadNotifications: _unreadNotifications,
+            onNotifications: _openNotifications,
+          ),
           const SizedBox(height: AppSizes.gapL),
           _HeroCarousel(banners: _banners ?? _fallback.banners(l10n)),
           const SizedBox(height: AppSizes.gapXl),
@@ -106,7 +128,13 @@ class _HomeScreenState extends State<HomeScreen> {
 // ---------------------------------------------------------------- header
 
 class _HomeHeader extends StatelessWidget {
-  const _HomeHeader();
+  const _HomeHeader({
+    required this.unreadNotifications,
+    required this.onNotifications,
+  });
+
+  final int unreadNotifications;
+  final VoidCallback onNotifications;
 
   @override
   Widget build(BuildContext context) {
@@ -155,7 +183,11 @@ class _HomeHeader extends StatelessWidget {
           const SizedBox(width: 4),
           const _HeaderIcon(icon: Icons.search_rounded),
           const SizedBox(width: 4),
-          const _HeaderIcon(icon: Icons.notifications_rounded, hasDot: true),
+          _HeaderIcon(
+            icon: Icons.notifications_rounded,
+            hasDot: unreadNotifications > 0,
+            onTap: onNotifications,
+          ),
         ],
       ),
     );
@@ -163,34 +195,39 @@ class _HomeHeader extends StatelessWidget {
 }
 
 class _HeaderIcon extends StatelessWidget {
-  const _HeaderIcon({required this.icon, this.hasDot = false});
+  const _HeaderIcon({required this.icon, this.hasDot = false, this.onTap});
 
   final IconData icon;
   final bool hasDot;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 40,
-      height: 40,
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          Icon(icon, size: 22, color: AppColors.textPrimary),
-          if (hasDot)
-            Positioned(
-              top: 8,
-              right: 8,
-              child: Container(
-                width: 8,
-                height: 8,
-                decoration: const BoxDecoration(
-                  color: AppColors.danger,
-                  shape: BoxShape.circle,
+    return InkResponse(
+      onTap: onTap,
+      radius: 22,
+      child: SizedBox(
+        width: 40,
+        height: 40,
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            Icon(icon, size: 22, color: AppColors.textPrimary),
+            if (hasDot)
+              Positioned(
+                top: 8,
+                right: 8,
+                child: Container(
+                  width: 8,
+                  height: 8,
+                  decoration: const BoxDecoration(
+                    color: AppColors.danger,
+                    shape: BoxShape.circle,
+                  ),
                 ),
               ),
-            ),
-        ],
+          ],
+        ),
       ),
     );
   }

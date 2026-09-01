@@ -128,6 +128,60 @@ abstract class AppLocalizations {
   /// **'Profile'**
   String get navProfile;
 
+  /// No description provided for @notificationsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get notificationsTitle;
+
+  /// No description provided for @notificationsMarkAllRead.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark all read'**
+  String get notificationsMarkAllRead;
+
+  /// No description provided for @notificationsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re all caught up'**
+  String get notificationsEmpty;
+
+  /// No description provided for @notificationsSomeone.
+  ///
+  /// In en, this message translates to:
+  /// **'Someone'**
+  String get notificationsSomeone;
+
+  /// No description provided for @notificationNewFollower.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} started following you'**
+  String notificationNewFollower(String name);
+
+  /// No description provided for @notificationFriendRequest.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} sent you a friend request'**
+  String notificationFriendRequest(String name);
+
+  /// No description provided for @notificationFriendAccepted.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} accepted your friend request'**
+  String notificationFriendAccepted(String name);
+
+  /// No description provided for @notificationRoomInvitation.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} invited you to a room'**
+  String notificationRoomInvitation(String name);
+
+  /// No description provided for @notificationDirectMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'New message from {name}'**
+  String notificationDirectMessage(String name);
+
   /// No description provided for @categoryGames.
   ///
   /// In en, this message translates to:

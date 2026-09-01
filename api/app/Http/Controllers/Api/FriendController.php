@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Services\InAppNotifier;
 
 class FriendController extends Controller
 {
@@ -53,6 +54,7 @@ class FriendController extends Controller
         abort_if($existing?->status === 'pending', 409, 'A friend request already exists.');
         if ($existing) $existing->delete();
         $friendRequest = FriendRequest::create(['requester_id' => $me->id, 'addressee_id' => $user->id]);
+        app(InAppNotifier::class)->send($user, 'friend_request', $me, ['request_id'=>(string)$friendRequest->id,'user_id'=>$me->public_id]);
         return response()->json(['request_id' => (string) $friendRequest->id], 201);
     }
 
@@ -61,6 +63,7 @@ class FriendController extends Controller
         abort_unless($friendRequest->addressee_id === $request->user()->id && $friendRequest->status === 'pending', 403);
         $data = $request->validate(['accept' => ['required', 'boolean']]);
         $friendRequest->update(['status' => $data['accept'] ? 'accepted' : 'declined', 'responded_at' => now()]);
+        if ($data['accept']) app(InAppNotifier::class)->send($friendRequest->requester, 'friend_accepted', $request->user(), ['user_id'=>$request->user()->public_id]);
         return response()->json(['message' => $data['accept'] ? 'Friend request accepted.' : 'Friend request declined.']);
     }
 

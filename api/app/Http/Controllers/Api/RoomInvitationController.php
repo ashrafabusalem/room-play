@@ -12,6 +12,7 @@ use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Services\InAppNotifier;
 
 class RoomInvitationController extends Controller
 {
@@ -39,6 +40,7 @@ class RoomInvitationController extends Controller
             ['room_id' => $room->id, 'invitee_id' => $user->id],
             ['inviter_id' => $request->user()->id, 'status' => 'pending', 'responded_at' => null],
         );
+        app(InAppNotifier::class)->send($user, 'room_invitation', $request->user(), ['invitation_id'=>(string)$invite->id,'room_id'=>$room->public_id,'room_name'=>$room->name]);
         return response()->json(['invitation_id' => (string) $invite->id], 201);
     }
 

@@ -25,6 +25,43 @@ class AppLocalizationsAr extends AppLocalizations {
   String get navProfile => 'حسابي';
 
   @override
+  String get notificationsTitle => 'الإشعارات';
+
+  @override
+  String get notificationsMarkAllRead => 'تحديد الكل كمقروء';
+
+  @override
+  String get notificationsEmpty => 'لا توجد إشعارات جديدة';
+
+  @override
+  String get notificationsSomeone => 'شخص ما';
+
+  @override
+  String notificationNewFollower(String name) {
+    return 'بدأ $name بمتابعتك';
+  }
+
+  @override
+  String notificationFriendRequest(String name) {
+    return 'أرسل إليك $name طلب صداقة';
+  }
+
+  @override
+  String notificationFriendAccepted(String name) {
+    return 'قبل $name طلب صداقتك';
+  }
+
+  @override
+  String notificationRoomInvitation(String name) {
+    return 'دعاك $name إلى غرفة';
+  }
+
+  @override
+  String notificationDirectMessage(String name) {
+    return 'رسالة جديدة من $name';
+  }
+
+  @override
   String get categoryGames => 'الألعاب';
 
   @override
