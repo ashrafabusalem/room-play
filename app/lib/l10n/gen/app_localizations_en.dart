@@ -28,6 +28,29 @@ class AppLocalizationsEn extends AppLocalizations {
   String get notificationsTitle => 'Notifications';
 
   @override
+  String get rankingsTitle => 'Rankings';
+
+  @override
+  String get rankingsWeekly => 'This week';
+
+  @override
+  String get rankingsAllTime => 'All time';
+
+  @override
+  String get rankingsTopSenders => 'Top senders';
+
+  @override
+  String get rankingsTopReceivers => 'Top receivers';
+
+  @override
+  String get rankingsEmpty => 'No gifts have been sent yet';
+
+  @override
+  String rankingsGold(int amount) {
+    return '$amount Gold';
+  }
+
+  @override
   String get notificationsMarkAllRead => 'Mark all read';
 
   @override

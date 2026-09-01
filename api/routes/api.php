@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\TruthOrDareController;
 use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\GiftController;
 use App\Http\Controllers\Api\RoomRewardController;
+use App\Http\Controllers\Api\RankingController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -38,6 +39,7 @@ Route::get('/content', ContentController::class)->middleware('throttle:120,1');
 Route::middleware(['auth:sanctum', 'active'])->group(function () {
     Route::get('/me', [AuthController::class, 'me']);
     Route::get('/wallet', WalletController::class);
+    Route::get('/rankings', RankingController::class);
     Route::get('/gifts', [GiftController::class, 'index']);
     Route::post('/rooms/{room}/gifts/{gift}', [GiftController::class, 'send'])->middleware('throttle:30,1');
     Route::get('/rooms/{room}/reward', [RoomRewardController::class, 'show']);

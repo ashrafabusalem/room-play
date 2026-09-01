@@ -28,6 +28,29 @@ class AppLocalizationsAr extends AppLocalizations {
   String get notificationsTitle => 'الإشعارات';
 
   @override
+  String get rankingsTitle => 'التصنيفات';
+
+  @override
+  String get rankingsWeekly => 'هذا الأسبوع';
+
+  @override
+  String get rankingsAllTime => 'كل الأوقات';
+
+  @override
+  String get rankingsTopSenders => 'الأكثر إرسالاً';
+
+  @override
+  String get rankingsTopReceivers => 'الأكثر استقبالاً';
+
+  @override
+  String get rankingsEmpty => 'لم يتم إرسال أي هدايا بعد';
+
+  @override
+  String rankingsGold(int amount) {
+    return '$amount ذهب';
+  }
+
+  @override
   String get notificationsMarkAllRead => 'تحديد الكل كمقروء';
 
   @override

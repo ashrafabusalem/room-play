@@ -134,6 +134,48 @@ abstract class AppLocalizations {
   /// **'Notifications'**
   String get notificationsTitle;
 
+  /// No description provided for @rankingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Rankings'**
+  String get rankingsTitle;
+
+  /// No description provided for @rankingsWeekly.
+  ///
+  /// In en, this message translates to:
+  /// **'This week'**
+  String get rankingsWeekly;
+
+  /// No description provided for @rankingsAllTime.
+  ///
+  /// In en, this message translates to:
+  /// **'All time'**
+  String get rankingsAllTime;
+
+  /// No description provided for @rankingsTopSenders.
+  ///
+  /// In en, this message translates to:
+  /// **'Top senders'**
+  String get rankingsTopSenders;
+
+  /// No description provided for @rankingsTopReceivers.
+  ///
+  /// In en, this message translates to:
+  /// **'Top receivers'**
+  String get rankingsTopReceivers;
+
+  /// No description provided for @rankingsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No gifts have been sent yet'**
+  String get rankingsEmpty;
+
+  /// No description provided for @rankingsGold.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} Gold'**
+  String rankingsGold(int amount);
+
   /// No description provided for @notificationsMarkAllRead.
   ///
   /// In en, this message translates to:
