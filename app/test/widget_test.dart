@@ -126,6 +126,28 @@ void main() {
     expect(find.text('Gold balance'), findsOneWidget);
   });
 
+  testWidgets('create room button opens the room form and close only closes', (
+    tester,
+  ) async {
+    await _pumpApp(tester);
+
+    await tester.tap(find.byIcon(Icons.add_rounded));
+    await tester.pumpAndSettle();
+    expect(find.text('Create a Room'), findsOneWidget);
+
+    await tester.tap(find.byIcon(Icons.close_rounded));
+    await tester.pumpAndSettle();
+    expect(find.text('Room name'), findsNothing);
+
+    await tester.tap(find.byIcon(Icons.add_rounded));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Create Room'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Room name'), findsOneWidget);
+    expect(find.text('Open Room'), findsOneWidget);
+  });
+
   testWidgets('see all opens the games catalogue', (tester) async {
     await _pumpApp(tester);
 

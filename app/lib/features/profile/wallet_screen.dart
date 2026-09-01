@@ -74,15 +74,6 @@ class _WalletScreenState extends State<WalletScreen> {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 14),
-                  Text(
-                    l10n.walletPurchasesLater,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      color: AppColors.textSecondary,
-                      fontSize: 12,
-                    ),
-                  ),
                   const SizedBox(height: 24),
                   Text(
                     l10n.walletHistory,

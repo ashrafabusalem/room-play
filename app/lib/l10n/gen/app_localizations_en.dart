@@ -360,6 +360,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get gameSyncRealtime => 'Planned: realtime sync';
 
   @override
+  String get gameChooseRoom => 'Choose a room to play in';
+
+  @override
+  String get gameNoRooms => 'No live rooms are available. Create a room first.';
+
+  @override
   String get truthDareTitle => 'Truth or Dare';
 
   @override

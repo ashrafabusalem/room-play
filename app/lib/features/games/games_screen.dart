@@ -4,9 +4,12 @@ import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
 import '../../data/mock_data.dart';
 import '../../data/models.dart';
+import '../../data/room_repository.dart';
 import '../../l10n/gen/app_localizations.dart';
 import '../../widgets/common.dart';
-import '../../games/game_registry.dart';
+import '../auth/auth_controller.dart';
+import 'spy_game_screen.dart';
+import 'truth_or_dare_screen.dart';
 
 /// The catalogue filters.
 ///
@@ -40,7 +43,10 @@ class _GamesScreenState extends State<GamesScreen> {
   GameFilter _filter = GameFilter.all;
 
   List<Game> get _visible {
-    final all = _repo.games();
+    final all = _repo
+        .games()
+        .where((game) => game.id == 'spy' || game.id == 'truthordare')
+        .toList();
     return switch (_filter) {
       GameFilter.popular =>
         (all.toList()
@@ -54,6 +60,63 @@ class _GamesScreenState extends State<GamesScreen> {
         all.where((g) => g.category == GameCategory.action).toList(),
       GameFilter.all => all,
     };
+  }
+
+  Future<void> _play(Game game) async {
+    final l = AppLocalizations.of(context);
+    final auth = AuthScope.of(context);
+    final repository = RoomRepository(auth.api, currentUserId: auth.publicId);
+    List<Room> rooms;
+    try {
+      rooms = await repository.rooms();
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(l.errorNetwork)));
+      }
+      return;
+    }
+    if (!mounted) return;
+    if (rooms.isEmpty) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(l.gameNoRooms)));
+      return;
+    }
+    final selected = await showModalBottomSheet<Room>(
+      context: context,
+      builder: (context) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(title: Text(l.gameChooseRoom)),
+            for (final room in rooms)
+              ListTile(
+                leading: const Icon(Icons.graphic_eq_rounded),
+                title: Text(room.name, textDirection: directionOf(room.name)),
+                subtitle: Text(l.playersPlaying('${room.memberCount}')),
+                onTap: () => Navigator.pop(context, room),
+              ),
+          ],
+        ),
+      ),
+    );
+    if (!mounted || selected == null) return;
+    try {
+      final room = await repository.join(selected.id);
+      if (!mounted) return;
+      await Navigator.of(context).push(
+        MaterialPageRoute<void>(
+          builder: (_) => game.id == 'spy'
+              ? SpyGameScreen(room: room)
+              : TruthOrDareScreen(room: room),
+        ),
+      );
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(l.errorUnexpected)));
+      }
+    }
   }
 
   @override
@@ -92,7 +155,8 @@ class _GamesScreenState extends State<GamesScreen> {
                     ),
                     itemCount: games.length,
                     separatorBuilder: (_, _) => const SizedBox(height: 10),
-                    itemBuilder: (context, i) => _GameRow(game: games[i]),
+                    itemBuilder: (context, i) =>
+                        _GameRow(game: games[i], onPlay: () => _play(games[i])),
                   ),
           ),
         ],
@@ -161,9 +225,10 @@ class _FilterTabs extends StatelessWidget {
 }
 
 class _GameRow extends StatelessWidget {
-  const _GameRow({required this.game});
+  const _GameRow({required this.game, required this.onPlay});
 
   final Game game;
+  final VoidCallback onPlay;
 
   @override
   Widget build(BuildContext context) {
@@ -218,7 +283,7 @@ class _GameRow extends StatelessWidget {
         ),
         const SizedBox(width: 8),
         FilledButton(
-          onPressed: () => GameRegistry.launch(context, game),
+          onPressed: onPlay,
           style: FilledButton.styleFrom(
             backgroundColor: AppColors.primaryAlt,
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),

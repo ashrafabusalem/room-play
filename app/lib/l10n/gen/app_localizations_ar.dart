@@ -359,6 +359,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get gameSyncRealtime => 'مخطط: مزامنة فورية';
 
   @override
+  String get gameChooseRoom => 'اختر غرفة للعب';
+
+  @override
+  String get gameNoRooms => 'لا توجد غرف مباشرة متاحة. أنشئ غرفة أولاً.';
+
+  @override
   String get truthDareTitle => 'صراحة أم جرأة';
 
   @override

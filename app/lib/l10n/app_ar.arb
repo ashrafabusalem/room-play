@@ -128,6 +128,8 @@
   "gameNotBuiltBody": "هذه واجهة أولية. اللعبة نفسها تحتاج إلى محرّك قواعد وخادم يدير حالة المباراة.",
   "gameSyncTurnBased": "مخطط: مزامنة بالأدوار",
   "gameSyncRealtime": "مخطط: مزامنة فورية",
+  "gameChooseRoom": "اختر غرفة للعب",
+  "gameNoRooms": "لا توجد غرف مباشرة متاحة. أنشئ غرفة أولاً.",
   "truthDareTitle": "صراحة أم جرأة",
   "truthDareNoGame": "لا توجد لعبة صراحة أم جرأة جارية في هذه الغرفة.",
   "truthDareCreate": "إنشاء لعبة",

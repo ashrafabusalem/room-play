@@ -6,6 +6,7 @@ import '../../data/mock_data.dart';
 import '../../l10n/gen/app_localizations.dart';
 import '../../widgets/common.dart';
 import '../create/create_screen.dart';
+import '../create/create_room_screen.dart';
 import '../games/games_screen.dart';
 import '../home/home_screen.dart';
 import '../messages/messages_screen.dart';
@@ -34,13 +35,17 @@ class _MainShellState extends State<MainShell> {
         .push(MaterialPageRoute<void>(builder: (_) => const GamesScreen()));
   }
 
-  void _openCreate() {
-    showModalBottomSheet<void>(
+  Future<void> _openCreate() async {
+    final action = await showModalBottomSheet<String>(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (_) => const CreateScreen(),
     );
+    if (!mounted || action != 'room') return;
+    await Navigator.of(
+      context,
+    ).push(MaterialPageRoute<void>(builder: (_) => const CreateRoomScreen()));
   }
 
   @override

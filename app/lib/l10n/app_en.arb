@@ -138,6 +138,8 @@
   "gameNotBuiltBody": "This is the UI shell. The game itself needs a rules engine and a server that owns the match state.",
   "gameSyncTurnBased": "Planned: turn-based sync",
   "gameSyncRealtime": "Planned: realtime sync",
+  "gameChooseRoom": "Choose a room to play in",
+  "gameNoRooms": "No live rooms are available. Create a room first.",
   "truthDareTitle": "Truth or Dare",
   "truthDareNoGame": "No Truth or Dare game is running in this room.",
   "truthDareCreate": "Create game",

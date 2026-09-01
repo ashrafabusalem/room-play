@@ -336,19 +336,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ],
           ),
           const SizedBox(height: 24),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: AppSizes.gutter),
-            child: Text(
-              l10n.profileNotDesignedNote,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontFamily: kFontFamily,
-                fontFamilyFallback: kFontFallback,
-                fontSize: 11,
-                color: AppColors.textTertiary,
-              ),
-            ),
-          ),
         ],
       ),
     );

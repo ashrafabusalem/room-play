@@ -728,6 +728,18 @@ abstract class AppLocalizations {
   /// **'Planned: realtime sync'**
   String get gameSyncRealtime;
 
+  /// No description provided for @gameChooseRoom.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a room to play in'**
+  String get gameChooseRoom;
+
+  /// No description provided for @gameNoRooms.
+  ///
+  /// In en, this message translates to:
+  /// **'No live rooms are available. Create a room first.'**
+  String get gameNoRooms;
+
   /// No description provided for @truthDareTitle.
   ///
   /// In en, this message translates to:
