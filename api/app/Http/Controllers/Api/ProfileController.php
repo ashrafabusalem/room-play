@@ -12,6 +12,9 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use Illuminate\Http\UploadedFile;
+use RuntimeException;
 use Illuminate\Validation\Rule;
 
 class ProfileController extends Controller
@@ -34,7 +37,7 @@ class ProfileController extends Controller
         ]);
         $user = $request->user();
         if ($request->hasFile('avatar')) {
-            $data['avatar_path'] = $request->file('avatar')->store('avatars', 'public');
+            $data['avatar_path'] = $this->storeAvatar($request->file('avatar'));
         }
         unset($data['avatar']);
         $user->forceFill($data)->save();
@@ -48,13 +51,30 @@ class ProfileController extends Controller
         $user = $request->user();
         $oldPath = $user->avatar_path;
         $user->forceFill([
-            'avatar_path' => $request->file('avatar')->store('avatars', 'public'),
+            'avatar_path' => $this->storeAvatar($request->file('avatar')),
         ])->save();
         if ($oldPath) {
             Storage::disk('public')->delete($oldPath);
         }
 
         return response()->json(['user' => new UserResource($user->refresh())]);
+    }
+
+    private function storeAvatar(UploadedFile $avatar): string
+    {
+        $extension = $avatar->extension() ?: 'jpg';
+        $path = 'avatars/'.Str::uuid().'.'.$extension;
+        $stored = Storage::disk('public')->put(
+            $path,
+            $avatar->getContent(),
+            ['visibility' => 'public'],
+        );
+
+        if (! $stored) {
+            throw new RuntimeException('The profile photo could not be stored.');
+        }
+
+        return $path;
     }
 
     public function follow(Request $request, User $user): JsonResponse
