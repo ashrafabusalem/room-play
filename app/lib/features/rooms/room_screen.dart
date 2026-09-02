@@ -657,9 +657,27 @@ class _RoomScreenState extends State<RoomScreen> {
         gifts: gifts,
         recipients: recipients,
         onSend: (gift, recipient) async {
-          await GiftRepository(auth.api).send(_room.id, gift.id, recipient.id);
+          final result = await GiftRepository(auth.api)
+              .send(_room.id, gift.id, recipient.id);
           if (sheetContext.mounted) Navigator.pop(sheetContext);
           if (mounted) {
+            setState(() {
+              AppUser updated(AppUser user) => user.id == auth.publicId
+                  ? user.copyWith(coins: result.senderBalance)
+                  : user.id == recipient.id
+                  ? user.copyWith(coins: result.recipientBalance)
+                  : user;
+              _room = _room.copyWith(
+                members: _room.members.map(updated).toList(growable: false),
+                seats: _room.seats
+                    .map(
+                      (seat) => seat.user == null
+                          ? seat
+                          : seat.copyWith(user: updated(seat.user!)),
+                    )
+                    .toList(growable: false),
+              );
+            });
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(

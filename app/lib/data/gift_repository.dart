@@ -60,7 +60,11 @@ class GiftRepository {
         .toList();
   }
 
-  Future<int> send(String roomId, int giftId, String recipientId) async {
+  Future<GiftSendResult> send(
+    String roomId,
+    int giftId,
+    String recipientId,
+  ) async {
     final requestId =
         '${DateTime.now().microsecondsSinceEpoch}-'
         '${Random.secure().nextInt(1 << 32)}';
@@ -75,6 +79,18 @@ class GiftRepository {
       }
       j = await _api.post('/rooms/$roomId/gifts/$giftId', body: body);
     }
-    return (j['balance'] as num).toInt();
+    return GiftSendResult(
+      senderBalance: (j['balance'] as num).toInt(),
+      recipientBalance: (j['recipient_balance'] as num).toInt(),
+    );
   }
+}
+
+class GiftSendResult {
+  const GiftSendResult({
+    required this.senderBalance,
+    required this.recipientBalance,
+  });
+  final int senderBalance;
+  final int recipientBalance;
 }
