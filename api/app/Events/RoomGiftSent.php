@@ -1,7 +1,7 @@
 <?php
 namespace App\Events;
-use App\Models\RoomGift;use Illuminate\Broadcasting\{InteractsWithSockets,PresenceChannel};use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;use Illuminate\Foundation\Events\Dispatchable;use Illuminate\Queue\SerializesModels;
-class RoomGiftSent implements ShouldBroadcastNow{
+use App\Models\RoomGift;use Illuminate\Broadcasting\{InteractsWithSockets,PresenceChannel};use Illuminate\Contracts\Broadcasting\ShouldBroadcast;use Illuminate\Foundation\Events\Dispatchable;use Illuminate\Queue\SerializesModels;
+class RoomGiftSent implements ShouldBroadcast{
  use Dispatchable,InteractsWithSockets,SerializesModels;
  public function __construct(public RoomGift $roomGift){}
  public function broadcastOn():array{return [new PresenceChannel('room.'.$this->roomGift->room->public_id)];}

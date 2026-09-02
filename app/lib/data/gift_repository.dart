@@ -1,4 +1,7 @@
+import 'dart:math';
+
 import '../core/api/api_client.dart';
+import '../core/api/api_exception.dart';
 
 class GiftItem {
   const GiftItem({
@@ -58,10 +61,20 @@ class GiftRepository {
   }
 
   Future<int> send(String roomId, int giftId, String recipientId) async {
-    final j = await _api.post(
-      '/rooms/$roomId/gifts/$giftId',
-      body: {'recipient_id': recipientId},
-    );
+    final requestId =
+        '${DateTime.now().microsecondsSinceEpoch}-'
+        '${Random.secure().nextInt(1 << 32)}';
+    final body = {'recipient_id': recipientId, 'request_id': requestId};
+    Map<String, dynamic> j;
+    try {
+      j = await _api.post('/rooms/$roomId/gifts/$giftId', body: body);
+    } on ApiException catch (error) {
+      if (error.kind != ApiErrorKind.timeout &&
+          error.kind != ApiErrorKind.network) {
+        rethrow;
+      }
+      j = await _api.post('/rooms/$roomId/gifts/$giftId', body: body);
+    }
     return (j['balance'] as num).toInt();
   }
 }
