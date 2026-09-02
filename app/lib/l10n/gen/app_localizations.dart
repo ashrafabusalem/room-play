@@ -530,6 +530,30 @@ abstract class AppLocalizations {
   /// **'Your seat will be released. You can join the room again later.'**
   String get roomLeaveConfirmBody;
 
+  /// No description provided for @gameRequestTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Game request'**
+  String get gameRequestTitle;
+
+  /// No description provided for @gameRequestBody.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} wants to play {game}.'**
+  String gameRequestBody(String name, String game);
+
+  /// No description provided for @gameRequestAccept.
+  ///
+  /// In en, this message translates to:
+  /// **'Accept'**
+  String get gameRequestAccept;
+
+  /// No description provided for @gameRequestDecline.
+  ///
+  /// In en, this message translates to:
+  /// **'Decline'**
+  String get gameRequestDecline;
+
   /// No description provided for @roomChatHint.
   ///
   /// In en, this message translates to:

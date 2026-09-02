@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\ContentController;
 use App\Http\Controllers\Api\DirectMessageController;
 use App\Http\Controllers\Api\FriendController;
 use App\Http\Controllers\Api\GiftController;
+use App\Http\Controllers\Api\GameRequestController;
 use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\RankingController;
@@ -68,6 +69,9 @@ Route::middleware(['auth:sanctum', 'active'])->group(function () {
     Route::delete('/rooms/{room}', [RoomController::class, 'close']);
     Route::get('/rooms/{room}/messages', [RoomController::class, 'messages']);
     Route::post('/rooms/{room}/messages', [RoomController::class, 'sendMessage'])->middleware('throttle:60,1');
+    Route::post('/rooms/{room}/game-requests', [GameRequestController::class, 'store'])->middleware('throttle:10,1');
+    Route::get('/rooms/{room}/game-requests/pending', [GameRequestController::class, 'pending']);
+    Route::patch('/game-requests/{gameRequest}', [GameRequestController::class, 'respond']);
     Route::get('/users/search', [DirectMessageController::class, 'search']);
     Route::get('/profiles/{user:public_id}', [ProfileController::class, 'show']);
     Route::patch('/profile', [ProfileController::class, 'update']);

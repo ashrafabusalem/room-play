@@ -249,6 +249,20 @@ class AppLocalizationsAr extends AppLocalizations {
       'سيتم إخلاء مقعدك. يمكنك الانضمام إلى الغرفة مرة أخرى لاحقًا.';
 
   @override
+  String get gameRequestTitle => 'طلب لعبة';
+
+  @override
+  String gameRequestBody(String name, String game) {
+    return 'يريد $name لعب $game.';
+  }
+
+  @override
+  String get gameRequestAccept => 'قبول';
+
+  @override
+  String get gameRequestDecline => 'رفض';
+
+  @override
   String get roomChatHint => 'اكتب رسالة...';
 
   @override

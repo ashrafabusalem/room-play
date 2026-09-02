@@ -250,6 +250,20 @@ class AppLocalizationsEn extends AppLocalizations {
       'Your seat will be released. You can join the room again later.';
 
   @override
+  String get gameRequestTitle => 'Game request';
+
+  @override
+  String gameRequestBody(String name, String game) {
+    return '$name wants to play $game.';
+  }
+
+  @override
+  String get gameRequestAccept => 'Accept';
+
+  @override
+  String get gameRequestDecline => 'Decline';
+
+  @override
   String get roomChatHint => 'Say something...';
 
   @override

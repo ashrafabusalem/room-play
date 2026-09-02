@@ -10,6 +10,7 @@ import '../../data/room_realtime.dart';
 import '../../data/room_repository.dart';
 import '../../data/social_repository.dart';
 import '../../data/gift_repository.dart';
+import '../../data/game_request_repository.dart';
 import '../../l10n/gen/app_localizations.dart';
 import '../../widgets/avatar.dart';
 import '../../widgets/common.dart';
@@ -52,6 +53,8 @@ class _RoomScreenState extends State<RoomScreen> {
   Timer? _giftTimer;
   RoomRewardStatus? _reward;
   Timer? _rewardTimer;
+  Timer? _gameRequestTimer;
+  bool _gameRequestDialogOpen = false;
 
   @override
   void didChangeDependencies() {
@@ -94,6 +97,13 @@ class _RoomScreenState extends State<RoomScreen> {
         },
         onGift: _showGift,
       );
+      if (_isHost) {
+        _gameRequestTimer ??= Timer.periodic(
+          const Duration(seconds: 2),
+          (_) => unawaited(_checkGameRequests()),
+        );
+        unawaited(_checkGameRequests());
+      }
       return true;
     } catch (_) {
       // Keep the last known room visible if joining or realtime is unavailable.
@@ -470,6 +480,7 @@ class _RoomScreenState extends State<RoomScreen> {
     _scrollController.dispose();
     _giftTimer?.cancel();
     _rewardTimer?.cancel();
+    _gameRequestTimer?.cancel();
     super.dispose();
   }
 
@@ -709,6 +720,11 @@ class _RoomScreenState extends State<RoomScreen> {
       ),
     );
     if (!mounted || game == null) return;
+    if (!_isHost && _rooms != null) {
+      await GameRequestRepository(AuthScope.of(context).api)
+          .request(_room.id, game == 'spy' ? 'spy' : 'truth_or_dare');
+    }
+    if (!mounted) return;
     await Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (_) => game == 'spy'
@@ -716,6 +732,54 @@ class _RoomScreenState extends State<RoomScreen> {
             : TruthOrDareScreen(room: _room),
       ),
     );
+  }
+
+  bool get _isHost => _room.seats.any(
+    (seat) => seat.user?.isMe == true && seat.user?.isHost == true,
+  );
+
+  Future<void> _checkGameRequests() async {
+    if (!_isHost || _gameRequestDialogOpen || !mounted) return;
+    try {
+      final repo = GameRequestRepository(AuthScope.of(context).api);
+      final request = await repo.pending(_room.id);
+      if (request == null || !mounted) return;
+      _gameRequestDialogOpen = true;
+      final l = AppLocalizations.of(context);
+      final gameName = request.game == 'spy' ? l.spyTitle : l.truthDareTitle;
+      final accepted = await showDialog<bool>(
+        context: context,
+        builder: (dialogContext) => AlertDialog(
+          title: Text(l.gameRequestTitle),
+          content: Text(l.gameRequestBody(request.requesterName, gameName)),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext, false),
+              child: Text(l.gameRequestDecline),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.pop(dialogContext, true),
+              child: Text(l.gameRequestAccept),
+            ),
+          ],
+        ),
+      );
+      if (accepted != null) {
+        await repo.respond(request.id, accepted);
+        if (accepted && mounted) {
+          await Navigator.of(context).push(
+            MaterialPageRoute<void>(
+              builder: (_) => request.game == 'spy'
+                  ? SpyGameScreen(room: _room)
+                  : TruthOrDareScreen(room: _room),
+            ),
+          );
+        }
+      }
+    } catch (_) {
+    } finally {
+      _gameRequestDialogOpen = false;
+    }
   }
 
   @override
