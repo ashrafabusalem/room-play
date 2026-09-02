@@ -366,6 +366,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get gameNoRooms => 'No live rooms are available. Create a room first.';
 
   @override
+  String get gameJoiningRoom => 'Joining room…';
+
+  @override
   String get truthDareTitle => 'Truth or Dare';
 
   @override
@@ -592,6 +595,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get profilePhotoUpdated => 'Profile photo updated.';
+
+  @override
+  String get profilePhotoFailed =>
+      'Couldn’t upload that photo. Choose a JPG or PNG up to 24 MB.';
 
   @override
   String get profileBio => 'Bio';

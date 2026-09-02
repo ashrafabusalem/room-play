@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../../core/api/api_exception.dart';
 import '../../core/locale/locale_controller.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
@@ -137,13 +138,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final image = await ImagePicker().pickImage(
       source: ImageSource.gallery,
       imageQuality: 85,
-      maxWidth: 1200,
-      maxHeight: 1200,
+      maxWidth: 1600,
+      maxHeight: 1600,
     );
     if (image == null || !mounted) return;
     final auth = AuthScope.of(context);
     final messenger = ScaffoldMessenger.of(context);
-    final successMessage = AppLocalizations.of(context).profilePhotoUpdated;
+    final l = AppLocalizations.of(context);
     setState(() => _loading = true);
     try {
       final user = await SocialRepository(auth.api)
@@ -151,7 +152,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
       await auth.applyProfileUpdate(user);
       if (mounted) {
         await _load();
-        messenger.showSnackBar(SnackBar(content: Text(successMessage)));
+        messenger.showSnackBar(SnackBar(content: Text(l.profilePhotoUpdated)));
+      }
+    } on ApiException catch (error) {
+      if (mounted) {
+        messenger.showSnackBar(
+          SnackBar(
+            content: Text(
+              error.errorFor('avatar') ??
+                  error.serverMessage ??
+                  l.profilePhotoFailed,
+            ),
+          ),
+        );
+      }
+    } catch (_) {
+      if (mounted) {
+        messenger.showSnackBar(SnackBar(content: Text(l.profilePhotoFailed)));
       }
     } finally {
       if (mounted) setState(() => _loading = false);

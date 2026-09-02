@@ -101,9 +101,27 @@ class _GamesScreenState extends State<GamesScreen> {
       ),
     );
     if (!mounted || selected == null) return;
+    showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => AlertDialog(
+        content: Row(
+          children: [
+            const SizedBox(
+              width: 22,
+              height: 22,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            ),
+            const SizedBox(width: 16),
+            Expanded(child: Text(l.gameJoiningRoom)),
+          ],
+        ),
+      ),
+    );
     try {
       final room = await repository.join(selected.id);
       if (!mounted) return;
+      Navigator.of(context).pop();
       await Navigator.of(context).push(
         MaterialPageRoute<void>(
           builder: (_) => game.id == 'spy'
@@ -113,6 +131,7 @@ class _GamesScreenState extends State<GamesScreen> {
       );
     } catch (_) {
       if (mounted) {
+        Navigator.of(context).pop();
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text(l.errorUnexpected)));
       }

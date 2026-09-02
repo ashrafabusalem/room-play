@@ -740,6 +740,12 @@ abstract class AppLocalizations {
   /// **'No live rooms are available. Create a room first.'**
   String get gameNoRooms;
 
+  /// No description provided for @gameJoiningRoom.
+  ///
+  /// In en, this message translates to:
+  /// **'Joining room…'**
+  String get gameJoiningRoom;
+
   /// No description provided for @truthDareTitle.
   ///
   /// In en, this message translates to:
@@ -1165,6 +1171,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Profile photo updated.'**
   String get profilePhotoUpdated;
+
+  /// No description provided for @profilePhotoFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn’t upload that photo. Choose a JPG or PNG up to 24 MB.'**
+  String get profilePhotoFailed;
 
   /// No description provided for @profileBio.
   ///

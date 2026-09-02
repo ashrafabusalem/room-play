@@ -365,6 +365,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get gameNoRooms => 'لا توجد غرف مباشرة متاحة. أنشئ غرفة أولاً.';
 
   @override
+  String get gameJoiningRoom => 'جارٍ الانضمام إلى الغرفة…';
+
+  @override
   String get truthDareTitle => 'صراحة أم جرأة';
 
   @override
@@ -588,6 +591,10 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get profilePhotoUpdated => 'تم تحديث صورة الحساب.';
+
+  @override
+  String get profilePhotoFailed =>
+      'تعذّر رفع الصورة. اختر صورة JPG أو PNG بحجم لا يتجاوز 24 ميجابايت.';
 
   @override
   String get profileBio => 'النبذة';

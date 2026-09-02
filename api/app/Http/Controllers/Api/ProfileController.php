@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\UserResource;
+use App\Models\FriendRequest;
 use App\Models\User;
 use App\Models\UserReport;
-use App\Models\FriendRequest;
 use App\Services\InAppNotifier;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -30,7 +30,7 @@ class ProfileController extends Controller
             'name' => ['sometimes', 'required', 'string', 'min:2', 'max:80'],
             'bio' => ['nullable', 'string', 'max:240'],
             'dm_privacy' => ['sometimes', Rule::in(['everyone', 'followers', 'nobody'])],
-            'avatar' => ['sometimes', 'nullable', 'image', 'max:4096'],
+            'avatar' => ['sometimes', 'nullable', 'image', 'max:24576', 'dimensions:max_width=6000,max_height=6000'],
         ]);
         $user = $request->user();
         if ($request->hasFile('avatar')) {
@@ -44,13 +44,15 @@ class ProfileController extends Controller
 
     public function avatar(Request $request): JsonResponse
     {
-        $request->validate(['avatar' => ['required', 'image', 'max:4096']]);
+        $request->validate(['avatar' => ['required', 'image', 'max:24576', 'dimensions:max_width=6000,max_height=6000']]);
         $user = $request->user();
         $oldPath = $user->avatar_path;
         $user->forceFill([
             'avatar_path' => $request->file('avatar')->store('avatars', 'public'),
         ])->save();
-        if ($oldPath) Storage::disk('public')->delete($oldPath);
+        if ($oldPath) {
+            Storage::disk('public')->delete($oldPath);
+        }
 
         return response()->json(['user' => new UserResource($user->refresh())]);
     }
@@ -61,13 +63,17 @@ class ProfileController extends Controller
         abort_if($viewer->is($user), 422, 'You cannot follow yourself.');
         abort_if($this->blockedEitherWay($viewer, $user), 403, 'This profile is unavailable.');
         $changes = $viewer->following()->syncWithoutDetaching([$user->id]);
-        if ($changes['attached']) app(InAppNotifier::class)->send($user, 'new_follower', $viewer, ['user_id'=>$viewer->public_id]);
+        if ($changes['attached']) {
+            app(InAppNotifier::class)->send($user, 'new_follower', $viewer, ['user_id' => $viewer->public_id]);
+        }
+
         return response()->json(['profile' => $this->profile($user, $viewer)]);
     }
 
     public function unfollow(Request $request, User $user): JsonResponse
     {
         $request->user()->following()->detach($user->id);
+
         return response()->json(['profile' => $this->profile($user, $request->user())]);
     }
 
@@ -84,12 +90,14 @@ class ProfileController extends Controller
                 ->where(['requester_id' => $viewer->id, 'addressee_id' => $user->id])
                 ->orWhere(['requester_id' => $user->id, 'addressee_id' => $viewer->id]))->delete();
         });
+
         return response()->json(['message' => 'User blocked.']);
     }
 
     public function unblock(Request $request, User $user): JsonResponse
     {
         $request->user()->blockedUsers()->detach($user->id);
+
         return response()->json(['message' => 'User unblocked.']);
     }
 
@@ -112,6 +120,7 @@ class ProfileController extends Controller
             'details' => ['nullable', 'string', 'max:1000'],
         ]);
         UserReport::create([...$data, 'reporter_id' => $request->user()->id, 'reported_id' => $user->id]);
+
         return response()->json(['message' => 'Report submitted.'], 201);
     }
 
@@ -120,6 +129,7 @@ class ProfileController extends Controller
         $friendship = FriendRequest::where(fn ($q) => $q
             ->where(['requester_id' => $viewer->id, 'addressee_id' => $user->id])
             ->orWhere(['requester_id' => $user->id, 'addressee_id' => $viewer->id]))->first();
+
         return [
             'id' => $user->public_id, 'name' => $user->name, 'level' => $user->level,
             'bio' => $user->bio, 'avatar_url' => $user->avatarUrl(),
