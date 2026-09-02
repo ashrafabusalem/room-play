@@ -662,33 +662,39 @@ class _RoomScreenState extends State<RoomScreen> {
         child: SafeArea(
           child: Column(
             children: [
-              if (!keyboardOpen) ...[
-                _RoomHeader(
-                  room: room,
-                  following: _following,
-                  onFollow: () => setState(() => _following = !_following),
-                  onInvite: _inviteFriends,
-                  onGame: _openGames,
-                ),
-                const SizedBox(height: 10),
-                _RoomMetaPills(room: room),
-                AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 250),
-                  child: _liveGift == null
-                      ? const SizedBox.shrink()
-                      : _LiveGiftBanner(
-                          key: ValueKey(_liveGift),
-                          gift: _liveGift!,
+              keyboardOpen
+                  ? const SizedBox.shrink()
+                  : Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        _RoomHeader(
+                          room: room,
+                          following: _following,
+                          onFollow: () =>
+                              setState(() => _following = !_following),
+                          onInvite: _inviteFriends,
+                          onGame: _openGames,
                         ),
-                ),
-                const SizedBox(height: 18),
-                _SeatGrid(
-                  seats: room.seats,
-                  micOn: _micOn,
-                  onSeatTap: _seatAction,
-                ),
-                const SizedBox(height: 16),
-              ],
+                        const SizedBox(height: 10),
+                        _RoomMetaPills(room: room),
+                        AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 250),
+                          child: _liveGift == null
+                              ? const SizedBox.shrink()
+                              : _LiveGiftBanner(
+                                  key: ValueKey(_liveGift),
+                                  gift: _liveGift!,
+                                ),
+                        ),
+                        const SizedBox(height: 18),
+                        _SeatGrid(
+                          seats: room.seats,
+                          micOn: _micOn,
+                          onSeatTap: _seatAction,
+                        ),
+                        const SizedBox(height: 16),
+                      ],
+                    ),
               Expanded(
                 child: _ChatPanel(
                   messages: _messages,
@@ -698,14 +704,15 @@ class _RoomScreenState extends State<RoomScreen> {
                   onGift: _openGifts,
                 ),
               ),
-              if (!keyboardOpen)
-                _ControlBar(
-                  micOn: _micOn,
-                  onToggleMic: _toggleMic,
-                  reward: _reward,
-                  onReward: _claimReward,
-                  onMore: _roomSettings,
-                ),
+              keyboardOpen
+                  ? const SizedBox.shrink()
+                  : _ControlBar(
+                      micOn: _micOn,
+                      onToggleMic: _toggleMic,
+                      reward: _reward,
+                      onReward: _claimReward,
+                      onMore: _roomSettings,
+                    ),
             ],
           ),
         ),
