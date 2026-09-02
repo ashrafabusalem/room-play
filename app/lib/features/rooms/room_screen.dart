@@ -493,6 +493,50 @@ class _RoomScreenState extends State<RoomScreen> {
     _scrollToNewest();
   }
 
+  Future<void> _openChatComposer() async {
+    await showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      builder: (sheetContext) => AnimatedPadding(
+        duration: const Duration(milliseconds: 120),
+        curve: Curves.easeOut,
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.viewInsetsOf(sheetContext).bottom,
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: _chatController,
+                  autofocus: true,
+                  textInputAction: TextInputAction.send,
+                  onSubmitted: (_) {
+                    Navigator.pop(sheetContext);
+                    unawaited(_send());
+                  },
+                  decoration: InputDecoration(
+                    hintText: AppLocalizations.of(context).roomChatHint,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              IconButton.filled(
+                onPressed: () {
+                  Navigator.pop(sheetContext);
+                  unawaited(_send());
+                },
+                icon: const Icon(Icons.send_rounded),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   void _scrollToNewest() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!_scrollController.hasClients) return;
@@ -708,7 +752,7 @@ class _RoomScreenState extends State<RoomScreen> {
                     messages: _messages,
                     controller: _chatController,
                     scrollController: _scrollController,
-                    onSend: _send,
+                    onInputTap: _openChatComposer,
                     onGift: _openGifts,
                   ),
                 ),
@@ -1118,14 +1162,14 @@ class _ChatPanel extends StatelessWidget {
     required this.messages,
     required this.controller,
     required this.scrollController,
-    required this.onSend,
+    required this.onInputTap,
     required this.onGift,
   });
 
   final List<ChatMessage> messages;
   final TextEditingController controller;
   final ScrollController scrollController;
-  final VoidCallback onSend;
+  final VoidCallback onInputTap;
   final VoidCallback onGift;
 
   @override
@@ -1153,7 +1197,7 @@ class _ChatPanel extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8),
-          _ChatInput(controller: controller, onSend: onSend, onGift: onGift),
+          _ChatInput(controller: controller, onTap: onInputTap, onGift: onGift),
         ],
       ),
     );
@@ -1396,12 +1440,12 @@ class _GiftSheetState extends State<_GiftSheet> {
 class _ChatInput extends StatelessWidget {
   const _ChatInput({
     required this.controller,
-    required this.onSend,
+    required this.onTap,
     required this.onGift,
   });
 
   final TextEditingController controller;
-  final VoidCallback onSend;
+  final VoidCallback onTap;
   final VoidCallback onGift;
 
   @override
@@ -1411,8 +1455,8 @@ class _ChatInput extends StatelessWidget {
         Expanded(
           child: TextField(
             controller: controller,
-            onSubmitted: (_) => onSend(),
-            textInputAction: TextInputAction.send,
+            onTap: onTap,
+            readOnly: true,
             style: const TextStyle(
               fontFamily: kFontFamily,
               fontFamilyFallback: kFontFallback,
@@ -1432,7 +1476,7 @@ class _ChatInput extends StatelessWidget {
                   size: 20,
                   color: AppColors.textSecondary,
                 ),
-                onPressed: onSend,
+                onPressed: onTap,
               ),
             ),
           ),

@@ -102,6 +102,29 @@ void main() {
     expect(find.text('Princess'), findsNWidgets(2));
   });
 
+  testWidgets('room chat keeps focus when the keyboard opens', (tester) async {
+    await _pumpApp(tester);
+    await tester.tap(find.text('Chill & Talk'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.widgetWithText(TextField, 'Say something...'));
+    await tester.pump(const Duration(milliseconds: 500));
+    final composer = find.byWidgetPredicate(
+      (widget) => widget is TextField && !widget.readOnly,
+    );
+    expect(composer, findsOneWidget);
+    expect(tester.testTextInput.isVisible, isTrue);
+
+    tester.view.viewInsets = const FakeViewPadding(bottom: 900);
+    addTearDown(() => tester.view.viewInsets = FakeViewPadding.zero);
+    await tester.pump(const Duration(milliseconds: 500));
+
+    expect(FocusManager.instance.primaryFocus?.hasFocus, isTrue);
+    await tester.enterText(composer, 'Keyboard stays open');
+    await tester.pump();
+    expect(find.text('Keyboard stays open'), findsWidgets);
+  });
+
   testWidgets('mic button toggles the seat mute badge', (tester) async {
     await _pumpApp(tester);
 
