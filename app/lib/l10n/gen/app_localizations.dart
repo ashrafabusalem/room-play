@@ -512,6 +512,24 @@ abstract class AppLocalizations {
   /// **'Everyone will be disconnected and the room will no longer appear in discovery.'**
   String get roomCloseConfirmBody;
 
+  /// No description provided for @roomLeaveRoom.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave room'**
+  String get roomLeaveRoom;
+
+  /// No description provided for @roomLeaveConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave this room?'**
+  String get roomLeaveConfirmTitle;
+
+  /// No description provided for @roomLeaveConfirmBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your seat will be released. You can join the room again later.'**
+  String get roomLeaveConfirmBody;
+
   /// No description provided for @roomChatHint.
   ///
   /// In en, this message translates to:

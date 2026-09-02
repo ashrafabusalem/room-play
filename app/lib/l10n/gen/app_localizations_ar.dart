@@ -239,6 +239,16 @@ class AppLocalizationsAr extends AppLocalizations {
       'سيتم فصل الجميع ولن تظهر الغرفة في البحث بعد الآن.';
 
   @override
+  String get roomLeaveRoom => 'مغادرة الغرفة';
+
+  @override
+  String get roomLeaveConfirmTitle => 'مغادرة هذه الغرفة؟';
+
+  @override
+  String get roomLeaveConfirmBody =>
+      'سيتم إخلاء مقعدك. يمكنك الانضمام إلى الغرفة مرة أخرى لاحقًا.';
+
+  @override
   String get roomChatHint => 'اكتب رسالة...';
 
   @override

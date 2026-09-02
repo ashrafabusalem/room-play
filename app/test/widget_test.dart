@@ -125,6 +125,30 @@ void main() {
     expect(find.text('Keyboard stays open'), findsWidgets);
   });
 
+  testWidgets('room member can explicitly leave and release the seat', (
+    tester,
+  ) async {
+    await _pumpApp(tester);
+    await tester.tap(find.text('Chill & Talk'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('More'));
+    await tester.pumpAndSettle();
+    expect(find.text('Leave this room?'), findsOneWidget);
+    expect(find.text('Leave room'), findsOneWidget);
+  });
+
+  testWidgets('room Game control opens the game selector', (tester) async {
+    await _pumpApp(tester);
+    await tester.tap(find.text('Chill & Talk'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Game'));
+    await tester.pumpAndSettle();
+    expect(find.text('Who’s the Spy?'), findsOneWidget);
+    expect(find.text('Truth or Dare'), findsOneWidget);
+  });
+
   testWidgets('mic button toggles the seat mute badge', (tester) async {
     await _pumpApp(tester);
 

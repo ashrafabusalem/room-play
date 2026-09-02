@@ -363,6 +363,36 @@ class _RoomScreenState extends State<RoomScreen> {
     if (mounted) setState(() => _room = room);
   }
 
+  Future<void> _leaveRoom() async {
+    final l = AppLocalizations.of(context);
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(l.roomLeaveConfirmTitle),
+        content: Text(l.roomLeaveConfirmBody),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: Text(l.commonCancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(dialogContext, true),
+            child: Text(l.roomLeaveRoom),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) return;
+    if (_rooms == null) {
+      Navigator.of(context).pop();
+      return;
+    }
+    try {
+      await _rooms!.leave(_room.id);
+      if (mounted) Navigator.of(context).pop();
+    } catch (_) {}
+  }
+
   Future<void> _manageRoomBans() async {
     final l = AppLocalizations.of(context);
     List<AppUser> users;
@@ -691,6 +721,9 @@ class _RoomScreenState extends State<RoomScreen> {
   @override
   Widget build(BuildContext context) {
     final room = _room;
+    final isHost = room.seats.any(
+      (seat) => seat.user?.isMe == true && seat.user?.isHost == true,
+    );
     final keyboardOpen = MediaQuery.viewInsetsOf(context).bottom > 0;
 
     return Scaffold(
@@ -763,7 +796,8 @@ class _RoomScreenState extends State<RoomScreen> {
                         onToggleMic: _toggleMic,
                         reward: _reward,
                         onReward: _claimReward,
-                        onMore: _roomSettings,
+                        onGame: _openGames,
+                        onMore: isHost ? _roomSettings : _leaveRoom,
                       ),
               ],
             ),
@@ -1529,6 +1563,7 @@ class _ControlBar extends StatelessWidget {
     required this.onToggleMic,
     required this.reward,
     required this.onReward,
+    required this.onGame,
     required this.onMore,
   });
 
@@ -1536,6 +1571,7 @@ class _ControlBar extends StatelessWidget {
   final VoidCallback onToggleMic;
   final RoomRewardStatus? reward;
   final VoidCallback onReward;
+  final VoidCallback onGame;
   final VoidCallback onMore;
 
   @override
@@ -1564,6 +1600,7 @@ class _ControlBar extends StatelessWidget {
           _ControlButton(
             icon: Icons.sports_esports_rounded,
             label: l10n.roomControlGame,
+            onTap: onGame,
           ),
           _ControlButton(
             icon: Icons.more_horiz_rounded,
@@ -1592,32 +1629,35 @@ class _ControlButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      behavior: HitTestBehavior.opaque,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 44,
-            height: 44,
-            decoration: BoxDecoration(
-              color: background,
-              shape: BoxShape.circle,
+    return Opacity(
+      opacity: onTap == null ? 0.4 : 1,
+      child: GestureDetector(
+        onTap: onTap,
+        behavior: HitTestBehavior.opaque,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 44,
+              height: 44,
+              decoration: BoxDecoration(
+                color: background,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(icon, size: 21, color: AppColors.textPrimary),
             ),
-            child: Icon(icon, size: 21, color: AppColors.textPrimary),
-          ),
-          const SizedBox(height: 5),
-          Text(
-            label,
-            style: const TextStyle(
-              fontFamily: kFontFamily,
-              fontFamilyFallback: kFontFallback,
-              fontSize: 10,
-              color: AppColors.textSecondary,
+            const SizedBox(height: 5),
+            Text(
+              label,
+              style: const TextStyle(
+                fontFamily: kFontFamily,
+                fontFamilyFallback: kFontFallback,
+                fontSize: 10,
+                color: AppColors.textSecondary,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

@@ -240,6 +240,16 @@ class AppLocalizationsEn extends AppLocalizations {
       'Everyone will be disconnected and the room will no longer appear in discovery.';
 
   @override
+  String get roomLeaveRoom => 'Leave room';
+
+  @override
+  String get roomLeaveConfirmTitle => 'Leave this room?';
+
+  @override
+  String get roomLeaveConfirmBody =>
+      'Your seat will be released. You can join the room again later.';
+
+  @override
   String get roomChatHint => 'Say something...';
 
   @override
