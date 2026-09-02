@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
-import '../../data/mock_data.dart';
 import '../../data/models.dart';
 import '../../data/direct_message_repository.dart';
+import '../../data/social_repository.dart';
 import '../auth/auth_controller.dart';
 import 'conversation_screen.dart';
 import '../../l10n/gen/app_localizations.dart';
@@ -14,14 +14,14 @@ import '../../widgets/avatar.dart';
 import '../../widgets/common.dart';
 
 class MessagesScreen extends StatefulWidget {
-  const MessagesScreen({super.key});
+  const MessagesScreen({super.key, this.onUnreadChanged});
+  final ValueChanged<int>? onUnreadChanged;
   @override
   State<MessagesScreen> createState() => _MessagesScreenState();
 }
 
 class _MessagesScreenState extends State<MessagesScreen> {
-  static const _repo = MockRepository();
-  List<Conversation> _items = _repo.conversations();
+  List<Conversation> _items = [];
   bool _loaded = false;
   @override
   void didChangeDependencies() {
@@ -38,7 +38,10 @@ class _MessagesScreenState extends State<MessagesScreen> {
         a.api,
         currentUserId: a.publicId,
       ).conversations();
-      if (mounted) setState(() => _items = v);
+      if (mounted) {
+        setState(() => _items = v);
+        widget.onUnreadChanged?.call(v.fold(0, (n, c) => n + c.unread));
+      }
     } catch (_) {}
   }
 
@@ -47,6 +50,9 @@ class _MessagesScreenState extends State<MessagesScreen> {
     final repo = DirectMessageRepository(a.api, currentUserId: a.publicId);
     final controller = TextEditingController();
     List<AppUser> users = [];
+    try {
+      users = await SocialRepository(a.api).friends();
+    } catch (_) {}
     if (!mounted) return;
     await showDialog<void>(
       context: context,
@@ -64,14 +70,27 @@ class _MessagesScreenState extends State<MessagesScreen> {
                     hintText: AppLocalizations.of(context).actionSearch,
                   ),
                   onChanged: (q) async {
+                    if (q.trim().isEmpty) {
+                      final r = await SocialRepository(a.api).friends();
+                      if (context.mounted) setDialog(() => users = r);
+                      return;
+                    }
                     if (q.trim().length < 2) return;
                     final r = await repo.search(q.trim());
                     if (context.mounted) setDialog(() => users = r);
                   },
                 ),
                 const SizedBox(height: 8),
+                Align(
+                  alignment: AlignmentDirectional.centerStart,
+                  child: Text(
+                    AppLocalizations.of(context).socialFriends,
+                    style: Theme.of(context).textTheme.titleSmall,
+                  ),
+                ),
                 ...users.map(
                   (u) => ListTile(
+                    leading: AvatarCircle(user: u, size: 36),
                     title: Text(u.name),
                     subtitle: Text(u.id),
                     onTap: () async {

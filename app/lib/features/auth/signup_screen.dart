@@ -52,6 +52,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         email: _email.text.trim(),
         password: _password.text,
       );
+      if (mounted) Navigator.of(context).popUntil((route) => route.isFirst);
     } on ApiException catch (error) {
       if (!mounted) return;
       // "The email has already been taken." arrives here, which is the most

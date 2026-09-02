@@ -5,6 +5,8 @@ import '../../data/social_repository.dart';
 import '../../l10n/gen/app_localizations.dart';
 import '../../widgets/common.dart';
 import '../auth/auth_controller.dart';
+import '../../data/direct_message_repository.dart';
+import '../messages/conversation_screen.dart';
 
 class PublicProfileScreen extends StatefulWidget {
   const PublicProfileScreen({super.key, required this.userId});
@@ -62,6 +64,26 @@ class _PublicProfileScreenState extends State<PublicProfileScreen> {
     if (mounted) {
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text(l10n.socialRequestSent)));
+    }
+  }
+
+  Future<void> _message() async {
+    setState(() => _busy = true);
+    try {
+      final auth = AuthScope.of(context);
+      final conversation = await DirectMessageRepository(
+        auth.api,
+        currentUserId: auth.publicId,
+      ).start(widget.userId);
+      if (mounted) {
+        await Navigator.of(context).push(
+          MaterialPageRoute<void>(
+            builder: (_) => ConversationScreen(conversation: conversation),
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _busy = false);
     }
   }
 
@@ -243,6 +265,14 @@ class _PublicProfileScreenState extends State<PublicProfileScreen> {
                       ),
                     ],
                   ),
+                  if (profile.friendshipStatus == 'accepted') ...[
+                    const SizedBox(height: 10),
+                    OutlinedButton.icon(
+                      onPressed: _busy || profile.isBlocked ? null : _message,
+                      icon: const Icon(Icons.chat_bubble_outline_rounded),
+                      label: Text(l10n.messagesNewChat),
+                    ),
+                  ],
                 ],
               ],
             ),

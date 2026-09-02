@@ -1,8 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
-import '../../data/mock_data.dart';
+import '../../data/direct_message_repository.dart';
 import '../../data/models.dart';
 import '../../l10n/gen/app_localizations.dart';
 import '../../widgets/common.dart';
@@ -14,6 +16,7 @@ import '../messages/messages_screen.dart';
 import '../profile/profile_screen.dart';
 import '../rooms/rooms_screen.dart';
 import '../rooms/room_screen.dart';
+import '../auth/auth_controller.dart';
 
 /// Bottom-nav container: Home · Rooms · (+) · Messages · Profile.
 ///
@@ -27,9 +30,30 @@ class MainShell extends StatefulWidget {
 }
 
 class _MainShellState extends State<MainShell> {
-  static const _repo = MockRepository();
   int _index = 0;
   int _roomsVersion = 0;
+  int _messagesVersion = 0;
+  int _unread = 0;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    unawaited(_refreshUnread());
+  }
+
+  Future<void> _refreshUnread() async {
+    final auth = AuthScope.maybeOf(context);
+    if (auth?.token == null) return;
+    try {
+      final conversations = await DirectMessageRepository(
+        auth!.api,
+        currentUserId: auth.publicId,
+      ).conversations();
+      if (mounted) {
+        setState(() => _unread = conversations.fold(0, (n, c) => n + c.unread));
+      }
+    } catch (_) {}
+  }
 
   /// Games is not a nav destination in the mockup — it is pushed on top, so
   /// the back arrow in its app bar has somewhere to go.
@@ -64,6 +88,7 @@ class _MainShellState extends State<MainShell> {
     setState(() {
       _index = index;
       if (index == 1) _roomsVersion++;
+      if (index == 2) _messagesVersion++;
     });
   }
 
@@ -77,13 +102,18 @@ class _MainShellState extends State<MainShell> {
         children: [
           HomeScreen(onSeeAllGames: _openGames),
           RoomsScreen(key: ValueKey(_roomsVersion)),
-          const MessagesScreen(),
+          MessagesScreen(
+            key: ValueKey(_messagesVersion),
+            onUnreadChanged: (value) {
+              if (mounted && value != _unread) setState(() => _unread = value);
+            },
+          ),
           const ProfileScreen(),
         ],
       ),
       bottomNavigationBar: _BottomNav(
         current: _index,
-        unread: _repo.unreadTotal,
+        unread: _unread,
         onTap: _selectTab,
         onCreate: _openCreate,
       ),

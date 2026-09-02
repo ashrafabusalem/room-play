@@ -46,7 +46,8 @@ class DirectMessageController extends Controller {
  private function authorizeMessaging(User $sender,User $recipient): void {
   $blocked=DB::table('user_blocks')->where(fn($q)=>$q->where(['blocker_id'=>$sender->id,'blocked_id'=>$recipient->id])->orWhere(['blocker_id'=>$recipient->id,'blocked_id'=>$sender->id]))->exists();
   abort_if($blocked,403,'Messaging is unavailable.');
-  $allowed=$recipient->dm_privacy==='everyone'||($recipient->dm_privacy==='followers'&&DB::table('user_follows')->where(['follower_id'=>$sender->id,'followed_id'=>$recipient->id])->exists());
+  $friends=DB::table('friend_requests')->where('status','accepted')->where(fn($q)=>$q->where(['requester_id'=>$sender->id,'addressee_id'=>$recipient->id])->orWhere(['requester_id'=>$recipient->id,'addressee_id'=>$sender->id]))->exists();
+  $allowed=$friends||$recipient->dm_privacy==='everyone'||($recipient->dm_privacy==='followers'&&DB::table('user_follows')->where(['follower_id'=>$sender->id,'followed_id'=>$recipient->id])->exists());
   abort_unless($allowed,403,'This user is not accepting new messages.');
  }
  private function conversation(DirectConversation $c,User $u): array {$other=$c->other($u);$last=$c->messages->first();return ['id'=>(string)$c->id,'user'=>['id'=>$other->public_id,'name'=>$other->name,'level'=>$other->level,'avatar_url'=>$other->avatarUrl()],'last_message'=>$last?['text'=>$last->body,'created_at'=>$last->created_at?->toISOString()]:null,'unread_count'=>(int)($c->unread_count??0)];}

@@ -104,6 +104,7 @@ class Room {
     this.following = false,
     this.isLocked = false,
     this.isClosed = false,
+    this.stateVersion = 0,
   });
 
   final String id;
@@ -119,6 +120,7 @@ class Room {
   final bool following;
   final bool isLocked;
   final bool isClosed;
+  final int stateVersion;
 
   Room copyWith({List<Seat>? seats}) => Room(
     id: id,
@@ -132,6 +134,7 @@ class Room {
     following: following,
     isLocked: isLocked,
     isClosed: isClosed,
+    stateVersion: stateVersion,
   );
 
   factory Room.fromJson(Map<String, dynamic> json, {String? currentUserId}) {
@@ -155,6 +158,7 @@ class Room {
       seats: seats,
       isLocked: json['is_locked'] as bool? ?? false,
       isClosed: json['is_closed'] as bool? ?? false,
+      stateVersion: (json['state_version'] as num?)?.toInt() ?? 0,
     );
   }
 }

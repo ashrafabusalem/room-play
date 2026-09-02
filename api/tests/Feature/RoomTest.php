@@ -60,9 +60,12 @@ class RoomTest extends TestCase
         $user = User::factory()->create();
         RoomMember::create(['room_id' => $room->id, 'user_id' => $user->id]);
 
-        $this->actingAs($user, 'sanctum')->putJson("/api/rooms/{$room->public_id}/seats/2")->assertOk();
-        $this->putJson("/api/rooms/{$room->public_id}/seats/3")->assertOk();
-        $this->patchJson("/api/rooms/{$room->public_id}/microphone", ['muted' => false])->assertOk();
+        $first = $this->actingAs($user, 'sanctum')->putJson("/api/rooms/{$room->public_id}/seats/2")->assertOk();
+        $second = $this->putJson("/api/rooms/{$room->public_id}/seats/3")->assertOk();
+        $third = $this->patchJson("/api/rooms/{$room->public_id}/microphone", ['muted' => false])->assertOk();
+
+        $this->assertGreaterThan($second->json('room.state_version'), $third->json('room.state_version'));
+        $this->assertGreaterThan($first->json('room.state_version'), $second->json('room.state_version'));
 
         $this->assertDatabaseHas('room_seats', ['room_id' => $room->id, 'position' => 2, 'user_id' => null]);
         $this->assertDatabaseHas('room_seats', ['room_id' => $room->id, 'position' => 3, 'user_id' => $user->id, 'mic_muted' => false]);

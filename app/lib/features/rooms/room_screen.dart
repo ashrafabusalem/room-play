@@ -77,7 +77,10 @@ class _RoomScreenState extends State<RoomScreen> {
         _room.id,
         (room) {
           if (!mounted) return;
-          if (_seatRequestInFlight) return;
+          if (_seatRequestInFlight ||
+              room.stateVersion <= _room.stateVersion) {
+            return;
+          }
           if (room.isClosed) {
             Navigator.of(context).maybePop();
           } else {

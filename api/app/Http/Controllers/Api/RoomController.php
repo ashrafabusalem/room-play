@@ -242,6 +242,9 @@ class RoomController extends Controller
 
     private function state(Room $room, bool $broadcast = false): JsonResponse
     {
+        if ($broadcast) {
+            $room->increment('state_version');
+        }
         $room = $room->fresh(['host', 'members.user', 'seats.user']);
         if ($broadcast) {
             broadcast(new RoomStateChanged($room))->toOthers();
