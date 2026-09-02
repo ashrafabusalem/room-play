@@ -455,11 +455,38 @@ class _RoomScreenState extends State<RoomScreen> {
         ],
       );
     } else {
+      final auth = AuthScope.of(context);
+      final pending = ChatMessage(
+        sender: AppUser(
+          id: auth.publicId ?? '',
+          name: auth.name ?? '',
+          level: auth.level,
+          isMe: true,
+        ),
+        text: text,
+      );
+      setState(() => _messages = [..._messages, pending]);
+      _scrollToNewest();
       try {
         final message = await _rooms!.sendMessage(_room.id, text);
-        if (mounted) setState(() => _messages = [..._messages, message]);
+        if (mounted) {
+          setState(() {
+            final index = _messages.indexWhere(
+              (item) => identical(item, pending),
+            );
+            if (index < 0) return;
+            _messages = [..._messages]..[index] = message;
+          });
+        }
       } catch (_) {
-        if (mounted) _chatController.text = text;
+        if (mounted) {
+          setState(
+            () => _messages = _messages
+                .where((item) => !identical(item, pending))
+                .toList(growable: false),
+          );
+          _chatController.text = text;
+        }
         return;
       }
     }
@@ -620,6 +647,7 @@ class _RoomScreenState extends State<RoomScreen> {
   @override
   Widget build(BuildContext context) {
     final room = _room;
+    final keyboardOpen = MediaQuery.viewInsetsOf(context).bottom > 0;
 
     return Scaffold(
       body: Container(
@@ -634,31 +662,33 @@ class _RoomScreenState extends State<RoomScreen> {
         child: SafeArea(
           child: Column(
             children: [
-              _RoomHeader(
-                room: room,
-                following: _following,
-                onFollow: () => setState(() => _following = !_following),
-                onInvite: _inviteFriends,
-                onGame: _openGames,
-              ),
-              const SizedBox(height: 10),
-              _RoomMetaPills(room: room),
-              AnimatedSwitcher(
-                duration: const Duration(milliseconds: 250),
-                child: _liveGift == null
-                    ? const SizedBox.shrink()
-                    : _LiveGiftBanner(
-                        key: ValueKey(_liveGift),
-                        gift: _liveGift!,
-                      ),
-              ),
-              const SizedBox(height: 18),
-              _SeatGrid(
-                seats: room.seats,
-                micOn: _micOn,
-                onSeatTap: _seatAction,
-              ),
-              const SizedBox(height: 16),
+              if (!keyboardOpen) ...[
+                _RoomHeader(
+                  room: room,
+                  following: _following,
+                  onFollow: () => setState(() => _following = !_following),
+                  onInvite: _inviteFriends,
+                  onGame: _openGames,
+                ),
+                const SizedBox(height: 10),
+                _RoomMetaPills(room: room),
+                AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 250),
+                  child: _liveGift == null
+                      ? const SizedBox.shrink()
+                      : _LiveGiftBanner(
+                          key: ValueKey(_liveGift),
+                          gift: _liveGift!,
+                        ),
+                ),
+                const SizedBox(height: 18),
+                _SeatGrid(
+                  seats: room.seats,
+                  micOn: _micOn,
+                  onSeatTap: _seatAction,
+                ),
+                const SizedBox(height: 16),
+              ],
               Expanded(
                 child: _ChatPanel(
                   messages: _messages,
@@ -668,13 +698,14 @@ class _RoomScreenState extends State<RoomScreen> {
                   onGift: _openGifts,
                 ),
               ),
-              _ControlBar(
-                micOn: _micOn,
-                onToggleMic: _toggleMic,
-                reward: _reward,
-                onReward: _claimReward,
-                onMore: _roomSettings,
-              ),
+              if (!keyboardOpen)
+                _ControlBar(
+                  micOn: _micOn,
+                  onToggleMic: _toggleMic,
+                  reward: _reward,
+                  onReward: _claimReward,
+                  onMore: _roomSettings,
+                ),
             ],
           ),
         ),

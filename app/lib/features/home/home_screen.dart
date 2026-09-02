@@ -34,6 +34,7 @@ class _HomeScreenState extends State<HomeScreen> {
   List<Room>? _rooms;
   String? _loadedLocale;
   int _unreadNotifications = 0;
+  Timer? _roomRefreshTimer;
 
   @override
   void didChangeDependencies() {
@@ -45,6 +46,10 @@ class _HomeScreenState extends State<HomeScreen> {
     unawaited(_loadBanners(locale));
     unawaited(_loadRooms());
     unawaited(_loadNotifications());
+    _roomRefreshTimer ??= Timer.periodic(
+      const Duration(seconds: 10),
+      (_) => unawaited(_loadRooms()),
+    );
   }
 
   Future<void> _loadNotifications() async {
@@ -87,6 +92,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void dispose() {
+    _roomRefreshTimer?.cancel();
     _content.close();
     super.dispose();
   }
@@ -124,7 +130,7 @@ class _HomeScreenState extends State<HomeScreen> {
           const SizedBox(height: AppSizes.gapXl),
           SectionHeader(title: l10n.sectionRecommendedRooms),
           for (final room in rooms) ...[
-            _RoomRow(room: room),
+            _RoomRow(room: room, onReturn: _loadRooms),
             const SizedBox(height: AppSizes.gapM),
           ],
         ],
@@ -576,9 +582,10 @@ class _PopularGameCard extends StatelessWidget {
 // ------------------------------------------------------------- room rows
 
 class _RoomRow extends StatelessWidget {
-  const _RoomRow({required this.room});
+  const _RoomRow({required this.room, required this.onReturn});
 
   final Room room;
+  final Future<void> Function() onReturn;
 
   @override
   Widget build(BuildContext context) {
@@ -593,9 +600,12 @@ class _RoomRow extends StatelessWidget {
         borderRadius: BorderRadius.circular(18),
         clipBehavior: Clip.antiAlias,
         child: InkWell(
-          onTap: () => Navigator.of(context).push(
-            MaterialPageRoute<void>(builder: (_) => RoomScreen(room: room)),
-          ),
+          onTap: () async {
+            await Navigator.of(context).push(
+              MaterialPageRoute<void>(builder: (_) => RoomScreen(room: room)),
+            );
+            await onReturn();
+          },
           child: Padding(
             padding: const EdgeInsets.all(10),
             child: Row(
