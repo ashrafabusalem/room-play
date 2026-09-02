@@ -77,8 +77,7 @@ class _RoomScreenState extends State<RoomScreen> {
         _room.id,
         (room) {
           if (!mounted) return;
-          if (_seatRequestInFlight ||
-              room.stateVersion <= _room.stateVersion) {
+          if (_seatRequestInFlight || room.stateVersion <= _room.stateVersion) {
             return;
           }
           if (room.isClosed) {
@@ -101,12 +100,23 @@ class _RoomScreenState extends State<RoomScreen> {
   Future<void> _takeSeat(Seat seat) async {
     if (_rooms == null || !seat.isOpen || _seatRequestInFlight) return;
     final previousRoom = _room;
-    final me = _room.seats
+    final knownMe = _room.seats
         .map((seat) => seat.user)
         .followedBy(_room.members)
         .whereType<AppUser>()
         .where((user) => user.isMe)
         .firstOrNull;
+    final auth = AuthScope.of(context);
+    final me =
+        knownMe ??
+        (auth.publicId == null
+            ? null
+            : AppUser(
+                id: auth.publicId!,
+                name: auth.name ?? '',
+                level: auth.level,
+                isMe: true,
+              ));
     _seatRequestInFlight = true;
     if (me != null) {
       setState(

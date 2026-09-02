@@ -40,11 +40,37 @@ class _ConversationScreenState extends State<ConversationScreen> {
     final t = _text.text.trim();
     if (t.isEmpty) return;
     _text.clear();
+    final auth = AuthScope.of(context);
+    final pending = ChatMessage(
+      sender: AppUser(
+        id: auth.publicId ?? '',
+        name: auth.name ?? '',
+        level: auth.level,
+        isMe: true,
+      ),
+      text: t,
+    );
+    setState(() => _messages = [..._messages, pending]);
     try {
       final m = await _repo!.send(widget.conversation.id, t);
-      if (mounted) setState(() => _messages = [..._messages, m]);
+      if (mounted) {
+        setState(() {
+          final index = _messages.indexWhere(
+            (item) => identical(item, pending),
+          );
+          if (index < 0) return;
+          _messages = [..._messages]..[index] = m;
+        });
+      }
     } catch (_) {
-      if (mounted) _text.text = t;
+      if (mounted) {
+        setState(
+          () => _messages = _messages
+              .where((item) => !identical(item, pending))
+              .toList(growable: false),
+        );
+        _text.text = t;
+      }
     }
   }
 
