@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Http\UploadedFile;
-use RuntimeException;
+use Illuminate\Support\Facades\File;
 use Illuminate\Validation\Rule;
 
 class ProfileController extends Controller
@@ -63,18 +63,12 @@ class ProfileController extends Controller
     private function storeAvatar(UploadedFile $avatar): string
     {
         $extension = $avatar->extension() ?: 'jpg';
-        $path = 'avatars/'.Str::uuid().'.'.$extension;
-        $stored = Storage::disk('public')->put(
-            $path,
-            $avatar->getContent(),
-            ['visibility' => 'public'],
-        );
+        $filename = Str::uuid().'.'.$extension;
+        $directory = Storage::disk('public')->path('avatars');
+        File::ensureDirectoryExists($directory, 0775);
+        $avatar->move($directory, $filename);
 
-        if (! $stored) {
-            throw new RuntimeException('The profile photo could not be stored.');
-        }
-
-        return $path;
+        return 'avatars/'.$filename;
     }
 
     public function follow(Request $request, User $user): JsonResponse
