@@ -70,6 +70,12 @@ class Seat {
 
   bool get isOpen => user == null && !locked;
 
+  Seat copyWith({AppUser? user, bool clearUser = false, bool? locked}) => Seat(
+    index: index,
+    user: clearUser ? null : (user ?? this.user),
+    locked: locked ?? this.locked,
+  );
+
   factory Seat.fromJson(Map<String, dynamic> json, {String? currentUserId}) {
     final rawUser = json['user'];
     return Seat(
@@ -113,6 +119,20 @@ class Room {
   final bool following;
   final bool isLocked;
   final bool isClosed;
+
+  Room copyWith({List<Seat>? seats}) => Room(
+    id: id,
+    name: name,
+    numericId: numericId,
+    language: language,
+    memberCount: memberCount,
+    members: members,
+    tag: tag,
+    seats: seats ?? this.seats,
+    following: following,
+    isLocked: isLocked,
+    isClosed: isClosed,
+  );
 
   factory Room.fromJson(Map<String, dynamic> json, {String? currentUserId}) {
     final members = (json['members'] as List? ?? const [])

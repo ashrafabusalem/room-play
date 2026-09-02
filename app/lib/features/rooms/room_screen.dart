@@ -46,6 +46,7 @@ class _RoomScreenState extends State<RoomScreen> {
   RoomRepository? _rooms;
   RoomRealtime? _realtime;
   bool _connected = false;
+  bool _seatRequestInFlight = false;
   LiveGift? _liveGift;
   Timer? _giftTimer;
   RoomRewardStatus? _reward;
@@ -76,6 +77,7 @@ class _RoomScreenState extends State<RoomScreen> {
         _room.id,
         (room) {
           if (!mounted) return;
+          if (_seatRequestInFlight) return;
           if (room.isClosed) {
             Navigator.of(context).maybePop();
           } else {
@@ -94,11 +96,38 @@ class _RoomScreenState extends State<RoomScreen> {
   }
 
   Future<void> _takeSeat(Seat seat) async {
-    if (_rooms == null || !seat.isOpen) return;
+    if (_rooms == null || !seat.isOpen || _seatRequestInFlight) return;
+    final previousRoom = _room;
+    final me = _room.seats
+        .map((seat) => seat.user)
+        .followedBy(_room.members)
+        .whereType<AppUser>()
+        .where((user) => user.isMe)
+        .firstOrNull;
+    _seatRequestInFlight = true;
+    if (me != null) {
+      setState(
+        () => _room = _room.copyWith(
+          seats: _room.seats
+              .map(
+                (current) => current.index == seat.index
+                    ? current.copyWith(user: me)
+                    : current.user?.isMe == true
+                    ? current.copyWith(clearUser: true)
+                    : current,
+              )
+              .toList(growable: false),
+        ),
+      );
+    }
     try {
       final room = await _rooms!.takeSeat(_room.id, seat.index);
       if (mounted) setState(() => _room = room);
-    } catch (_) {}
+    } catch (_) {
+      if (mounted) setState(() => _room = previousRoom);
+    } finally {
+      _seatRequestInFlight = false;
+    }
   }
 
   Future<void> _seatAction(Seat seat) async {
