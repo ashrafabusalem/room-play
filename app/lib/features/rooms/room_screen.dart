@@ -46,6 +46,7 @@ class _RoomScreenState extends State<RoomScreen> {
   RoomRepository? _rooms;
   RoomRealtime? _realtime;
   bool _connected = false;
+  final Completer<bool> _joined = Completer<bool>();
   bool _seatRequestInFlight = false;
   LiveGift? _liveGift;
   Timer? _giftTimer;
@@ -66,10 +67,11 @@ class _RoomScreenState extends State<RoomScreen> {
     unawaited(_join());
   }
 
-  Future<void> _join() async {
+  Future<bool> _join() async {
     try {
       final room = await _rooms!.join(_room.id);
       if (mounted) setState(() => _room = room);
+      if (!_joined.isCompleted) _joined.complete(true);
       await _loadReward();
       final messages = await _rooms!.messages(_room.id);
       if (mounted) setState(() => _messages = messages);
@@ -92,13 +94,18 @@ class _RoomScreenState extends State<RoomScreen> {
         },
         onGift: _showGift,
       );
+      return true;
     } catch (_) {
       // Keep the last known room visible if joining or realtime is unavailable.
+      if (!_joined.isCompleted) _joined.complete(false);
+      return false;
     }
   }
 
   Future<void> _takeSeat(Seat seat) async {
     if (_rooms == null || !seat.isOpen || _seatRequestInFlight) return;
+    final joined = await _joined.future;
+    if (!mounted || !joined || !seat.isOpen || _seatRequestInFlight) return;
     final previousRoom = _room;
     final knownMe = _room.seats
         .map((seat) => seat.user)
@@ -428,9 +435,6 @@ class _RoomScreenState extends State<RoomScreen> {
 
   @override
   void dispose() {
-    if (_rooms != null) {
-      unawaited(_rooms!.leave(_room.id).catchError((_) => _room));
-    }
     unawaited(_realtime?.dispose());
     _chatController.dispose();
     _scrollController.dispose();
