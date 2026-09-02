@@ -16,6 +16,7 @@ use Illuminate\Support\Str;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
 use Illuminate\Validation\Rule;
+use RuntimeException;
 
 class ProfileController extends Controller
 {
@@ -66,7 +67,15 @@ class ProfileController extends Controller
         $filename = Str::uuid().'.'.$extension;
         $directory = Storage::disk('public')->path('avatars');
         File::ensureDirectoryExists($directory, 0775);
-        $avatar->move($directory, $filename);
+        $destination = $directory.DIRECTORY_SEPARATOR.$filename;
+        $source = $avatar->getRealPath();
+        if (! $source || ! File::copy($source, $destination)) {
+            throw new RuntimeException('The profile photo could not be copied from temporary storage.');
+        }
+        if (! File::exists($destination) || File::size($destination) !== $avatar->getSize()) {
+            File::delete($destination);
+            throw new RuntimeException('The stored profile photo failed verification.');
+        }
 
         return 'avatars/'.$filename;
     }
