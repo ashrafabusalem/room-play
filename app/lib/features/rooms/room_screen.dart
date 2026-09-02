@@ -650,70 +650,79 @@ class _RoomScreenState extends State<RoomScreen> {
     final keyboardOpen = MediaQuery.viewInsetsOf(context).bottom > 0;
 
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Color(0xFF3E334B), Color(0xFF141A26), AppColors.bg],
-            stops: [0, 0.45, 1],
-          ),
+      resizeToAvoidBottomInset: false,
+      body: AnimatedPadding(
+        duration: const Duration(milliseconds: 120),
+        curve: Curves.easeOut,
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.viewInsetsOf(context).bottom,
         ),
-        child: SafeArea(
-          child: Column(
-            children: [
-              keyboardOpen
-                  ? const SizedBox.shrink()
-                  : Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        _RoomHeader(
-                          room: room,
-                          following: _following,
-                          onFollow: () =>
-                              setState(() => _following = !_following),
-                          onInvite: _inviteFriends,
-                          onGame: _openGames,
-                        ),
-                        const SizedBox(height: 10),
-                        _RoomMetaPills(room: room),
-                        AnimatedSwitcher(
-                          duration: const Duration(milliseconds: 250),
-                          child: _liveGift == null
-                              ? const SizedBox.shrink()
-                              : _LiveGiftBanner(
-                                  key: ValueKey(_liveGift),
-                                  gift: _liveGift!,
-                                ),
-                        ),
-                        const SizedBox(height: 18),
-                        _SeatGrid(
-                          seats: room.seats,
-                          micOn: _micOn,
-                          onSeatTap: _seatAction,
-                        ),
-                        const SizedBox(height: 16),
-                      ],
-                    ),
-              Expanded(
-                child: _ChatPanel(
-                  messages: _messages,
-                  controller: _chatController,
-                  scrollController: _scrollController,
-                  onSend: _send,
-                  onGift: _openGifts,
+        child: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [Color(0xFF3E334B), Color(0xFF141A26), AppColors.bg],
+              stops: [0, 0.45, 1],
+            ),
+          ),
+          child: SafeArea(
+            maintainBottomViewPadding: true,
+            child: Column(
+              children: [
+                keyboardOpen
+                    ? const SizedBox.shrink()
+                    : Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          _RoomHeader(
+                            room: room,
+                            following: _following,
+                            onFollow: () =>
+                                setState(() => _following = !_following),
+                            onInvite: _inviteFriends,
+                            onGame: _openGames,
+                          ),
+                          const SizedBox(height: 10),
+                          _RoomMetaPills(room: room),
+                          AnimatedSwitcher(
+                            duration: const Duration(milliseconds: 250),
+                            child: _liveGift == null
+                                ? const SizedBox.shrink()
+                                : _LiveGiftBanner(
+                                    key: ValueKey(_liveGift),
+                                    gift: _liveGift!,
+                                  ),
+                          ),
+                          const SizedBox(height: 18),
+                          _SeatGrid(
+                            seats: room.seats,
+                            micOn: _micOn,
+                            onSeatTap: _seatAction,
+                          ),
+                          const SizedBox(height: 16),
+                        ],
+                      ),
+                Expanded(
+                  child: _ChatPanel(
+                    messages: _messages,
+                    controller: _chatController,
+                    scrollController: _scrollController,
+                    onSend: _send,
+                    onGift: _openGifts,
+                  ),
                 ),
-              ),
-              keyboardOpen
-                  ? const SizedBox.shrink()
-                  : _ControlBar(
-                      micOn: _micOn,
-                      onToggleMic: _toggleMic,
-                      reward: _reward,
-                      onReward: _claimReward,
-                      onMore: _roomSettings,
-                    ),
-            ],
+                keyboardOpen
+                    ? const SizedBox.shrink()
+                    : _ControlBar(
+                        micOn: _micOn,
+                        onToggleMic: _toggleMic,
+                        reward: _reward,
+                        onReward: _claimReward,
+                        onMore: _roomSettings,
+                      ),
+              ],
+            ),
           ),
         ),
       ),
