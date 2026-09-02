@@ -31,6 +31,18 @@ class AppUser {
   final bool isMe;
   final String? avatarUrl;
 
+  AppUser copyWith({int? coins}) => AppUser(
+    id: id,
+    name: name,
+    coins: coins ?? this.coins,
+    level: level,
+    verified: verified,
+    micMuted: micMuted,
+    isHost: isHost,
+    isMe: isMe,
+    avatarUrl: avatarUrl,
+  );
+
   factory AppUser.fromJson(
     Map<String, dynamic> json, {
     String? currentUserId,
@@ -122,13 +134,13 @@ class Room {
   final bool isClosed;
   final int stateVersion;
 
-  Room copyWith({List<Seat>? seats}) => Room(
+  Room copyWith({List<Seat>? seats, List<AppUser>? members}) => Room(
     id: id,
     name: name,
     numericId: numericId,
     language: language,
     memberCount: memberCount,
-    members: members,
+    members: members ?? this.members,
     tag: tag,
     seats: seats ?? this.seats,
     following: following,

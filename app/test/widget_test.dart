@@ -556,6 +556,44 @@ void main() {
     expect(find.text('Alex'), findsOneWidget);
     expect(find.text('ID: 567185'), findsOneWidget);
   });
+
+  testWidgets('reopening Profile refreshes the Gold balance', (tester) async {
+    var balance = 0;
+    final server = MockClient((request) async {
+      if (request.url.path.endsWith('/login')) {
+        return _json({'token': 'server-token', 'user': _user});
+      }
+      if (request.url.path.endsWith('/profiles/567185')) {
+        return _json({
+          'profile': {
+            ..._user,
+            'coin_balance': balance,
+            'followers_count': 0,
+            'following_count': 0,
+            'is_me': true,
+          },
+        });
+      }
+      return _json({'message': 'ok'});
+    });
+    await _pumpApp(tester, signedIn: false, server: server);
+    final fields = find.byType(TextFormField);
+    await tester.enterText(fields.first, 'alex@example.com');
+    await tester.enterText(fields.last, 'correct-horse');
+    await tester.tap(find.text('Sign In'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Profile'));
+    await tester.pumpAndSettle();
+    expect(find.text('0'), findsWidgets);
+
+    balance = 5;
+    await tester.tap(find.text('Home'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Profile'));
+    await tester.pumpAndSettle();
+    expect(find.text('5'), findsOneWidget);
+  });
 }
 
 /// Stands in for the socket errors `package:http` throws when nothing is

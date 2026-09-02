@@ -116,10 +116,12 @@ class RoomRewardStatus {
     required this.reward,
     required this.available,
     this.readyAt,
+    this.balance,
   });
   final int reward;
   final bool available;
   final DateTime? readyAt;
+  final int? balance;
   factory RoomRewardStatus.fromJson(Map<String, dynamic> json) {
     final server = DateTime.tryParse(json['server_time'] as String? ?? '');
     final next = DateTime.tryParse(json['next_claim_at'] as String? ?? '');
@@ -130,6 +132,7 @@ class RoomRewardStatus {
       reward: (json['reward'] as num?)?.toInt() ?? 0,
       available: json['available'] as bool? ?? false,
       readyAt: readyAt,
+      balance: (json['balance'] as num?)?.toInt(),
     );
   }
 }

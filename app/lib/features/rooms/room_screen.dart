@@ -614,7 +614,24 @@ class _RoomScreenState extends State<RoomScreen> {
     try {
       final reward = await _rooms!.claimReward(_room.id);
       if (!mounted) return;
-      setState(() => _reward = reward);
+      setState(() {
+        _reward = reward;
+        final balance = reward.balance;
+        if (balance != null) {
+          _room = _room.copyWith(
+            members: _room.members
+                .map((user) => user.isMe ? user.copyWith(coins: balance) : user)
+                .toList(growable: false),
+            seats: _room.seats
+                .map(
+                  (seat) => seat.user?.isMe == true
+                      ? seat.copyWith(user: seat.user!.copyWith(coins: balance))
+                      : seat,
+                )
+                .toList(growable: false),
+          );
+        }
+      });
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(

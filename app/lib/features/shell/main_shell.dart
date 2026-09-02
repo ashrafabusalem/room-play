@@ -33,6 +33,7 @@ class _MainShellState extends State<MainShell> {
   int _index = 0;
   int _roomsVersion = 0;
   int _messagesVersion = 0;
+  int _profileVersion = 0;
   int _unread = 0;
 
   @override
@@ -89,6 +90,7 @@ class _MainShellState extends State<MainShell> {
       _index = index;
       if (index == 1) _roomsVersion++;
       if (index == 2) _messagesVersion++;
+      if (index == 3) _profileVersion++;
     });
   }
 
@@ -108,7 +110,7 @@ class _MainShellState extends State<MainShell> {
               if (mounted && value != _unread) setState(() => _unread = value);
             },
           ),
-          const ProfileScreen(),
+          ProfileScreen(key: ValueKey(_profileVersion)),
         ],
       ),
       bottomNavigationBar: _BottomNav(

@@ -63,4 +63,29 @@ void main() {
     expect(room.seats.single.user!.isMe, isTrue);
     expect(room.seats.single.user!.isHost, isTrue);
   });
+
+  test('claim reward keeps the returned wallet balance', () async {
+    final client = MockClient(
+      (request) async => http.Response(
+        jsonEncode({
+          'reward': 5,
+          'available': false,
+          'balance': 15,
+          'server_time': '2026-09-02T00:00:00Z',
+          'next_claim_at': '2026-09-02T00:10:00Z',
+        }),
+        200,
+        headers: {'content-type': 'application/json'},
+      ),
+    );
+    final repository = RoomRepository(
+      ApiClient(httpClient: client, baseUrl: 'https://api.roomsplay.com'),
+      currentUserId: 'me',
+    );
+
+    final status = await repository.claimReward('123456');
+
+    expect(status.reward, 5);
+    expect(status.balance, 15);
+  });
 }
